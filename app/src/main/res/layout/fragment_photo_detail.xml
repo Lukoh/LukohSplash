@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.goforer.base.view.widget.SwipeCoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="UnusedAttribute"
+    tools:context=".presentation.ui.photo.PhotoDetailFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/sv_contents"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:scrollingCache="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/dp_64"
+            android:background="@color/grey_5"
+            android:animateLayoutChanges="true"
+            android:clipToPadding="false">
+
+            <ImageView
+                android:id="@+id/iv_photo"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                android:foreground="@color/colorTransparent"
+                android:fitsSystemWindows="false"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintDimensionRatio="4:3"
+                tools:src="@color/colorPrimaryLight"
+                tools:ignore="ContentDescription" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@drawable/toolbar_image_scrim"
+                app:layout_constraintTop_toTopOf="@id/iv_photo"
+                app:layout_constraintBottom_toBottomOf="@id/iv_photo"/>
+
+            <TextView
+                android:id="@+id/tv_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/dp_16"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-medium"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:drawablePadding="@dimen/dp_6"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_place_18dp"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/iv_photo"
+                tools:text="Toronto, Canada"
+                tools:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/user_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_16"
+                android:layout_marginTop="@dimen/dp_16"
+                android:paddingStart="0dp"
+                android:paddingEnd="@dimen/dp_16"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_download"
+                app:layout_constraintTop_toBottomOf="@id/iv_photo">
+
+                <ImageView
+                    android:id="@+id/iv_user"
+                    android:layout_width="@dimen/dp_40"
+                    android:layout_height="@dimen/dp_40"
+                    android:scaleType="centerCrop"
+                    tools:src="@color/colorPrimaryLight"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/tv_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/dp_12"
+                    android:singleLine="true"
+                    android:layout_gravity="center_vertical"
+                    tools:text="Lukoh Nam" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_collect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_bookmark_border_24dp"
+                android:contentDescription="@string/add_to_collection"
+                app:layout_constraintTop_toTopOf="@id/user_container"
+                app:layout_constraintBottom_toBottomOf="@id/user_container"
+                app:layout_constraintEnd_toEndOf="parent"
+                style="@style/MaterialImageButton" />
+
+            <ImageView
+                android:id="@+id/iv_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp_16"
+                android:contentDescription="@string/like"
+                android:src="@drawable/ic_favorite_border_24dp"
+                app:layout_constraintTop_toTopOf="@id/user_container"
+                app:layout_constraintBottom_toBottomOf="@id/user_container"
+                app:layout_constraintEnd_toStartOf="@id/iv_collect"
+                style="@style/MaterialImageButton" />
+
+            <ImageView
+                android:id="@+id/iv_download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp_16"
+                android:src="@drawable/ic_download_border_24dp"
+                android:contentDescription="@string/download"
+                app:layout_constraintTop_toTopOf="@id/user_container"
+                app:layout_constraintBottom_toBottomOf="@id/user_container"
+                app:layout_constraintEnd_toStartOf="@id/iv_like"
+                style="@style/MaterialImageButton" />
+
+            <View
+                android:id="@+id/divider_1"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_1"
+                android:layout_margin="@dimen/dp_16"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/user_container" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_exif"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_16"
+                android:overScrollMode="never"
+                app:layout_constraintTop_toBottomOf="@id/divider_1"
+                tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                tools:spanCount="2"
+                tools:listitem="@layout/item_photo_exif" />
+
+            <View
+                android:id="@+id/divider_2"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_1"
+                android:layout_margin="@dimen/dp_16"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rv_exif" />
+
+            <LinearLayout
+                android:id="@+id/views_count_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_24"
+                android:layout_marginTop="@dimen/dp_16"
+                android:orientation="vertical"
+                android:background="@color/colorTransparent"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/downloads_count_container"
+                app:layout_constraintTop_toBottomOf="@id/divider_2">
+
+                <TextView
+                    android:id="@+id/tv_views"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/views"
+                    android:textAlignment="center"
+                    android:textColor="@color/color_text5"
+                    android:fontFamily="sans-serif-medium"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/tv_views_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:fontFamily="sans-serif-medium"
+                    tools:text="123" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/downloads_count_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_8"
+                android:orientation="vertical"
+                android:background="@color/colorTransparent"
+                app:layout_constraintStart_toEndOf="@id/views_count_container"
+                app:layout_constraintEnd_toStartOf="@id/likes_count_container"
+                app:layout_constraintTop_toTopOf="@id/views_count_container"
+                app:layout_constraintBottom_toBottomOf="@id/views_count_container">
+
+                <TextView
+                    android:id="@+id/tv_downloads"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/downloads"
+                    android:textAlignment="center"
+                    android:textColor="@color/color_text5"
+                    android:fontFamily="sans-serif-medium"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/tv_downloads_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"
+                    tools:text="323.4K" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/likes_count_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dp_8"
+                android:layout_marginEnd="@dimen/dp_24"
+                android:orientation="vertical"
+                android:background="@color/colorTransparent"
+                app:layout_constraintStart_toEndOf="@id/downloads_count_container"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/views_count_container"
+                app:layout_constraintBottom_toBottomOf="@id/views_count_container">
+
+                <TextView
+                    android:id="@+id/tv_likes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/likes"
+                    android:textAlignment="center"
+                    android:textColor="@color/color_text5"
+                    android:fontFamily="sans-serif-medium"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/tv_likes_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:fontFamily="sans-serif-medium"
+                    tools:text="2" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/divider_3"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dp_1"
+                android:layout_margin="@dimen/dp_16"
+                android:background="@color/line_grey"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/views_count_container" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_tag"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/dp_4"
+                app:layout_constraintTop_toBottomOf="@id/divider_3"
+                tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:orientation="horizontal"
+                tools:listitem="@layout/item_photo_tag" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</com.goforer.base.view.widget.SwipeCoordinatorLayout>

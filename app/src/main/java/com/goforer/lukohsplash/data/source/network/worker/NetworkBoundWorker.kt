@@ -1,0 +1,114 @@
+/*
+ * Copyright (C)  2020 Blue-Ocean
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.goforer.lukohsplash.data.source.network.worker
+
+import androidx.annotation.MainThread
+import androidx.annotation.WorkerThread
+import com.goforer.lukohsplash.data.source.network.response.*
+import com.goforer.base.extension.isNullOnFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.*
+import timber.log.Timber
+
+/**
+ * A generic class that can provide a resource backed by the network.
+ * <p>
+ * You can read more about it in the <a href="https://developer.android.com/arch">Architecture
+ * Guide</a>.
+ */
+abstract class NetworkBoundWorker<T, R> constructor(
+    private val enabledCache: Boolean,
+    private val viewModelScope: CoroutineScope
+) {
+    companion object {
+        internal const val YOUR_ACCESS_KEY = "V9sYHDmwcPc46chEOLA_bhTV3hwsWG0P1ta1vNZjmLs"
+        internal const val NONE_ITEM_COUNT = 10
+        internal const val LATEST = "latest"
+
+        private const val LOADING = "loading"
+    }
+
+    private val resource = Resource()
+
+    internal fun asSharedFlow() = flow {
+        emit(resource.loading(LOADING))
+        clearCache()
+
+        val responseData = request()
+
+        responseData.collect { apiResponse ->
+            when (apiResponse) {
+                is ApiSuccessResponse -> {
+                    val source = if (enabledCache) {
+                        saveToCache(apiResponse.body)
+                        loadFromCache(false, NONE_ITEM_COUNT, 1)
+
+                    } else {
+                        load(apiResponse.body, NONE_ITEM_COUNT)
+                    }
+
+                    source.isNullOnFlow({
+                        emitAll(responseData.map {
+                            resource.success(apiResponse.body)
+                        })
+                    }, {
+                        it.collect { data ->
+                            Timber.e("NetworkBoundWorker refreshed $data")
+                            emit(resource.success(data))
+                        }
+                    })
+                }
+
+                is ApiEmptyResponse -> {
+                    emit(resource.success(""))
+                }
+
+                is ApiErrorResponse -> {
+                    Timber.e("Network-Error: ${apiResponse.errorMessage}")
+                    emit(resource.error(apiResponse.errorMessage, apiResponse.statusCode))
+                    onNetworkError(apiResponse.errorMessage, apiResponse.statusCode)
+                }
+            }
+        }
+    }.shareIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        replay = 1
+    )
+
+    protected open suspend fun onNetworkError(errorMessage: String, errorCode: Int) {
+    }
+
+    @WorkerThread
+    protected open suspend fun saveToCache(item: R) {
+    }
+
+    @MainThread
+    protected open fun loadFromCache(
+        isLatest: Boolean,
+        itemCount: Int,
+        pages: Int
+    ): Flow<T>? = null
+
+    @MainThread
+    protected open fun load(item: R, itemCount: Int): Flow<T>? = null
+
+    @MainThread
+    protected abstract fun request(): Flow<ApiResponse<R>>
+
+    protected open suspend fun clearCache() {}
+}

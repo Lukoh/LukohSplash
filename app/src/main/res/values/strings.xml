@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">LukohSplash</string>
+    <string name="title_home">Home</string>
+    <string name="title_photos">Photos</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_setting">Setting</string>
+    <string name="title_photo_detail">Photo Information</string>
+    <string name="title_photo_download">Photo Download</string>
+
+    <string name="no_network">No network</string>
+    <string name="network_disconnect">The app cannot be used because there is no internet connection. Please check the setting on your device to ensure that mobile network is activated and that flight mode has been switched off.</string>
+    <string name="no_user">No User</string>
+    <string name="no_user_info_phrase">There is no the user\'s information</string>
+    <string name="no_user_name">No User\'s Name</string>
+    <string name="no_user_name_phrase">There is no the user\'s name</string>
+    <string name="download_fail_phrase">Download has been failed, please try again</string>
+    <string name="download_success">The photo is downloaded successfully</string>
+    <string name="photo_existed">This photo file existed in the storage</string>
+    <string name="no_photo">There is no any photo to download"</string>
+
+    <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="paused">paused</string>
+    <string name="unknown">Unknown</string>
+    <string name="sponsored">Sponsored</string>
+    <string name="like">Like</string>
+    <string name="likes">Likes</string>
+    <string name="collections">Collections</string>
+    <string name="views">Views</string>
+    <string name="download">Download</string>
+    <string name="downloads">Downloads</string>
+    <string name="add_to_collection">Add to collection</string>
+    <string name="location_template" translatable="false">%s, %s</string>
+
+    <string name="camera">Camera</string>
+    <string name="aperture">Aperture</string>
+    <string name="focal_length">Focal Length</string>
+    <string name="dimensions">Dimensions</string>
+    <string name="shutter_speed">Shutter Speed</string>
+    <string name="iso" translatable="false">ISO</string>
+
+    <string name="setting_sub_title_profile">Profile</string>
+    <string name="setting_my_profile">Personal Details</string>
+    <string name="setting_privacy_policy">Privacy Policy</string>
+    <string name="setting_terms_conditions">Terms and Conditions</string>
+    <string name="setting_notifications">Notification</string>
+    <string name="setting_sub_title_about_us">About us</string>
+    <string name="setting_close_account">Close Account</string>
+    <string name="version">Version %s</string>
+    <string name="setting_company">Goforer Open-Source Group</string>
+
+    <string name="request_permission">This app requires permissions for File storage.</string>
+
+    <plurals name="photos">
+        <item quantity="one">%d Photo</item>
+        <item quantity="other">%d Photos</item>
+    </plurals>
+</resources>

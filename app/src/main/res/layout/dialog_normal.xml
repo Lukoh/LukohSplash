@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingStart="30dp"
+    android:paddingEnd="30dp"
+    tools:background="@color/overlay_dark_60">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_close"
+        android:layout_width="@dimen/dp_32"
+        android:layout_height="@dimen/dp_32"
+        android:layout_gravity="end"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:padding="@dimen/dp_5"
+        android:src="@drawable/ic_close"
+        android:visibility="gone"
+        app:tint="@color/white"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/contents_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_dialog_top"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/dp_20"
+        android:paddingTop="@dimen/dp_20"
+        android:paddingEnd="@dimen/dp_20"
+        android:paddingBottom="@dimen/dp_20">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:fontFamily="sans-serif"
+            android:lineSpacingExtra="9sp"
+            android:textColor="#3f3f3f"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="Photo Selection" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="start"
+            android:textColor="#3f3f3f"
+            android:textSize="15sp"
+            android:textStyle="normal"
+            tools:text="In order to fully explore our photos, you are required to upgrade your account to Accredited User." />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/h_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_dialog_bottom"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/dp_10"
+        android:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_h_negative"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/dp_4"
+            android:layout_weight="1"
+            android:background="@drawable/reactive_next_button_big_enabled_sub"
+            android:fontFamily="sans-serif"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center_horizontal"
+            android:letterSpacing="-0.01"
+            android:lineSpacingExtra="7sp"
+            android:paddingStart="@dimen/dp_5"
+            android:paddingTop="@dimen/dp_15"
+            android:paddingEnd="@dimen/dp_5"
+            android:paddingBottom="@dimen/dp_15"
+            android:textColor="@color/colorPrimary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="@string/yes" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_h_positive"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_4"
+            android:layout_weight="1"
+            android:background="@drawable/shape_rounded2"
+            android:fontFamily="sans-serif"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center_horizontal"
+            android:letterSpacing="-0.01"
+            android:lineSpacingExtra="7sp"
+            android:paddingStart="@dimen/dp_5"
+            android:paddingTop="@dimen/dp_15"
+            android:paddingEnd="@dimen/dp_5"
+            android:paddingBottom="@dimen/dp_15"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="@string/no" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/v_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_dialog_bottom"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="@dimen/dp_10"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_v_negative"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dp_10"
+            android:layout_weight="1"
+            android:background="@drawable/reactive_next_button_big_enabled_sub"
+            android:fontFamily="sans-serif"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center_horizontal"
+            android:letterSpacing="-0.01"
+            android:lineSpacingExtra="7sp"
+            android:paddingStart="@dimen/dp_5"
+            android:paddingTop="@dimen/dp_14"
+            android:paddingEnd="@dimen/dp_5"
+            android:paddingBottom="@dimen/dp_14"
+            android:textColor="@color/colorPrimary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="@string/yes" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_v_positive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/shape_rounded2"
+            android:fontFamily="sans-serif"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center_horizontal"
+            android:letterSpacing="-0.01"
+            android:lineSpacingExtra="7sp"
+            android:paddingStart="@dimen/dp_5"
+            android:paddingTop="@dimen/dp_14"
+            android:paddingEnd="@dimen/dp_5"
+            android:paddingBottom="@dimen/dp_14"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="@string/no" />
+    </LinearLayout>
+</LinearLayout>

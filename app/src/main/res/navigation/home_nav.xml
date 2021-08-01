@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav"
+    app:startDestination="@+id/photo_list">
+
+    <fragment
+        android:id="@+id/photo_list"
+        android:name="com.goforer.lukohsplash.presentation.ui.home.PhotosFragment"
+        tools:layout="@layout/fragment_photos">
+        <action
+            android:id="@+id/action_PhotosFragment_to_PhotoDetailFragment"
+            app:destination="@id/photo_detail">
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/photo_detail"
+        android:name="com.goforer.lukohsplash.presentation.ui.photo.PhotoDetailFragment"
+        tools:layout="@layout/fragment_photo_detail">
+
+        <action
+            android:id="@+id/action_PhotoDetailFragment_to_UserFragment"
+            app:destination="@id/user_info">
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/user_info"
+        android:name="com.goforer.lukohsplash.presentation.ui.user.UserFragment"
+        tools:layout="@layout/fragment_user">
+
+    </fragment>
+
+</navigation>

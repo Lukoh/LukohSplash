@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:ignore="UnusedAttribute">
+
+    <androidx.cardview.widget.CardView
+        style="@style/ShadowPhotoCardViewStyle"
+        android:id="@+id/cv_collection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="@color/colorTransparent"
+        app:cardElevation="0dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_collection"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_250"
+            android:foreground="@drawable/collection_gradient_overlay"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            tools:src="@color/red_200"
+            tools:ignore="ContentDescription" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/tv_collection_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/dp_8"
+        app:layout_goneMarginEnd="@dimen/dp_16"
+        android:textColor="@color/white"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:translationZ="@dimen/dp_1"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_collection_private"
+        app:layout_constraintBottom_toTopOf="@id/tv_collection_count"
+        style="@style/TextAppearance.Headline6"
+        tools:text="Landscapes" />
+
+    <ImageView
+        android:id="@+id/iv_collection_private"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/dp_8"
+        android:layout_marginEnd="@dimen/dp_16"
+        android:src="@drawable/ic_lock"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/tv_collection_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_collection_name"
+        app:layout_constraintBottom_toBottomOf="@id/tv_collection_name"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tv_collection_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/dp_16"
+        android:textColor="@color/white"
+        android:textAlignment="viewStart"
+        android:translationZ="@dimen/dp_1"
+        app:layout_constraintBottom_toBottomOf="@id/cv_collection"
+        style="@style/TextAppearance.Subtitle2"
+        tools:text="1234 Photos" />
+
+    <View
+        android:id="@+id/v_line"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_6"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/cv_collection"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
