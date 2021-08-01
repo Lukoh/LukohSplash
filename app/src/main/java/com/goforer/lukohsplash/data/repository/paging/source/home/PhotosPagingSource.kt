@@ -27,12 +27,10 @@ constructor() : BasePagingSource<Int, Photo>() {
 
     @SuppressWarnings("unchecked")
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
-        val offset = params.key ?: 1
-
         return try {
             params.key.isNullOnFlow({}, {
                 restAPI.getPhotos(
-                    YOUR_ACCESS_KEY, offset, query.secondParam as Int,  query.thirdParam as String
+                    YOUR_ACCESS_KEY, params.key?.plus(1), query.secondParam as Int,  query.thirdParam as String
                 ).collect { apiResponse ->
                     pagingList = when (apiResponse) {
                         is ApiSuccessResponse -> {
@@ -56,7 +54,7 @@ constructor() : BasePagingSource<Int, Photo>() {
                 LoadResult.Page(
                     data = pagingList,
                     prevKey = null,
-                    nextKey = offset + 1
+                    nextKey = params.key?.plus(1) ?: 1
                 )
             else
                 LoadResult.Error(Throwable(errorMessage))
