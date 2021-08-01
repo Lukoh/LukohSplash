@@ -34,7 +34,7 @@ constructor() : BasePagingSource<Int, Photo>() {
         return try {
             params.key.isNullOnFlow({}, {
                 restAPI.getUserLikes(
-                    query.firstParam as String, YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT, LATEST, null
+                    query.firstParam as String, YOUR_ACCESS_KEY, offset, NONE_ITEM_COUNT, LATEST, null
                 ).collect { apiResponse ->
                     pagingList = when (apiResponse) {
                         is ApiSuccessResponse -> {
@@ -58,7 +58,7 @@ constructor() : BasePagingSource<Int, Photo>() {
                 LoadResult.Page(
                     data = pagingList,
                     prevKey = null,
-                    nextKey = offset + 1
+                    nextKey =  offset + 1
                 )
             else
                 LoadResult.Error(Throwable(errorMessage))

@@ -33,7 +33,7 @@ constructor() : BasePagingSource<Int, Photo>() {
             params.key.isNullOnFlow({}, {
                 restAPI.getUserPhotos(
                     query.firstParam as String,
-                    NetworkBoundWorker.YOUR_ACCESS_KEY, 1,
+                    NetworkBoundWorker.YOUR_ACCESS_KEY, offset,
                     NetworkBoundWorker.NONE_ITEM_COUNT,
                     NetworkBoundWorker.LATEST,
                     query.secondParam as Boolean, query.thirdParam as String,
@@ -61,7 +61,7 @@ constructor() : BasePagingSource<Int, Photo>() {
                 LoadResult.Page(
                     data = pagingList,
                     prevKey = null,
-                    nextKey = offset + 1
+                    nextKey =  offset + 1
                 )
             else
                 LoadResult.Error(Throwable(errorMessage))

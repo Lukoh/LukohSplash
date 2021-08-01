@@ -33,7 +33,7 @@ constructor() : BasePagingSource<Int, Collection>() {
             params.key.isNullOnFlow({}, {
                 restAPI.getUserCollections(
                     query.firstParam as String,
-                    NetworkBoundWorker.YOUR_ACCESS_KEY, 1,
+                    NetworkBoundWorker.YOUR_ACCESS_KEY, offset,
                     NetworkBoundWorker.NONE_ITEM_COUNT
                 ).collect { apiResponse ->
                     pagingList = when (apiResponse) {
