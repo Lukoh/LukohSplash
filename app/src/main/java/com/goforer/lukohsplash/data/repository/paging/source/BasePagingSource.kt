@@ -18,5 +18,5 @@ abstract class BasePagingSource<Key : Any, Value : Any> : PagingSource<Key, Valu
     @Inject
     internal lateinit var restAPI: RestAPI
 
-    abstract fun setData(query: Query, items: MutableList<Value>)
+    abstract fun setData(query: Query, value: MutableList<Value>)
 }

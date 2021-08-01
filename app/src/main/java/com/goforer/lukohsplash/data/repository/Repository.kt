@@ -9,14 +9,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-abstract class Repository<T> {
+abstract class Repository<Resource> {
     @Inject
     lateinit var restAPI: RestAPI
 
     @Inject
     lateinit var networkErrorHandler: NetworkErrorHandler
 
-    abstract fun doWork(viewModelScope: CoroutineScope, query: Query): SharedFlow<T>
+    abstract fun doWork(viewModelScope: CoroutineScope, query: Query): SharedFlow<Resource>
 
     protected fun handleNetworkError(errorMessage: String) {
         networkErrorHandler.handleError(errorMessage)

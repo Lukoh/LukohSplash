@@ -24,14 +24,14 @@ constructor(val pagingSource: UserCollectionsPagingSource) : Repository<Resource
             query.firstParam as String, YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT
         )
 
-        override fun load(item: MutableList<Collection>, itemCount: Int) = Pager(
+        override fun load(value: MutableList<Collection>, itemCount: Int) = Pager(
             config = PagingConfig(
                 pageSize = itemCount,
                 prefetchDistance = itemCount,
                 initialLoadSize = itemCount
             )
         ) {
-            pagingSource.setData(query, item)
+            pagingSource.setData(query, value)
             pagingSource
         }.flow.cachedIn(viewModelScope)
     }.asSharedFlow()

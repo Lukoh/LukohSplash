@@ -26,9 +26,9 @@ import javax.inject.Singleton
  */
 
 @Singleton
-abstract class UseCase<in P, T> {
+abstract class UseCase<in Param, Resource> {
     companion object {
         internal const val CORRECTION_Y_VALUE = 356
     }
-    abstract fun run(viewModelScope: CoroutineScope, params: P): SharedFlow<T>
+    abstract fun run(viewModelScope: CoroutineScope, params: Param): SharedFlow<Resource>
 }

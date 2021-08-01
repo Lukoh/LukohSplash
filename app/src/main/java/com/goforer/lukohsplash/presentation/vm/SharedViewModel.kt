@@ -21,10 +21,10 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-open class SharedViewModel<T> : ViewModel() {
-    private var sharedData: SharedFlow<T> = MutableSharedFlow()
+open class SharedViewModel<Data> : ViewModel() {
+    private var sharedData: SharedFlow<Data> = MutableSharedFlow()
 
-    internal fun share(data: T) {
+    internal fun share(data: Data) {
         sharedData = flow {
             emit(data)
         }.shareIn (
@@ -34,7 +34,7 @@ open class SharedViewModel<T> : ViewModel() {
         )
     }
 
-    internal fun shared(doOnResult: (data: T) -> Unit) {
+    internal fun shared(doOnResult: (data: Data) -> Unit) {
         viewModelScope.launch {
             sharedData.collect {
                doOnResult(it)

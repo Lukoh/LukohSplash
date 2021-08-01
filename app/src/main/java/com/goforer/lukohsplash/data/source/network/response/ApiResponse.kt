@@ -20,12 +20,12 @@ import retrofit2.Response
 import timber.log.Timber
 import java.util.regex.Pattern
 
-sealed class ApiResponse<T> {
+sealed class ApiResponse<Data> {
     companion object {
-        fun <T> create(error: Throwable): ApiErrorResponse<T> =
+        fun <Data> create(error: Throwable): ApiErrorResponse<Data> =
             ApiErrorResponse(error.message ?: "unknown error", -1)
 
-        fun <T> create(response: Response<T>): ApiResponse<T> {
+        fun <Data> create(response: Response<Data>): ApiResponse<Data> {
             return if (response.isSuccessful) {
                 val body = response.body()
                 if (body == null || response.code() == 204) {
@@ -53,10 +53,10 @@ sealed class ApiResponse<T> {
 /**
  * separate class for HTTP 204 resposes so that we can make ApiSuccessResponse's body non-null.
  */
-class ApiEmptyResponse<T> : ApiResponse<T>()
+class ApiEmptyResponse<Data> : ApiResponse<Data>()
 
-data class ApiSuccessResponse<T>(val body: T, val links: Map<String, String>) : ApiResponse<T>() {
-    constructor(body: T, linkHeader: String?) : this(
+data class ApiSuccessResponse<Data>(val body: Data, val links: Map<String, String>) : ApiResponse<Data>() {
+    constructor(body: Data, linkHeader: String?) : this(
         body = body,
         links = linkHeader?.extractLinks() ?: emptyMap()
     )
@@ -100,4 +100,4 @@ data class ApiSuccessResponse<T>(val body: T, val links: Map<String, String>) : 
     }
 }
 
-data class ApiErrorResponse<T>(val errorMessage: String, val statusCode: Int) : ApiResponse<T>()
+data class ApiErrorResponse<Data>(val errorMessage: String, val statusCode: Int) : ApiResponse<Data>()

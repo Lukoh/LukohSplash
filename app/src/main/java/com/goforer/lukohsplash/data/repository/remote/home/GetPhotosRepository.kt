@@ -24,14 +24,14 @@ constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
                 YOUR_ACCESS_KEY, query.firstParam as Int, query.secondParam as Int, query.thirdParam as String
             )
 
-            override fun load(item: MutableList<Photo>, itemCount: Int)  = Pager(
+            override fun load(value: MutableList<Photo>, itemCount: Int)  = Pager(
                 config = PagingConfig(
                     pageSize = itemCount,
                     prefetchDistance = itemCount,
                     initialLoadSize = itemCount
                 )
             ) {
-                pagingSource.setData(query, item)
+                pagingSource.setData(query, value)
                 pagingSource
             }.flow.cachedIn(viewModelScope)
         }.asSharedFlow()

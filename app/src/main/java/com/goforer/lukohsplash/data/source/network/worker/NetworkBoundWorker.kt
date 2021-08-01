@@ -30,7 +30,7 @@ import timber.log.Timber
  * You can read more about it in the <a href="https://developer.android.com/arch">Architecture
  * Guide</a>.
  */
-abstract class NetworkBoundWorker<T, R> constructor(
+abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
     private val enabledCache: Boolean,
     private val viewModelScope: CoroutineScope
 ) {
@@ -94,7 +94,7 @@ abstract class NetworkBoundWorker<T, R> constructor(
     }
 
     @WorkerThread
-    protected open suspend fun saveToCache(item: R) {
+    protected open suspend fun saveToCache(value: ResponseValue) {
     }
 
     @MainThread
@@ -102,13 +102,13 @@ abstract class NetworkBoundWorker<T, R> constructor(
         isLatest: Boolean,
         itemCount: Int,
         pages: Int
-    ): Flow<T>? = null
+    ): Flow<Result>? = null
 
     @MainThread
-    protected open fun load(item: R, itemCount: Int): Flow<T>? = null
+    protected open fun load(value: ResponseValue, itemCount: Int): Flow<Result>? = null
 
     @MainThread
-    protected abstract fun request(): Flow<ApiResponse<R>>
+    protected abstract fun request(): Flow<ApiResponse<ResponseValue>>
 
     protected open suspend fun clearCache() {}
 }

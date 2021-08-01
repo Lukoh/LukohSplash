@@ -20,9 +20,9 @@ import javax.inject.Singleton
 class UserPhotosPagingSource
 @Inject
 constructor() : BasePagingSource<Int, Photo>() {
-    override fun setData(query: Query, items: MutableList<Photo>) {
+    override fun setData(query: Query, value: MutableList<Photo>) {
         this.query = query
-        pagingList = items
+        pagingList = value
     }
 
     @SuppressWarnings("unchecked")

@@ -6,7 +6,7 @@ import android.content.Intent
 import com.goforer.lukohsplash.presentation.ui.HomeActivity
 
 object Caller {
-    const val SERVICE_PREPARING = "SERVICE_PREPARING"
+    private const val SERVICE_PREPARING = "SERVICE_PREPARING"
 
     internal fun closeApp(activity: Activity) {
         activity.finishAffinity()

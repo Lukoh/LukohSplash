@@ -34,7 +34,7 @@ open class BaseEntity {
             return builder.create()
         }
 
-        fun <T> deepCopy(`object`: T, type: Class<T>): T? {
+        fun <Type> deepCopy(`object`: Type, type: Class<Type>): Type? {
             return try {
                 gson().fromJson(gson().toJson(`object`, type), type)
             } catch (e: Exception) {
