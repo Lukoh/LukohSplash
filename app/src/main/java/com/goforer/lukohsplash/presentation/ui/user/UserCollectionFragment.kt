@@ -9,6 +9,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
 import com.goforer.base.extension.isNull
@@ -25,6 +27,7 @@ import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserCollectionsViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -34,7 +37,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
 
     private lateinit var userName: String
 
-    private lateinit var collectionAdapter: UserCollectionAdapter
+    private var collectionAdapter: UserCollectionAdapter? = null
 
     @Inject
     internal lateinit var getUserCollectionsViewModel: GetUserCollectionsViewModel
@@ -53,53 +56,70 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeUserName()
-        binding.swipeRefreshLayout.setOnRefreshListener {
+        collectionAdapter ?: observeUserName()
+        binding.swipeRefreshContainer.setOnRefreshListener {
             if (userName != "")
                 getUserCollection(userName)
         }
 
-        collectionAdapter = UserCollectionAdapter(homeActivity) { _, _ ->
+        collectionAdapter = collectionAdapter ?: UserCollectionAdapter(homeActivity) { _, _ ->
         }
 
-        binding.recyclerView.apply {
+        binding.rvList.apply {
             val gridManager = StaggeredGridLayoutManager(1, RecyclerView.VERTICAL).apply {
                 gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
             }
 
             adapter = collectionAdapter
+            collectionAdapter?.stateRestorationPolicy = PREVENT_WHEN_EMPTY
+
             gridManager.spanCount = 1
             gridManager.orientation = resources.configuration.orientation
+            itemAnimator?.changeDuration = 0
             addItemDecoration(StaggeredGridItemOffsetDecoration(0, 1), 0)
+            (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
             setItemViewCacheSize(RECYCLER_VIEW_CACHE_SIZE)
             layoutManager = gridManager
         }
 
         lifecycleScope.launchWhenCreated {
-            collectionAdapter.loadStateFlow
-                .collectLatest {
-                    var state: LoadState = LoadState.Loading
-                    if (it.append is LoadState.Error) state = it.append
-                    else if (it.refresh is LoadState.Error) state = it.refresh
+            collectionAdapter?.loadStateFlow?.collectLatest {
+                var state: LoadState = LoadState.Loading
 
-                    Timber.e("state.toString() $state")
-                    /*
-                    if (state is LoadState.Error) { // check error state
-                        when (state.error.message) {
-                            PagingErrorMessage.ERROR_MESSAGE_PAGING_EMPTY -> {
-                                binding.exRecyclerView.showNoItemMessage(true)
-                            }
-                            else -> showErrorPopup(state.error.message ?: "") {
+                when {
+                    it.append is LoadState.Error -> state = it.append
+                    it.refresh is LoadState.Error -> state = it.refresh
+                    it.refresh is LoadState.NotLoading -> {
+                        launch {
+                            with(binding) {
+                                if (collectionAdapter?.itemCount == 0)
+                                    showNoPhotoMessage(rvList, noPhotoContainer.root, true)
+                                else
+                                    showNoPhotoMessage(rvList, noPhotoContainer.root, false)
                             }
                         }
                     }
-
-                     */
-
-
-                    if (it.refresh !is LoadState.Loading)
-                        binding.swipeRefreshLayout.isRefreshing = false
+                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing = false
                 }
+
+                Timber.e("state.toString() $state")
+
+                /*
+                if (state is LoadState.Error) { // check error state
+                    when (state.error.message) {
+                        PagingErrorMessage.ERROR_MESSAGE_PAGING_EMPTY -> {
+                            with(binding) {
+                                showNoPhotoMessage(rvList, noPhotoContainer.root, true)
+                            }
+                        }
+
+                        else -> showErrorPopup(state.error.message ?: "") {
+                        }
+                    }
+                }
+
+                 */
+            }
         }
     }
 
@@ -128,24 +148,24 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
             when (resource.getStatus()) {
                 Status.SUCCESS -> {
                     resource.getData()?.let {
-                        binding.swipeRefreshLayout.isRefreshing = false
+                        binding.swipeRefreshContainer.isRefreshing = false
                         @Suppress("UNCHECKED_CAST")
                         val collections = resource.getData() as? PagingData<Collection>
 
                         lifecycleScope.launchWhenCreated {
-                            collectionAdapter.submitData(collections!!)
+                            collectionAdapter?.submitData(collections!!)
                         }
                     }
                 }
 
                 Status.ERROR -> {
-                    binding.swipeRefreshLayout.isRefreshing = false
+                    binding.swipeRefreshContainer.isRefreshing = false
                     showErrorPopup(resource.getMessage()!!) {}
 
                 }
 
                 Status.LOADING -> {
-                    binding.swipeRefreshLayout.isRefreshing = true
+                    binding.swipeRefreshContainer.isRefreshing = true
                 }
             }
         }

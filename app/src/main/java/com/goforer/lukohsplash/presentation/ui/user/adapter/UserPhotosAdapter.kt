@@ -21,6 +21,7 @@ import com.goforer.lukohsplash.databinding.ItemPhotoBinding
 import com.goforer.lukohsplash.presentation.ui.HomeActivity
 import com.goforer.base.view.holder.BaseViewHolder
 import com.goforer.lukohsplash.presentation.scheduler.UIJobScheduler
+import com.goforer.lukohsplash.presentation.ui.home.adapter.PhotosAdapter
 
 class UserPhotosAdapter(
     private val context: Context,
@@ -77,14 +78,6 @@ class UserPhotosAdapter(
         }
     }
 
-//    override fun getItemId(position: Int): Long {
-//        return getItem(position)?.id.hashCode().toLong()
-//    }
-
-//    internal fun searchText(text: String) {
-//        searchedText = text
-//    }
-
     class PhotoItemHolder(
         private val binding: ItemPhotoBinding,
         private val adapter: UserPhotosAdapter
@@ -110,7 +103,7 @@ class UserPhotosAdapter(
                     }
                 }
 
-                val url = getPhotoUrl(item, FULL)
+                val url = getPhotoUrl(item, THUMB)
 
                 ivPhoto.setAspectRatio(item.width, item.height)
                 UIJobScheduler.submitJob(coroutineScope) {

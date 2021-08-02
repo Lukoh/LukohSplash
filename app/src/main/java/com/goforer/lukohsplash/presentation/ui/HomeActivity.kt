@@ -44,7 +44,7 @@ class HomeActivity : AppCompatActivity(), HasAndroidInjector {
 
     private lateinit var binding: ActivityHomeBinding
 
-    internal lateinit var glideRequestManager: RequestManager
+    private lateinit var glideRequestManager: RequestManager
 
     internal var onKeyboardChange: ((status: Int) -> Unit) = {}
 

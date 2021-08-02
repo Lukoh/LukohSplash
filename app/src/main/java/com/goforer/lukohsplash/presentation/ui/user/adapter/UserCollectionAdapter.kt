@@ -20,6 +20,7 @@ import com.goforer.lukohsplash.data.source.model.entity.user.response.Collection
 import com.goforer.lukohsplash.databinding.ItemCollectionBinding
 import com.goforer.lukohsplash.presentation.scheduler.UIJobScheduler
 import com.goforer.lukohsplash.presentation.ui.HomeActivity
+import com.goforer.lukohsplash.presentation.ui.home.adapter.PhotosAdapter
 
 class UserCollectionAdapter(
     private val context: Context,
@@ -76,14 +77,6 @@ class UserCollectionAdapter(
         }
     }
 
-//    override fun getItemId(position: Int): Long {
-//        return getItem(position)?.id.hashCode().toLong()
-//    }
-
-//    internal fun searchText(text: String) {
-//        searchedText = text
-//    }
-
     class CollectionItemHolder(
         private val binding: ItemCollectionBinding,
         private val adapter: UserCollectionAdapter
@@ -95,7 +88,7 @@ class UserCollectionAdapter(
 
             with(binding) {
                 item.cover_photo?.let { photo ->
-                    val url = getPhotoUrl(photo, FULL)
+                    val url = getPhotoUrl(photo, THUMB)
 
                     UIJobScheduler.submitJob(coroutineScope) {
                         ivCollection.minimumHeight = itemView.resources.getDimensionPixelSize(R.dimen.dp_250)

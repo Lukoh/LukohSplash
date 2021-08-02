@@ -53,6 +53,7 @@ import com.goforer.base.extension.*
 import com.goforer.base.view.decoration.SpacingItemDecoration
 import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.base.view.widget.SwipeCoordinatorLayout
+import com.goforer.lukohsplash.presentation.ui.home.adapter.PhotosAdapter
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.ExifAdapter
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.TagAdapter
 import timber.log.Timber
@@ -197,7 +198,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     private fun setup(photo: Photo) {
         binding.ivPhoto.loadPhotoUrlWithThumbnail(
-            getPhotoUrl(photo, RAW),
+            getPhotoUrl(photo, THUMB),
             photo.urls.thumb,
             photo.color,
             centerCrop = true

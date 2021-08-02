@@ -17,10 +17,12 @@
     <string name="download_success">The photo is downloaded successfully</string>
     <string name="photo_existed">This photo file existed in the storage</string>
     <string name="no_photo">There is no any photo to download"</string>
+    <string name="list_no_photo">No Item</string>
 
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="ok">OK</string>
     <string name="paused">paused</string>
     <string name="unknown">Unknown</string>
     <string name="sponsored">Sponsored</string>

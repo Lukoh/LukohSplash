@@ -25,6 +25,7 @@
             app:destination="@id/user_info">
         </action>
 
+
     </fragment>
 
     <fragment

@@ -9,6 +9,8 @@ import androidx.navigation.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
@@ -25,6 +27,7 @@ import com.goforer.base.extension.*
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.abs
@@ -33,9 +36,11 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentPhotosBinding
         get() = FragmentPhotosBinding::inflate
 
-    private lateinit var photoAdapter: PhotosAdapter
+    private var photoAdapter: PhotosAdapter? = null
 
     private var isAppBarExpended = true
+
+    private var currentPosition = 0
 
     @Inject
     internal lateinit var getPhotosViewModel: GetPhotosViewModel
@@ -47,7 +52,9 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         setAppBar()
-        photoAdapter = PhotosAdapter(homeActivity) { itemView, item ->
+        photoAdapter ?: getPhotos()
+        photoAdapter = photoAdapter ?: PhotosAdapter(homeActivity) { itemView, item, position ->
+            currentPosition = position
             sharedPhotoIdViewModel.share(item.id)
             itemView.findNavController().navigate(
                 PhotosFragmentDirections.actionPhotosFragmentToPhotoDetailFragment()
@@ -60,45 +67,60 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
             }
 
             adapter = photoAdapter
+            photoAdapter?.stateRestorationPolicy = PREVENT_WHEN_EMPTY
             gridManager.spanCount = 1
             gridManager.orientation = resources.configuration.orientation
+            itemAnimator?.changeDuration = 0
             addItemDecoration(StaggeredGridItemOffsetDecoration(0, 1), 0)
+            (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
             setItemViewCacheSize(RECYCLER_VIEW_CACHE_SIZE)
+            isVerticalScrollBarEnabled = false
             layoutManager = gridManager
         }
 
-        binding.swipeContainer.setOnRefreshListener {
+        binding.swipeRefreshContainer.setOnRefreshListener {
             getPhotos()
         }
 
         lifecycleScope.launchWhenCreated {
-            photoAdapter.loadStateFlow
-                .collectLatest {
-                    var state: LoadState = LoadState.Loading
-                    if (it.append is LoadState.Error) state = it.append
-                    else if (it.refresh is LoadState.Error) state = it.refresh
+            photoAdapter?.loadStateFlow?.collectLatest {
+                var state: LoadState = LoadState.Loading
 
-                    Timber.e("state.toString() $state")
-                    /*
-                    if (state is LoadState.Error) { // check error state
-                        when (state.error.message) {
-                            PagingErrorMessage.ERROR_MESSAGE_PAGING_EMPTY -> {
-                                binding.exRecyclerView.showNoItemMessage(true)
-                            }
-                            else -> showErrorPopup(state.error.message ?: "") {
+                when {
+                    it.append is LoadState.Error -> state = it.append
+                    it.refresh is LoadState.Error -> state = it.refresh
+                    it.refresh is LoadState.NotLoading -> {
+                        launch {
+                            with(binding) {
+                                if (photoAdapter?.itemCount == 0)
+                                    showNoPhotoMessage(rvPhotos, noPhotoContainer.root, true)
+                                else
+                                    showNoPhotoMessage(rvPhotos, noPhotoContainer.root, false)
                             }
                         }
                     }
-
-                     */
-
-
-                    if (it.refresh !is LoadState.Loading)
-                        binding.swipeContainer.isRefreshing = false
+                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing = false
                 }
-        }
 
-        getPhotos()
+                Timber.e("state.toString() $state")
+
+                /*
+                if (state is LoadState.Error) { // check error state
+                    when (state.error.message) {
+                        PagingErrorMessage.ERROR_MESSAGE_PAGING_EMPTY -> {
+                            with(binding) {
+                                showNoPhotoMessage(rvPhotos, noPhotoContainer.root, true)
+                            }
+                        }
+
+                        else -> showErrorPopup(state.error.message ?: "") {
+                        }
+                    }
+                }
+
+                 */
+            }
+        }
     }
 
     private fun setAppBar() {
@@ -142,24 +164,24 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
             when (resource.getStatus()) {
                 Status.SUCCESS -> {
                     resource.getData()?.let {
-                        binding.swipeContainer.isRefreshing = false
+                        binding.swipeRefreshContainer.isRefreshing = false
                         @Suppress("UNCHECKED_CAST")
                         val photos = resource.getData() as? PagingData<Photo>
 
                         lifecycleScope.launchWhenCreated {
-                            photoAdapter.submitData(photos!!)
+                            photoAdapter?.submitData(photos!!)
                         }
                     }
                 }
 
                 Status.ERROR -> {
-                    binding.swipeContainer.isRefreshing = false
+                    binding.swipeRefreshContainer.isRefreshing = false
                     showErrorPopup(resource.getMessage()!!) {}
 
                 }
 
                 Status.LOADING -> {
-                    binding.swipeContainer.isRefreshing = true
+                    binding.swipeRefreshContainer.isRefreshing = true
                 }
             }
         }

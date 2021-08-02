@@ -24,7 +24,7 @@ import com.goforer.lukohsplash.presentation.scheduler.UIJobScheduler
 
 class PhotosAdapter(
     private val context: Context,
-    val doOnClick: (view: View, asset: Photo) -> Unit
+    val doOnClick: (view: View, asset: Photo, position: Int) -> Unit
 ) : PagingDataAdapter<Photo, BaseViewHolder<Photo>>(DIFF_CALLBACK) {
         companion object {
             private const val RAW = "raw"
@@ -111,7 +111,7 @@ class PhotosAdapter(
                         }
                     }
 
-                    val url = getPhotoUrl(item, FULL)
+                    val url = getPhotoUrl(item, THUMB)
 
                     ivPhoto.setAspectRatio(item.width, item.height)
 
@@ -120,7 +120,7 @@ class PhotosAdapter(
                     }
 
                     holder.itemView.setOnClickListener {
-                        adapter.doOnClick(holder.view, item)
+                        adapter.doOnClick(holder.view, item, position)
                     }
                 }
             }

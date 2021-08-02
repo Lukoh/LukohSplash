@@ -9,6 +9,8 @@ import com.goforer.lukohsplash.data.source.network.response.ApiEmptyResponse
 import com.goforer.lukohsplash.data.source.network.response.ApiErrorResponse
 import com.goforer.lukohsplash.data.source.network.response.ApiSuccessResponse
 import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
+import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.NONE_ITEM_COUNT
+import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.YOUR_ACCESS_KEY
 import com.goforer.lukohsplash.presentation.vm.Query
 import kotlinx.coroutines.flow.collect
 import retrofit2.HttpException
@@ -20,9 +22,9 @@ import javax.inject.Singleton
 class UserCollectionsPagingSource
 @Inject
 constructor() : BasePagingSource<Int, Collection>() {
-    override fun setData(query: Query, items: MutableList<Collection>) {
+    override fun setData(query: Query, value: MutableList<Collection>) {
         this.query = query
-        pagingList = items
+        pagingList = value
     }
 
     @SuppressWarnings("unchecked")
@@ -31,8 +33,7 @@ constructor() : BasePagingSource<Int, Collection>() {
             params.key.isNullOnFlow({}, {
                 restAPI.getUserCollections(
                     query.firstParam as String,
-                    NetworkBoundWorker.YOUR_ACCESS_KEY,  params.key?.plus(1),
-                    NetworkBoundWorker.NONE_ITEM_COUNT
+                    YOUR_ACCESS_KEY,  params.key?.plus(1), NONE_ITEM_COUNT
                 ).collect { apiResponse ->
                     pagingList = when (apiResponse) {
                         is ApiSuccessResponse -> {
