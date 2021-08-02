@@ -35,7 +35,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
     private val viewModelScope: CoroutineScope
 ) {
     companion object {
-        internal const val YOUR_ACCESS_KEY = "V9sYHDmwcPc46chEOLA_bhTV3hwsWG0P1ta1vNZjmLs"
+        internal const val YOUR_ACCESS_KEY = "ogfHK8SPaobznFUnD4jXUe4TIIgsh5pmUdfZ4Ra91Zw"
         internal const val NONE_ITEM_COUNT = 10
         internal const val LATEST = "latest"
 
