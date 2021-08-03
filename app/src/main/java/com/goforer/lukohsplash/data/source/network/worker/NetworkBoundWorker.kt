@@ -22,6 +22,7 @@ import com.goforer.lukohsplash.data.source.network.response.*
 import com.goforer.base.extension.isNullOnFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import timber.log.Timber
 
 /**
@@ -44,7 +45,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
 
     private val resource = Resource()
 
-    internal fun asSharedFlow() = flow {
+    internal fun asStateFlow() = flow {
         emit(resource.loading(LOADING))
         clearCache()
 
@@ -84,11 +85,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
                 }
             }
         }
-    }.shareIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        replay = 1
-    )
+    }
 
     protected open suspend fun onNetworkError(errorMessage: String, errorCode: Int) {
     }

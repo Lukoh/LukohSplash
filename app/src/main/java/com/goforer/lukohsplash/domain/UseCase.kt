@@ -17,7 +17,9 @@
 package com.goforer.lukohsplash.domain
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Singleton
 
 /**
@@ -30,5 +32,5 @@ abstract class UseCase<in Param, Resource> {
     companion object {
         internal const val CORRECTION_Y_VALUE = 356
     }
-    abstract fun run(viewModelScope: CoroutineScope, params: Param): SharedFlow<Resource>
+    abstract fun run(viewModelScope: CoroutineScope, params: Param): Flow<Resource>
 }

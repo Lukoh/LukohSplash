@@ -1,6 +1,8 @@
 package com.goforer.lukohsplash.domain.processor.photo
 
 import android.app.DownloadManager
+import android.app.DownloadManager.STATUS_PENDING
+import android.app.DownloadManager.STATUS_SUCCESSFUL
 import android.content.Context
 import android.database.Cursor
 import android.os.Environment
@@ -11,7 +13,7 @@ import com.goforer.base.worker.download.wrapper.DownloaderQueryWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -49,7 +51,7 @@ constructor(
                 if (cursor.getInt(
                         cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
                     )
-                    == DownloadManager.STATUS_SUCCESSFUL
+                    == STATUS_SUCCESSFUL
                 ) {
                     downloading = false
                 }
@@ -61,9 +63,9 @@ constructor(
 
             }
         }
-    }.shareIn(
+    }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        replay = 1
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = STATUS_PENDING
     )
 }

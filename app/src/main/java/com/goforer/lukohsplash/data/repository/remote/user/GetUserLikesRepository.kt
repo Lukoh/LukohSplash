@@ -34,5 +34,5 @@ constructor(val pagingSource: UserLikesPagingSource) : Repository<Resource>() {
             pagingSource.setData(query, value)
             pagingSource
         }.flow.cachedIn(viewModelScope)
-    }.asSharedFlow()
+    }.asStateFlow()
 }
