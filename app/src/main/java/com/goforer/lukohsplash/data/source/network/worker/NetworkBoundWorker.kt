@@ -22,6 +22,8 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.goforer.lukohsplash.data.source.network.response.*
 import com.goforer.base.extension.isNullOnFlow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import timber.log.Timber
@@ -67,9 +69,9 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
                             resource.success(apiResponse.body)
                         })
                     }, {
-                        it.collect { data ->
-                            Timber.e("NetworkBoundWorker refreshed $data")
-                            emit(resource.success(data))
+                        it.collect { result ->
+                            Timber.e("NetworkBoundWorker refreshed $result")
+                            emit(resource.success(result))
                         }
                     })
                 }
