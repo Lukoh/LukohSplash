@@ -19,7 +19,7 @@ class GetPhotosRepository
 @Inject
 constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
     override fun doWork(viewModelScope: CoroutineScope, query: Query) = object :
-        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false, viewModelScope) {
+        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false) {
             override fun request() = restAPI.getPhotos(
                 YOUR_ACCESS_KEY, query.firstParam as Int, query.secondParam as Int, query.thirdParam as String
             )

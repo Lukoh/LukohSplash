@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 open class TriggerViewModel<Resource>(open val useCase: UseCase<Params, Resource>) : ViewModel() {
     open fun pullTrigger(params: Params, doOnResult: (result: Resource) -> Unit) {
         viewModelScope.launch {
-            useCase.run(viewModelScope, params).collect {
+            useCase.run(viewModelScope, params) .collect {
                 doOnResult(it)
             }
         }

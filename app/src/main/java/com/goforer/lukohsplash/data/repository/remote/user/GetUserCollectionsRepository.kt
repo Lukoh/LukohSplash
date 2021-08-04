@@ -19,7 +19,7 @@ class GetUserCollectionsRepository
 @Inject
 constructor(val pagingSource: UserCollectionsPagingSource) : Repository<Resource>() {
     override fun doWork(viewModelScope: CoroutineScope, query: Query) = object :
-        NetworkBoundWorker<PagingData<Collection>, MutableList<Collection>>(false, viewModelScope) {
+        NetworkBoundWorker<PagingData<Collection>, MutableList<Collection>>(false) {
         override fun request() = restAPI.getUserCollections(
             query.firstParam as String, YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT
         )

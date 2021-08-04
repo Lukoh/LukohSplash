@@ -14,7 +14,7 @@ class GetPhotoInfoRepository
 @Inject
 constructor() : Repository<Resource>() {
     override fun doWork(viewModelScope: CoroutineScope, query: Query) = object :
-        NetworkBoundWorker<Photo, Photo>(false, viewModelScope) {
+        NetworkBoundWorker<Photo, Photo>(false) {
         override fun request() = restAPI.getPhoto(query.firstParam as String, YOUR_ACCESS_KEY)
 
         override suspend fun onNetworkError(errorMessage: String, errorCode: Int) {
