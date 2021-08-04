@@ -2,7 +2,6 @@ package com.goforer.lukohsplash.presentation.vm.user
 
 import androidx.paging.PagingData
 import com.goforer.lukohsplash.data.source.model.cache.entity.BaseTest
-import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.model.entity.user.response.Collection
 import com.goforer.lukohsplash.data.source.network.response.Resource
 import com.goforer.lukohsplash.presentation.vm.Params

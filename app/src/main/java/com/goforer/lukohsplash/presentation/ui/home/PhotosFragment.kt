@@ -26,6 +26,7 @@ import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
 import com.goforer.base.extension.*
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.google.android.material.appbar.AppBarLayout
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -155,6 +156,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun getPhotos() {
         getPhotosViewModel.pullTrigger(Params(Query().apply {
             firstParam = 1
