@@ -22,7 +22,7 @@ import android.content.DialogInterface
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.bluewhale.base.network.entity.NetworkError
+import com.goforer.base.network.entity.NetworkError
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
