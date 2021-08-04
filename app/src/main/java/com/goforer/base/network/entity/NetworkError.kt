@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.bluewhale.base.network.entity
+package com.goforer.base.network.entity
 
 data class NetworkError(val error: ErrorBody) {
     data class ErrorBody(val code: String?, var message: String = ERROR_DEFAULT)

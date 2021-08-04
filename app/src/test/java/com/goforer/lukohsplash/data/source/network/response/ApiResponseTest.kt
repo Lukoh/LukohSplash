@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2021 Lukoh Nam, goForer
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License,
+ * or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.goforer.lukohsplash.data.source.network.response
 
 import com.goforer.lukohsplash.data.source.model.entity.ResponseResult
@@ -5,7 +21,7 @@ import com.goforer.lukohsplash.data.source.network.response.ApiSuccessResponse.C
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert
 import org.junit.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -41,7 +57,7 @@ class ApiResponseTest : TestWatcher() {
         )
 
         val successResponse2 = ApiResponse.create<ResponseResult>(
-            Response.error(400, ResponseBody.create(null, ""))
+            Response.error(400, "".toResponseBody(null))
         )
 
         Assert.assertEquals(

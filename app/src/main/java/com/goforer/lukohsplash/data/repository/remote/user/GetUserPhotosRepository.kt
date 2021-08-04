@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2021 Lukoh Nam, goForer
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License,
+ * or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.goforer.lukohsplash.data.repository.remote.user
 
 import androidx.paging.Pager
@@ -19,7 +35,7 @@ class GetUserPhotosRepository
 @Inject
 constructor(val pagingSource: UserPhotosPagingSource) : Repository<Resource>() {
     override fun doWork(viewModelScope: CoroutineScope, query: Query) = object :
-        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false, viewModelScope) {
+        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false) {
         override fun request() = restAPI.getUserPhotos(
             query.firstParam as String, YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT, LATEST,
             query.secondParam as Boolean, query.thirdParam as String,
@@ -36,5 +52,5 @@ constructor(val pagingSource: UserPhotosPagingSource) : Repository<Resource>() {
             pagingSource.setData(query, value)
             pagingSource
         }.flow.cachedIn(viewModelScope)
-    }.asStateFlow()
+    }.asFlow()
 }

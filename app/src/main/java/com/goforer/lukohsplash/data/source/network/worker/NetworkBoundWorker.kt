@@ -1,17 +1,17 @@
 /*
- * Copyright (C)  2020 Blue-Ocean
+ * Copyright (C) 2021 Lukoh Nam, goForer
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License,
+ * or (at your option) any later version.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program.
+ * If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.goforer.lukohsplash.data.source.network.worker
@@ -20,9 +20,7 @@ import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import com.goforer.lukohsplash.data.source.network.response.*
 import com.goforer.base.extension.isNullOnFlow
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import timber.log.Timber
 
 /**
@@ -32,8 +30,7 @@ import timber.log.Timber
  * Guide</a>.
  */
 abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
-    private val enabledCache: Boolean,
-    private val viewModelScope: CoroutineScope
+    private val enabledCache: Boolean
 ) {
     companion object {
         internal const val YOUR_ACCESS_KEY = "ogfHK8SPaobznFUnD4jXUe4TIIgsh5pmUdfZ4Ra91Zw"
@@ -45,7 +42,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
 
     private val resource = Resource()
 
-    internal fun asStateFlow() = flow {
+    internal fun asFlow() = flow {
         emit(resource.loading(LOADING))
         clearCache()
 
