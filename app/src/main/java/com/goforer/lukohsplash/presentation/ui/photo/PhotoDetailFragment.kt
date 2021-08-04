@@ -53,9 +53,9 @@ import com.goforer.base.extension.*
 import com.goforer.base.view.decoration.SpacingItemDecoration
 import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.base.view.widget.SwipeCoordinatorLayout
-import com.goforer.lukohsplash.presentation.ui.home.adapter.PhotosAdapter
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.ExifAdapter
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.TagAdapter
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -171,6 +171,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhoto() {
         getPhotoInfoViewModel.pullTrigger(Params(Query().apply {
             firstParam = photoID
@@ -285,6 +286,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
             .show(childFragmentManager)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun downloadPhoto(url: String) {
         val file  = File(Environment.DIRECTORY_PICTURES)
 

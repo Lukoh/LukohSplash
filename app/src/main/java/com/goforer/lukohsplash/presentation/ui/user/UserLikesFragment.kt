@@ -42,6 +42,7 @@ import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
 import com.goforer.base.extension.isNull
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.goforer.base.view.dialog.NormalDialog
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -155,6 +156,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserLikes(name: String) {
         getUserLikesViewModel.pullTrigger(Params(Query().apply {
             firstParam = name

@@ -42,6 +42,7 @@ import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserCollectionsViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -156,6 +157,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserCollection(name: String) {
         getUserCollectionsViewModel.pullTrigger(Params(Query().apply {
             firstParam = name

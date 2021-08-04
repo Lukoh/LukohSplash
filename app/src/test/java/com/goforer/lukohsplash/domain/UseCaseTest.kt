@@ -34,7 +34,6 @@ import org.mockito.Mockito
 
 open class UseCaseTest : TestWatcher() {
     lateinit var useCase: UseCase<Params, Resource>
-    lateinit var useCaseForDownloadPhoto: UseCase<Params, Int?>
 
     lateinit var repository: Repository<Resource>
 

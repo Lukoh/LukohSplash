@@ -21,7 +21,7 @@ import com.goforer.lukohsplash.data.source.network.response.ApiSuccessResponse.C
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert
 import org.junit.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -53,11 +53,11 @@ class ApiResponseTest : TestWatcher() {
 
         Assert.assertEquals(
             successResponse1,
-            ApiSuccessResponse<ResponseResult>(ResponseResult("OK"), null)
+            ApiSuccessResponse(ResponseResult("OK"), null)
         )
 
         val successResponse2 = ApiResponse.create<ResponseResult>(
-            Response.error(400, ResponseBody.create(null, ""))
+            Response.error(400, "".toResponseBody(null))
         )
 
         Assert.assertEquals(
