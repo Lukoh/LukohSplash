@@ -22,6 +22,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
@@ -52,6 +53,8 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentItemListBinding
         get() = FragmentItemListBinding::inflate
 
+    private lateinit var userFragment: UserFragment
+
     private lateinit var userName: String
 
     private var collectionAdapter: UserCollectionAdapter? = null
@@ -63,7 +66,8 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
     internal lateinit var sharedUserNameViewModel: SharedUserNameViewModel
 
     companion object {
-        fun newInstance() = UserCollectionFragment().apply {
+        fun newInstance(fragment: UserFragment) = UserCollectionFragment().apply {
+            userFragment = fragment
             arguments = Bundle(1).apply {
                 putString(FRAGMENT_TAG, UserCollectionFragment::class.java.name)
             }
@@ -138,6 +142,10 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                  */
             }
         }
+    }
+
+    override fun onBackPressed() {
+        findNavController(userFragment).popBackStack()
     }
 
     private fun observeUserName() {

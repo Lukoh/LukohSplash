@@ -35,6 +35,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -68,8 +69,6 @@ import javax.inject.Inject
 class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentPhotoDetailBinding
         get() = FragmentPhotoDetailBinding::inflate
-
-    private lateinit var photoID: String
 
     private lateinit var listener: PermissionCallback
 
@@ -134,7 +133,6 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         observePhotoID()
-        getPhoto()
         binding.swipeContainer.setOnSwipeOutListener(
             homeActivity,
             object : SwipeCoordinatorLayout.OnSwipeOutListener {
@@ -162,7 +160,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
             FRAGMENT_REQUEST_FROM_BACKSTACK,
             bundleOf(FRAGMENT_RESULT_FROM_BACKSTACK to true)
         )
-        binding.swipeContainer.findNavController().popBackStack()
+        findNavController(this).popBackStack()
     }
 
     private fun setupPermission(callback: PermissionCallback) {
@@ -177,14 +175,14 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     private fun observePhotoID() {
         sharedPhotoIdViewModel.shared {
-            photoID = it
+            getPhoto(it)
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getPhoto() {
+    private fun getPhoto(id : String) {
         getPhotoInfoViewModel.pullTrigger(Params(Query().apply {
-            firstParam = photoID
+            firstParam = id
             secondParam = -1
         }), lifecycleOwner = viewLifecycleOwner) { resource ->
             when (resource.getStatus()) {
