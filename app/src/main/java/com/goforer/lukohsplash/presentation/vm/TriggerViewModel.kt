@@ -17,7 +17,6 @@
 package com.goforer.lukohsplash.presentation.vm
 
 import androidx.lifecycle.*
-import com.goforer.base.extension.isNull
 import com.goforer.lukohsplash.domain.UseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
