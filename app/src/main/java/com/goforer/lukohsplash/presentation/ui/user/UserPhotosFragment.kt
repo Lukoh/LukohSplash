@@ -22,6 +22,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +43,7 @@ import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
 import com.goforer.base.extension.isNull
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.goforer.base.view.dialog.NormalDialog
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -50,6 +52,8 @@ import javax.inject.Inject
 class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentItemListBinding
         get() = FragmentItemListBinding::inflate
+
+    private lateinit var userFragment: UserFragment
 
     private var photoAdapter: UserPhotosAdapter? = null
 
@@ -62,7 +66,8 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
     internal lateinit var sharedUserNameViewModel: SharedUserNameViewModel
 
     companion object {
-        fun newInstance() = UserPhotosFragment().apply {
+        fun newInstance(fragment: UserFragment) = UserPhotosFragment().apply {
+            userFragment = fragment
             arguments = Bundle(1).apply {
                 putString(FRAGMENT_TAG, UserPhotosFragment::class.java.name)
             }
@@ -138,6 +143,10 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
         }
     }
 
+    override fun onBackPressed() {
+        findNavController(userFragment).popBackStack()
+    }
+
     private fun observeUserName() {
         sharedUserNameViewModel.shared {
             it?.isNull({
@@ -155,13 +164,14 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserPhotos(name: String) {
         getUserPhotosViewModel.pullTrigger(Params(Query().apply {
             firstParam = name
             secondParam = false
             thirdParam = "days"
             forthParam = 30
-        })) { resource ->
+        }), lifecycleOwner = viewLifecycleOwner) { resource ->
             when (resource.getStatus()) {
                 Status.SUCCESS -> {
                     resource.getData()?.let {

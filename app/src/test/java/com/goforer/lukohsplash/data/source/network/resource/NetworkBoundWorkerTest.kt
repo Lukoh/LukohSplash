@@ -17,6 +17,8 @@
 package com.goforer.lukohsplash.data.source.network.resource
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.testing.TestLifecycleOwner
 import com.goforer.lukohsplash.data.source.model.entity.ResponseResult
 import com.goforer.lukohsplash.data.source.network.response.ApiResponse
 import com.goforer.lukohsplash.data.source.network.response.Resource
@@ -54,7 +56,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
     fun successCacheTest() {
         val resource =
             object : NetworkBoundWorker<ResponseResult, ResponseResult>(
-                false
+                false, TestLifecycleOwner().lifecycleScope
             ) {
                 override fun loadFromCache(
                     isLatest: Boolean,
@@ -83,7 +85,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
     fun successRemoteTest() {
         val resource =
             object : NetworkBoundWorker<ResponseResult, ResponseResult>(
-                false
+                false, TestLifecycleOwner().lifecycleScope
             ) {
                 override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
                     emit(ApiResponse.create(Response.success(ResponseResult("OK"))))
@@ -104,7 +106,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
     fun emptyResponseTest() {
         val resource =
             object : NetworkBoundWorker<ResponseResult, ResponseResult>(
-                false
+                false, TestLifecycleOwner().lifecycleScope
             ) {
                 override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
                     emit(ApiResponse.create(Response.success(204, ResponseResult("OK"))))
@@ -125,7 +127,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
     fun errorResponseTest() {
         val resource =
             object : NetworkBoundWorker<ResponseResult, ResponseResult>(
-                false
+                false, TestLifecycleOwner().lifecycleScope
             ) {
                 override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
                     emit(ApiResponse.create(Throwable()))
@@ -146,7 +148,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
     fun localResponseTest() {
         val resource =
             object : NetworkBoundWorker<ResponseResult, ResponseResult>(
-                false
+                false, TestLifecycleOwner().lifecycleScope
             ) {
                 override fun loadFromCache(
                     isLatest: Boolean,

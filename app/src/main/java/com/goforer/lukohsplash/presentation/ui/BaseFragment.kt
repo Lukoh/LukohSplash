@@ -22,8 +22,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.goforer.lukohsplash.R
@@ -51,14 +51,13 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
 
     internal var isLoading = false
 
+    private lateinit var onBackPressedCallback: OnBackPressedCallback
+
     companion object {
         const val FRAGMENT_TAG = "fragment_tag"
-    }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        this.context = context
+        const val FRAGMENT_REQUEST_FROM_BACKSTACK = "requestKey_from_back"
+        const val FRAGMENT_RESULT_FROM_BACKSTACK = "resultKey_get_photos"
     }
 
     override fun onCreateView(
@@ -103,9 +102,31 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
         _binding = null
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        this.context = context
+        onBackPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                onBackPressed()
+            }
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
+        onBackPressedCallback.remove()
+    }
+
     override fun getContext() = context
 
     protected open fun checkSession() {
+    }
+
+    protected open fun onBackPressed() {
     }
 
     protected fun setKeyboardStateRelatedViews(

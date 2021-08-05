@@ -24,6 +24,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.goforer.lukohsplash.R
@@ -45,9 +46,9 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
     private var currentTab = USER_PHOTOS
 
     private val fragments: List<BaseFragment<*>> = listOf(
-        UserPhotosFragment.newInstance(),
-        UserLikesFragment.newInstance(),
-        UserCollectionFragment.newInstance()
+        UserPhotosFragment.newInstance(this),
+        UserLikesFragment.newInstance(this),
+        UserCollectionFragment.newInstance(this)
     )
 
     @Inject
@@ -65,6 +66,10 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
         setAdapter()
         observeUser()
         onTabChanged(binding.viewPager.currentItem)
+    }
+
+    override fun onBackPressed() {
+        findNavController(this).popBackStack()
     }
 
     private fun observeUser() {

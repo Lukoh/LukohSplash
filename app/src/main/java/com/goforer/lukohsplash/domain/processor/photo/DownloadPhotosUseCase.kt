@@ -45,7 +45,7 @@ constructor(
         internal const val FILE_EXISTED = 9999
     }
 
-    override fun run(viewModelScope: CoroutineScope, params: Params) = flow {
+    override fun run(lifecycleScope: CoroutineScope, params: Params) = flow {
         var downloading = true
         val downloadManager = params.query.firstParam as DownloadManager
         val url = params.query.secondParam as String
@@ -78,7 +78,7 @@ constructor(
             }
         }
     }.shareIn(
-        scope = viewModelScope,
+        scope = lifecycleScope,
         started = SharingStarted.Eagerly,
         replay = 1
     )

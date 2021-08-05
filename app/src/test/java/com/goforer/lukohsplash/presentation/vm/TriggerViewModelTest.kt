@@ -18,6 +18,7 @@ package com.goforer.lukohsplash.presentation.vm
 
 import android.app.DownloadManager
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.LifecycleOwner
 import com.goforer.lukohsplash.data.source.model.cache.entity.BaseTest
 import com.goforer.lukohsplash.data.source.model.cache.entity.PhotoInfoTest
 import com.goforer.lukohsplash.data.source.model.cache.entity.UserTest
@@ -38,6 +39,7 @@ import org.mockito.Mockito
 
 open class TriggerViewModelTest : TestWatcher() {
     lateinit var viewModel: TriggerViewModel<*>
+    lateinit var lifecycleOwner: LifecycleOwner
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()

@@ -32,7 +32,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -53,9 +56,9 @@ import com.goforer.base.extension.*
 import com.goforer.base.view.decoration.SpacingItemDecoration
 import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.base.view.widget.SwipeCoordinatorLayout
-import com.goforer.lukohsplash.presentation.ui.home.adapter.PhotosAdapter
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.ExifAdapter
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.TagAdapter
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -66,8 +69,6 @@ import javax.inject.Inject
 class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentPhotoDetailBinding
         get() = FragmentPhotoDetailBinding::inflate
-
-    private lateinit var photoID: String
 
     private lateinit var listener: PermissionCallback
 
@@ -132,7 +133,6 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         observePhotoID()
-        getPhoto()
         binding.swipeContainer.setOnSwipeOutListener(
             homeActivity,
             object : SwipeCoordinatorLayout.OnSwipeOutListener {
@@ -143,7 +143,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                 }
 
                 override fun onSwipeDown(x: Float, y: Float, distance: Float) {
-                    binding.swipeContainer.findNavController().popBackStack()
+                    onBackPressed()
                 }
 
                 override fun onSwipeUp(x: Float, y: Float, distance: Float) {
@@ -153,6 +153,14 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                 }
             }
         )
+    }
+
+    override fun onBackPressed() {
+        setFragmentResult(
+            FRAGMENT_REQUEST_FROM_BACKSTACK,
+            bundleOf(FRAGMENT_RESULT_FROM_BACKSTACK to true)
+        )
+        findNavController(this).popBackStack()
     }
 
     private fun setupPermission(callback: PermissionCallback) {
@@ -167,15 +175,16 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     private fun observePhotoID() {
         sharedPhotoIdViewModel.shared {
-            photoID = it
+            getPhoto(it)
         }
     }
 
-    private fun getPhoto() {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun getPhoto(id : String) {
         getPhotoInfoViewModel.pullTrigger(Params(Query().apply {
-            firstParam = photoID
+            firstParam = id
             secondParam = -1
-        })) { resource ->
+        }), lifecycleOwner = viewLifecycleOwner) { resource ->
             when (resource.getStatus()) {
                 Status.SUCCESS -> {
                     resource.getData()?.let {
@@ -285,6 +294,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
             .show(childFragmentManager)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun downloadPhoto(url: String) {
         val file  = File(Environment.DIRECTORY_PICTURES)
 
@@ -292,7 +302,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
             firstParam = homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             secondParam = url
             thirdParam = file
-        })) {
+        }), lifecycleOwner = viewLifecycleOwner) {
             when (it) {
                 DownloadManager.STATUS_FAILED -> {
                     if (isLoading)

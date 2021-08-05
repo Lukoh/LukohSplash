@@ -56,7 +56,7 @@ class FlowCallAdapterFactoryTest : TestWatcher() {
                 return Flow::class.java
             }
 
-            override fun getOwnerType(): Type? {
+            override fun getOwnerType(): Type {
                 return Flow::class.java
             }
 
@@ -68,7 +68,7 @@ class FlowCallAdapterFactoryTest : TestWatcher() {
                                 return ApiResponse::class.java
                             }
 
-                            override fun getOwnerType(): Type? {
+                            override fun getOwnerType(): Type {
                                 return ApiResponse::class.java
                             }
 
