@@ -32,6 +32,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -143,7 +145,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                 }
 
                 override fun onSwipeDown(x: Float, y: Float, distance: Float) {
-                    binding.swipeContainer.findNavController().popBackStack()
+                    onBackPressed()
                 }
 
                 override fun onSwipeUp(x: Float, y: Float, distance: Float) {
@@ -153,6 +155,14 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                 }
             }
         )
+    }
+
+    override fun onBackPressed() {
+        setFragmentResult(
+            FRAGMENT_REQUEST_FROM_BACKSTACK,
+            bundleOf(FRAGMENT_RESULT_FROM_BACKSTACK to true)
+        )
+        binding.swipeContainer.findNavController().popBackStack()
     }
 
     private fun setupPermission(callback: PermissionCallback) {
@@ -176,7 +186,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         getPhotoInfoViewModel.pullTrigger(Params(Query().apply {
             firstParam = photoID
             secondParam = -1
-        })) { resource ->
+        }), lifecycleOwner = viewLifecycleOwner) { resource ->
             when (resource.getStatus()) {
                 Status.SUCCESS -> {
                     resource.getData()?.let {
@@ -294,7 +304,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
             firstParam = homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             secondParam = url
             thirdParam = file
-        })) {
+        }), lifecycleOwner = viewLifecycleOwner) {
             when (it) {
                 DownloadManager.STATUS_FAILED -> {
                     if (isLoading)

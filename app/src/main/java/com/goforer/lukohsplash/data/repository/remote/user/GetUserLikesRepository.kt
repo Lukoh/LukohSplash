@@ -19,6 +19,7 @@ package com.goforer.lukohsplash.data.repository.remote.user
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.goforer.lukohsplash.data.repository.Repository
 import com.goforer.lukohsplash.data.repository.paging.source.user.UserLikesPagingSource
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
@@ -50,7 +51,7 @@ constructor(val pagingSource: UserLikesPagingSource) : Repository<Resource>() {
         ) {
             pagingSource.setData(query, value)
             pagingSource
-        }.flow.shareIn(
+        }.flow.cachedIn(viewModelScope).shareIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
             replay = 1

@@ -163,7 +163,7 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
             secondParam = false
             thirdParam = "days"
             forthParam = 30
-        })) { resource ->
+        }), lifecycleOwner = viewLifecycleOwner) { resource ->
             when (resource.getStatus()) {
                 Status.SUCCESS -> {
                     resource.getData()?.let {

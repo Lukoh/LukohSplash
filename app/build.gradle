@@ -140,9 +140,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$arch_livecycle_livedata_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$arch_livedata_ktx"
     // Lifecycles only (no ViewModel or LiveData)
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$arch_lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$arch_lifecycle_ktx"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$arch_lifecycle_runtime_ktx"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$arch_lifecycle_ktx"
     implementation "androidx.lifecycle:lifecycle-common-java8:$arch_lifecycle_version"
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
 

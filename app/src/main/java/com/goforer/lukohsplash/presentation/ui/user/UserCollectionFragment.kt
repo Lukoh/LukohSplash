@@ -162,7 +162,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
         getUserCollectionsViewModel.pullTrigger(Params(Query().apply {
             firstParam = name
             secondParam = -1
-        })) { resource ->
+        }), lifecycleOwner = viewLifecycleOwner) { resource ->
             when (resource.getStatus()) {
                 Status.SUCCESS -> {
                     resource.getData()?.let {
