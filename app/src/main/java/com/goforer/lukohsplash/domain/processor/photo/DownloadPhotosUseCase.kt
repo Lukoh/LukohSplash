@@ -17,7 +17,6 @@
 package com.goforer.lukohsplash.domain.processor.photo
 
 import android.app.DownloadManager
-import android.app.DownloadManager.STATUS_PENDING
 import android.app.DownloadManager.STATUS_SUCCESSFUL
 import android.content.Context
 import android.database.Cursor
@@ -27,9 +26,7 @@ import com.goforer.lukohsplash.domain.UseCase
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.base.worker.download.wrapper.DownloaderQueryWrapper
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -79,9 +76,5 @@ constructor(
 
             }
         }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = STATUS_PENDING
-    )
+    }
 }

@@ -19,12 +19,14 @@ package com.goforer.lukohsplash.presentation.vm.photo
 import android.app.DownloadManager
 import android.content.Context
 import android.os.Environment
+import androidx.lifecycle.testing.TestLifecycleOwner
 import com.goforer.lukohsplash.domain.processor.photo.DownloadPhotosUseCase
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.TriggerViewModelTest
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -33,6 +35,8 @@ import org.mockito.Mockito
 import org.mockito.Mockito.mockStatic
 import java.io.File
 
+@ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 class DownloadPhotoViewModelTest : TriggerViewModelTest() {
     private lateinit var file: File
     private lateinit var url: String
@@ -43,6 +47,7 @@ class DownloadPhotoViewModelTest : TriggerViewModelTest() {
     override fun setup() {
         super.setup()
 
+        lifecycleOwner = TestLifecycleOwner()
         viewModel = DownloadPhotoViewModel(getProcessorUseCase())
     }
 
@@ -59,7 +64,6 @@ class DownloadPhotoViewModelTest : TriggerViewModelTest() {
         super.tearDown()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun pullTriggerTest() {
         val context: Context = Mockito.mock(Context::class.java)
@@ -71,7 +75,7 @@ class DownloadPhotoViewModelTest : TriggerViewModelTest() {
             firstParam = manager!!
             secondParam = url
             thirdParam = file
-        })) {
+        }), lifecycleOwner) {
             when (it) {
                 DownloadManager.STATUS_FAILED -> {
                     Assert.assertEquals(it, DownloadManager.STATUS_FAILED)

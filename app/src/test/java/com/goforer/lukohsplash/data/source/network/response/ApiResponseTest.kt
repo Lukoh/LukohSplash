@@ -53,7 +53,7 @@ class ApiResponseTest : TestWatcher() {
 
         Assert.assertEquals(
             successResponse1,
-            ApiSuccessResponse<ResponseResult>(ResponseResult("OK"), null)
+            ApiSuccessResponse(ResponseResult("OK"), null)
         )
 
         val successResponse2 = ApiResponse.create<ResponseResult>(

@@ -20,6 +20,7 @@ import androidx.paging.PagingData
 import com.goforer.lukohsplash.data.repository.paging.source.user.UserPhotosPagingSource
 import com.goforer.lukohsplash.data.repository.remote.RepositoryTest
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
+import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.test.kit.QueryTool
 import com.goforer.test.kit.flow.test
 import io.mockk.junit5.MockKExtension
@@ -41,7 +42,7 @@ class GetUserPhotosRepositoryTest : RepositoryTest() {
     fun setup() {
         setBaseRepository(
             GetUserPhotosRepository(UserPhotosPagingSource()),
-            QueryTool.getQuery(0, "0")
+            QueryTool.getQuery("jimmydean", false, "days", 30)
         )
     }
 
@@ -49,7 +50,12 @@ class GetUserPhotosRepositoryTest : RepositoryTest() {
     fun workTest() {
         runBlockingTest {
             coroutinesTestRule.managedCoroutineScope.launch {
-                repository.doWork(this, defaultQuery).test(this) {
+                repository.doWork(this, Query().apply {
+                    firstParam = "jimmydean"
+                    secondParam = false
+                    thirdParam = "days"
+                    forthParam = 30
+                }).test(this) {
                     this.assertValue {
                         @Suppress("UNCHECKED_CAST")
                         (it.getData() as? PagingData<Photo>) is PagingData<Photo>

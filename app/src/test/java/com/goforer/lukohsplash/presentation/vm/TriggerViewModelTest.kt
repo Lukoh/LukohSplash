@@ -18,6 +18,7 @@ package com.goforer.lukohsplash.presentation.vm
 
 import android.app.DownloadManager
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.LifecycleOwner
 import com.goforer.lukohsplash.data.source.model.cache.entity.BaseTest
 import com.goforer.lukohsplash.data.source.model.cache.entity.PhotoInfoTest
 import com.goforer.lukohsplash.data.source.model.cache.entity.UserTest
@@ -38,6 +39,7 @@ import org.mockito.Mockito
 
 open class TriggerViewModelTest : TestWatcher() {
     lateinit var viewModel: TriggerViewModel<*>
+    lateinit var lifecycleOwner: LifecycleOwner
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
@@ -50,11 +52,7 @@ open class TriggerViewModelTest : TestWatcher() {
         val useCase = Mockito.mock(U::class.java) as UseCase<Params, Resource>
         Mockito.`when`(useCase.run(isA(), isA()))
             .thenReturn(
-                flowOf(getResponseResult(entity)).shareIn(
-                    scope = GlobalScope,
-                    started = SharingStarted.Eagerly,
-                    replay = 1
-                )
+                flowOf(getResponseResult(entity))
             )
         return useCase as U
     }
@@ -64,11 +62,7 @@ open class TriggerViewModelTest : TestWatcher() {
         val useCase = Mockito.mock(U::class.java) as UseCase<Params, T>
         Mockito.`when`(useCase.run(isA(), isA()))
             .thenReturn(
-                flowOf(getResult() as T).shareIn(
-                    scope = GlobalScope,
-                    started = SharingStarted.Eagerly,
-                    replay = 1
-                )
+                flowOf(getResult() as T)
             )
         return useCase as U
     }

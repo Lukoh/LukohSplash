@@ -17,6 +17,7 @@
 package com.goforer.lukohsplash.data.repository.remote.photo
 
 import com.goforer.lukohsplash.data.repository.remote.RepositoryTest
+import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.test.kit.QueryTool
 import com.goforer.test.kit.flow.test
 import io.mockk.junit5.MockKExtension
@@ -38,15 +39,20 @@ class GetPhotoInfoRepositoryTest : RepositoryTest() {
     fun setup() {
         setBaseRepository(
             GetPhotoInfoRepository(),
-            QueryTool.getQuery("0")
+            QueryTool.getQuery("Jvw3pxgeiZw", -1)
         )
     }
 
     @Test
     fun workTest() {
         runBlockingTest {
-            repository.doWork(this, defaultQuery).test(this) {
-                this.assertValueAt(0, getResourceValue(photoInfoTest.photo0))
+            coroutinesTestRule.managedCoroutineScope.launch {
+                repository.doWork(this, Query().apply {
+                    firstParam = "Jvw3pxgeiZw"
+                    secondParam = -1
+                }).test(this) {
+                    this.assertValueAt(0, getResourceValue(photoInfoTest.photo0))
+                }
             }
         }
     }

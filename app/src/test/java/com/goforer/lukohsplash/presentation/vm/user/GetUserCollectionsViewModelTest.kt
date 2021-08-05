@@ -16,6 +16,7 @@
 
 package com.goforer.lukohsplash.presentation.vm.user
 
+import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.paging.PagingData
 import com.goforer.lukohsplash.data.source.model.cache.entity.BaseTest
 import com.goforer.lukohsplash.data.source.model.entity.user.response.Collection
@@ -40,6 +41,7 @@ class GetUserCollectionsViewModelTest : TriggerViewModelTest() {
     override fun setup() {
         super.setup()
 
+        lifecycleOwner = TestLifecycleOwner()
         viewModel = GetUserCollectionsViewModel(getBaseUseCase(BaseTest().responseResult0))
     }
 
@@ -53,7 +55,7 @@ class GetUserCollectionsViewModelTest : TriggerViewModelTest() {
         viewModel.pullTrigger(Params(Query().apply {
             firstParam = "jimmydean"
             secondParam = -1
-        })) {
+        }), lifecycleOwner) {
             coroutineTestRule.managedCoroutineScope.launch {
                 @Suppress("UNCHECKED_CAST")
                 Assert.assertTrue(((it as Resource).getData() as? PagingData<Collection>) is PagingData<Collection>)

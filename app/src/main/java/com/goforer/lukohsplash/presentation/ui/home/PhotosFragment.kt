@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.paging.LoadState
@@ -57,7 +58,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 
     private var isAppBarExpended = true
 
-    private var currentPosition = 0
+    private var isFromBackStack = false
 
     @Inject
     internal lateinit var getPhotosViewModel: GetPhotosViewModel
@@ -65,14 +66,16 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     @Inject
     internal lateinit var sharedPhotoIdViewModel: SharedPhotoIdViewModel
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setFragmentResultListener(FRAGMENT_REQUEST_FROM_BACKSTACK) { _, bundle ->
+            isFromBackStack = bundle.getBoolean(FRAGMENT_RESULT_FROM_BACKSTACK)
+        }
+
         setAppBar()
         photoAdapter ?: getPhotos()
-        photoAdapter = photoAdapter ?: PhotosAdapter(homeActivity) { itemView, item, position ->
-            currentPosition = position
+        photoAdapter = photoAdapter ?: PhotosAdapter(homeActivity) { itemView, item ->
             sharedPhotoIdViewModel.share(item.id)
             itemView.findNavController().navigate(
                 PhotosFragmentDirections.actionPhotosFragmentToPhotoDetailFragment()
@@ -97,6 +100,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
         }
 
         binding.swipeRefreshContainer.setOnRefreshListener {
+            isFromBackStack = false
             getPhotos()
         }
 
@@ -141,6 +145,12 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        isFromBackStack = false
+    }
+
     private fun setAppBar() {
         with(binding) {
             appbarPhotos.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -173,13 +183,13 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
         }
     }
 
-    @ExperimentalCoroutinesApi
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhotos() {
         getPhotosViewModel.pullTrigger(Params(Query().apply {
             firstParam = 1
             secondParam = NONE_ITEM_COUNT
             thirdParam = LATEST
-        })) { resource ->
+        }), lifecycleOwner = viewLifecycleOwner) { resource ->
             when (resource.getStatus()) {
                 Status.SUCCESS -> {
                     resource.getData()?.let {
