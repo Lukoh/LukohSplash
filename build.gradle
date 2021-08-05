@@ -9,7 +9,7 @@ buildscript {
         arch_lifecycle_extension_version = '2.2.0'
         arch_livecycle_livedata_version = '2.3.1'
         arch_lifecycle_ktx = '2.3.1'
-        arch_lifecycle_runtime_ktx = '2.4.0-alpha01'
+        arch_lifecycle_runtime_ktx = '2.4.0-alpha02'
         arch_room_version = '2.3.0'
         arch_room_ktx = '2.3.0'
         arch_livedata_ktx = '2.3.1'

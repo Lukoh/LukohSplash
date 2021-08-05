@@ -23,11 +23,11 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.launch
 
-open class TriggerViewModel<Resource>(open val useCase: UseCase<Params, Resource>) : ViewModel() {
+open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : ViewModel() {
     private var value: Any? = null
 
     @ExperimentalCoroutinesApi
-    open fun pullTrigger(params: Params, lifecycleOwner: LifecycleOwner, doOnResult: (result: Resource) -> Unit) {
+    open fun pullTrigger(params: Params, lifecycleOwner: LifecycleOwner, doOnResult: (result: Value) -> Unit) {
         lifecycleOwner.lifecycleScope.launch {
             useCase.run(this, params)
                 .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
