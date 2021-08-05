@@ -31,16 +31,16 @@ open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : V
         lifecycleOwner.lifecycleScope.launch {
             useCase.run(this, params)
                 .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .flatMapLatest { resource ->
+                .collect { resource ->
                     value = resource
                     flow {
                         emit(doOnResult(resource))
-                    }
-                }.stateIn(
-                    scope = lifecycleOwner.lifecycleScope,
-                    started = Eagerly,
-                    initialValue = value
-                )
+                    }.stateIn(
+                        scope = lifecycleOwner.lifecycleScope,
+                        started = Eagerly,
+                        initialValue = value
+                    )
+                }
         }
     }
 }
