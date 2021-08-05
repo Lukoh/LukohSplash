@@ -34,7 +34,7 @@ abstract class Repository<Resource> {
     @Inject
     lateinit var networkErrorHandler: NetworkErrorHandler
 
-    abstract fun doWork(viewModelScope: CoroutineScope, query: Query): Flow<Resource>
+    abstract fun doWork(lifecycleScope: CoroutineScope, query: Query): Flow<Resource>
 
     protected fun handleNetworkError(errorMessage: String) {
         networkErrorHandler.handleError(errorMessage)

@@ -34,7 +34,7 @@ import javax.inject.Singleton
 class GetUserCollectionsRepository
 @Inject
 constructor(val pagingSource: UserCollectionsPagingSource) : Repository<Resource>() {
-    override fun doWork(viewModelScope: CoroutineScope, query: Query) = object :
+    override fun doWork(lifecycleScope: CoroutineScope, query: Query) = object :
         NetworkBoundWorker<PagingData<Collection>, MutableList<Collection>>(false) {
         override fun request() = restAPI.getUserCollections(
             query.firstParam as String, YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT
@@ -49,6 +49,6 @@ constructor(val pagingSource: UserCollectionsPagingSource) : Repository<Resource
         ) {
             pagingSource.setData(query, value)
             pagingSource
-        }.flow.cachedIn(viewModelScope)
+        }.flow.cachedIn(lifecycleScope)
     }.asFlow()
 }
