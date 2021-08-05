@@ -153,6 +153,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_version"
 
     implementation "androidx.paging:paging-runtime-ktx:$arch_paging_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-testing:$arch_lifecycle_version"
     testImplementation "androidx.paging:paging-common-ktx:$arch_paging_version"
 
     implementation 'com.google.code.gson:gson:2.8.7'

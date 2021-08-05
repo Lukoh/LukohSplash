@@ -36,8 +36,8 @@ import javax.inject.Singleton
 class GetUserLikesRepository
 @Inject
 constructor(val pagingSource: UserLikesPagingSource) : Repository<Resource>() {
-    override fun doWork(viewModelScope: CoroutineScope, query: Query) = object :
-        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false) {
+    override fun doWork(lifecycleScope: CoroutineScope, query: Query) = object :
+        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false, lifecycleScope) {
         override fun request() = restAPI.getUserLikes(
             query.firstParam as String, YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT, LATEST, null
         )
@@ -51,8 +51,8 @@ constructor(val pagingSource: UserLikesPagingSource) : Repository<Resource>() {
         ) {
             pagingSource.setData(query, value)
             pagingSource
-        }.flow.cachedIn(viewModelScope).shareIn(
-            scope = viewModelScope,
+        }.flow.cachedIn(lifecycleScope).shareIn(
+            scope = lifecycleScope,
             started = SharingStarted.WhileSubscribed(),
             replay = 1
         )

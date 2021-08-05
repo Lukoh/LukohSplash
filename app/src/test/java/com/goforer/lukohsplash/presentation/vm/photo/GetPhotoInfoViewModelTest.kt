@@ -16,22 +16,30 @@
 
 package com.goforer.lukohsplash.presentation.vm.photo
 
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.testing.TestLifecycleOwner
 import com.goforer.lukohsplash.data.source.model.cache.entity.PhotoInfoTest
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.TriggerViewModelTest
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito
 
+@ObsoleteCoroutinesApi
+@ExperimentalCoroutinesApi
 class GetPhotoInfoViewModelTest : TriggerViewModelTest() {
     @Before
     @DelicateCoroutinesApi
     override fun setup() {
         super.setup()
 
+        lifecycleOwner = TestLifecycleOwner()
         viewModel = GetPhotoInfoViewModel(getBaseUseCase(PhotoInfoTest().photo0))
     }
 
@@ -45,7 +53,7 @@ class GetPhotoInfoViewModelTest : TriggerViewModelTest() {
         viewModel.pullTrigger(Params(Query().apply {
             firstParam = "Jvw3pxgeiZw"
             secondParam = -1
-        })) {
+        }), lifecycleOwner) {
             Assert.assertEquals(it, getResponseResult(PhotoInfoTest().photo0))
         }
     }

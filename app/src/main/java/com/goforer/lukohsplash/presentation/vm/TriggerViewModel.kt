@@ -17,6 +17,7 @@
 package com.goforer.lukohsplash.presentation.vm
 
 import androidx.lifecycle.*
+import com.goforer.base.extension.isNull
 import com.goforer.lukohsplash.domain.UseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -29,7 +30,7 @@ open class TriggerViewModel<Resource>(open val useCase: UseCase<Params, Resource
     @ExperimentalCoroutinesApi
     open fun pullTrigger(params: Params, lifecycleOwner: LifecycleOwner, doOnResult: (result: Resource) -> Unit) {
         lifecycleOwner.lifecycleScope.launch {
-            useCase.run(viewModelScope, params)
+            useCase.run(this, params)
                 .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .flatMapLatest { resource ->
                     value = resource
