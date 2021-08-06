@@ -50,5 +50,5 @@ constructor(val pagingSource: UserCollectionsPagingSource) : Repository<Resource
             pagingSource.setData(query, value)
             pagingSource
         }.flow.cachedIn(lifecycleScope)
-    }.asFlow()
+    }.asFlow
 }

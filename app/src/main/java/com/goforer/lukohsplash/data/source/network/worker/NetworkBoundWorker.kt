@@ -42,7 +42,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
 
     private val resource = Resource()
 
-    internal fun asFlow() = flow {
+    internal val asFlow = flow {
         emit(resource.loading(LOADING))
         clearCache()
 

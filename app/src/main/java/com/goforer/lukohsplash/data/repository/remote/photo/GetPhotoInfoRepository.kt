@@ -37,5 +37,5 @@ constructor() : Repository<Resource>() {
             handleNetworkError(errorMessage)
         }
 
-    }.asFlow()
+    }.asFlow
 }
