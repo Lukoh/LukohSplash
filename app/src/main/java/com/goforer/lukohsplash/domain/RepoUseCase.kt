@@ -25,6 +25,7 @@ import javax.inject.Singleton
 @Singleton
 abstract class RepoUseCase(open val repository: Repository<Resource>) :
     UseCase<Params, Resource>() {
+
     override fun run(lifecycleScope: CoroutineScope, params: Params) =
         repository.doWork(lifecycleScope, params.query)
 }

@@ -21,26 +21,26 @@ import com.goforer.lukohsplash.domain.UseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : ViewModel() {
-    private var value: Any? = null
+    private var initValue: Any? = null
 
     @ExperimentalCoroutinesApi
     open fun pullTrigger(params: Params, lifecycleOwner: LifecycleOwner, doOnResult: (result: Value) -> Unit) {
         lifecycleOwner.lifecycleScope.launch {
-            useCase.run(this, params)
+            useCase.run(lifecycleOwner.lifecycleScope, params)
                 .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .flatMapLatest { resource ->
-                    value = resource
+                    initValue = resource
                     flow {
                         emit(doOnResult(resource))
                     }
                 }.stateIn(
                     scope =  lifecycleOwner.lifecycleScope,
                     started = Eagerly,
-                    initialValue = value
+                    initialValue = initValue
                 )
         }
     }

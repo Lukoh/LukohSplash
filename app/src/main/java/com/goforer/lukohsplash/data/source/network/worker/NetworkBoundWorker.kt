@@ -18,8 +18,6 @@ package com.goforer.lukohsplash.data.source.network.worker
 
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
-import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import com.goforer.lukohsplash.data.source.network.response.*
 import com.goforer.base.extension.isNullOnFlow
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +32,7 @@ import timber.log.Timber
  * Guide</a>.
  */
 abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
-    private val enabledCache: Boolean, private val lifecycleScope: CoroutineScope
+    private val enabledCache: Boolean, lifecycleScope: CoroutineScope
 ) {
     companion object {
         internal const val YOUR_ACCESS_KEY = "ogfHK8SPaobznFUnD4jXUe4TIIgsh5pmUdfZ4Ra91Zw"
@@ -46,7 +44,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
 
     private val resource = Resource()
 
-    internal fun asSharedFlow() = flow {
+    internal val asSharedFlow = flow {
         emit(resource.loading(LOADING))
         clearCache()
 
