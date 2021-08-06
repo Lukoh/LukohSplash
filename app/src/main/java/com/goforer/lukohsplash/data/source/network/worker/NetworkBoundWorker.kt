@@ -34,6 +34,8 @@ import timber.log.Timber
 abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
     private val enabledCache: Boolean, lifecycleScope: CoroutineScope
 ) {
+    private val resource = Resource()
+
     companion object {
         internal const val YOUR_ACCESS_KEY = "ogfHK8SPaobznFUnD4jXUe4TIIgsh5pmUdfZ4Ra91Zw"
         internal const val NONE_ITEM_COUNT = 10
@@ -41,8 +43,6 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
 
         private const val LOADING = "loading"
     }
-
-    private val resource = Resource()
 
     internal val asSharedFlow = flow {
         emit(resource.loading(LOADING))
@@ -86,7 +86,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
         }
     }.shareIn(
         scope = lifecycleScope,
-        started = WhileSubscribed(1000L),
+        started = WhileSubscribed(5000),
         replay = 1
     )
 

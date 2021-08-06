@@ -53,7 +53,7 @@ constructor(val pagingSource: UserLikesPagingSource) : Repository<Resource>() {
             pagingSource
         }.flow.cachedIn(lifecycleScope).shareIn(
             scope = lifecycleScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.WhileSubscribed(5000),
             replay = 1
         )
     }.asSharedFlow

@@ -25,12 +25,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : ViewModel() {
-    private var initValue: Any? = null
+    private var initValue: Value? = null
 
     @ExperimentalCoroutinesApi
     open fun pullTrigger(params: Params, lifecycleOwner: LifecycleOwner, doOnResult: (result: Value) -> Unit) {
         lifecycleOwner.lifecycleScope.launch {
-            useCase.run(lifecycleOwner.lifecycleScope, params)
+            useCase.run(this, params)
                 .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .flatMapLatest { resource ->
                     initValue = resource

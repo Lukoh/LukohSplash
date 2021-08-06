@@ -37,7 +37,7 @@ constructor() : UseCase<Params, Bitmap>() {
         emit(cropImage(params.query.firstParam as Bitmap))
     }.shareIn(
         scope = lifecycleScope,
-        started = SharingStarted.Eagerly,
+        started = SharingStarted.WhileSubscribed(5000),
         replay = 1
     )
 

@@ -25,7 +25,7 @@ import com.goforer.lukohsplash.domain.UseCase
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.base.worker.download.wrapper.DownloaderQueryWrapper
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.shareIn
 import java.io.File
@@ -79,7 +79,7 @@ constructor(
         }
     }.shareIn(
         scope = lifecycleScope,
-        started = SharingStarted.Eagerly,
+        started = WhileSubscribed(5000),
         replay = 1
     )
 }
