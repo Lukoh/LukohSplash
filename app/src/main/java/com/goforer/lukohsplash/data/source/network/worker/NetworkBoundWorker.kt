@@ -88,7 +88,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
         }
     }.shareIn(
         scope = lifecycleScope,
-        started = WhileSubscribed(),
+        started = WhileSubscribed(1000L),
         replay = 1
     )
 

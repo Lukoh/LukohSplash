@@ -21,6 +21,7 @@ import com.goforer.lukohsplash.domain.UseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
 
 open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : ViewModel() {
@@ -37,7 +38,7 @@ open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : V
                         emit(doOnResult(resource))
                     }
                 }.stateIn(
-                    scope = viewModelScope,
+                    scope =  lifecycleOwner.lifecycleScope,
                     started = Eagerly,
                     initialValue = value
                 )
