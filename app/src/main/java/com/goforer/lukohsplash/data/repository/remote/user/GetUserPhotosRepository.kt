@@ -58,5 +58,5 @@ constructor(val pagingSource: UserPhotosPagingSource) : Repository<Resource>() {
             started = SharingStarted.WhileSubscribed(),
             replay = 1
         )
-    }.asSharedFlow()
+    }.asSharedFlow
 }
