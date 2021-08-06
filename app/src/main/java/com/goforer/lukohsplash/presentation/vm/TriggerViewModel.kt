@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.launch
 
 open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : ViewModel() {
-    private var value: Any? = null
+    private var value: Value? = null
 
     @ExperimentalCoroutinesApi
     open fun pullTrigger(params: Params, lifecycleOwner: LifecycleOwner, doOnResult: (result: Value) -> Unit) {
