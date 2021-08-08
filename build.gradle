@@ -50,7 +50,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_gradle_plugin_version"
-        classpath 'com.google.gms:google-services:4.3.8' // google-services plugin
+        classpath 'com.google.gms:google-services:4.3.9' // google-services plugin
         classpath 'com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta10'
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
         classpath 'com.google.firebase:perf-plugin:1.4.0'
