@@ -28,6 +28,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -77,9 +78,9 @@ constructor(
 
             }
         }
-    }.shareIn(
+    }.stateIn(
         scope = lifecycleScope,
         started = WhileSubscribed(5000),
-        replay = 1
+        initialValue = 1
     )
 }

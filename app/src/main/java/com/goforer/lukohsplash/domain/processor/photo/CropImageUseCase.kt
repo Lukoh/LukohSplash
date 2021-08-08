@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,10 +36,10 @@ constructor() : UseCase<Params, Bitmap>() {
     @Suppress("UNCHECKED_CAST")
     override fun run(lifecycleScope: CoroutineScope, params: Params) = flow {
         emit(cropImage(params.query.firstParam as Bitmap))
-    }.shareIn(
+    }.stateIn(
         scope = lifecycleScope,
         started = SharingStarted.WhileSubscribed(5000),
-        replay = 1
+        initialValue = params.query.firstParam as Bitmap
     )
 
     private fun cropImage(bitmap: Bitmap): Bitmap {

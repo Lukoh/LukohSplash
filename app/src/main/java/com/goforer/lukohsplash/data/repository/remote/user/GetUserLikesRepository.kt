@@ -27,8 +27,7 @@ import com.goforer.lukohsplash.data.source.network.response.Resource
 import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
 import com.goforer.lukohsplash.presentation.vm.Query
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,13 +35,15 @@ import javax.inject.Singleton
 class GetUserLikesRepository
 @Inject
 constructor(val pagingSource: UserLikesPagingSource) : Repository<Resource>() {
+    private lateinit var initValue: PagingData<Photo>
+
     override fun doWork(lifecycleScope: CoroutineScope, query: Query) = object :
         NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false, lifecycleScope) {
         override fun request() = restAPI.getUserLikes(
             query.firstParam as String, YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT, LATEST, null
         )
 
-        override fun load(value: MutableList<Photo>, itemCount: Int) = Pager(
+        override fun load(value: MutableList<Photo>, itemCount: Int) =  Pager(
             config = PagingConfig(
                 pageSize = itemCount,
                 prefetchDistance = itemCount,
@@ -51,10 +52,6 @@ constructor(val pagingSource: UserLikesPagingSource) : Repository<Resource>() {
         ) {
             pagingSource.setData(query, value)
             pagingSource
-        }.flow.cachedIn(lifecycleScope).shareIn(
-            scope = lifecycleScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            replay = 1
-        )
-    }.asSharedFlow
+        }.flow.cachedIn(lifecycleScope)
+    }.asStateFlow
 }
