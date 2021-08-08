@@ -34,6 +34,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -56,9 +59,13 @@ import com.goforer.base.extension.*
 import com.goforer.base.view.decoration.SpacingItemDecoration
 import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.base.view.widget.SwipeCoordinatorLayout
+import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.ExifAdapter
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.TagAdapter
+import com.goforer.lukohsplash.presentation.vm.Param.setParams
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -181,25 +188,33 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhoto(id : String) {
-        getPhotoInfoViewModel.pullTrigger(Params(Query().apply {
-            firstParam = id
-            secondParam = -1
-        }), lifecycleOwner = viewLifecycleOwner) { resource ->
-            when (resource.getStatus()) {
-                Status.SUCCESS -> {
-                    resource.getData()?.let {
-                        val photo = it as Photo
+        setParams(
+            Params(Query().apply {
+                firstParam = id
+                secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
+                thirdParam = NetworkBoundWorker.LATEST
+            })
+        )
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getPhotoInfoViewModel.value.collect { resource ->
+                    when (resource?.getStatus()) {
+                        Status.SUCCESS -> {
+                            resource.getData()?.let {
+                                val photo = it as Photo
 
-                        setup(photo)
-                        displayPhotoDetails(photo)
+                                setup(photo)
+                                displayPhotoDetails(photo)
+                            }
+                        }
+
+                        Status.ERROR -> {
+                            showErrorPopup(resource.getMessage()!!) {}
+                        }
+
+                        Status.LOADING -> {
+                        }
                     }
-                }
-
-                Status.ERROR -> {
-                    showErrorPopup(resource.getMessage()!!) {}
-                }
-
-                Status.LOADING -> {
                 }
             }
         }
@@ -298,58 +313,65 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     private fun downloadPhoto(url: String) {
         val file  = File(Environment.DIRECTORY_PICTURES)
 
-        downloadPhotoViewModel.pullTrigger(Params(Query().apply {
-            firstParam = homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            secondParam = url
-            thirdParam = file
-        }), lifecycleOwner = viewLifecycleOwner) {
-            when (it) {
-                DownloadManager.STATUS_FAILED -> {
-                    if (isLoading)
-                        makeLoading(false)
+        setParams(
+            Params(Query().apply {
+                firstParam = homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                secondParam = url
+                thirdParam = file
+            })
+        )
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                downloadPhotoViewModel.value.collect {
+                    when (it) {
+                        DownloadManager.STATUS_FAILED -> {
+                            if (isLoading)
+                                makeLoading(false)
 
-                    Toast.makeText(homeActivity, getString(R.string.download_fail_phrase), Toast.LENGTH_SHORT).show()
-                }
+                            Toast.makeText(homeActivity, getString(R.string.download_fail_phrase), Toast.LENGTH_SHORT).show()
+                        }
 
-                DownloadManager.STATUS_PAUSED -> {
-                    Toast.makeText(homeActivity, getString(R.string.paused), Toast.LENGTH_SHORT).show()
+                        DownloadManager.STATUS_PAUSED -> {
+                            Toast.makeText(homeActivity, getString(R.string.paused), Toast.LENGTH_SHORT).show()
 
-                }
+                        }
 
-                DownloadManager.STATUS_PENDING -> {
-                    if (!isLoading)
-                        makeLoading(true)
-                }
+                        DownloadManager.STATUS_PENDING -> {
+                            if (!isLoading)
+                                makeLoading(true)
+                        }
 
-                DownloadManager.STATUS_RUNNING -> {
-                }
+                        DownloadManager.STATUS_RUNNING -> {
+                        }
 
-                DownloadManager.STATUS_SUCCESSFUL -> {
-                    if (isLoading)
-                        makeLoading(false)
+                        DownloadManager.STATUS_SUCCESSFUL -> {
+                            if (isLoading)
+                                makeLoading(false)
 
-                    Timber.d(
-                        "$file${File.separator}${url.substring(url.lastIndexOf("/") + 1)}"
-                    )
-                    NormalDialog.Builder(context)
-                        .setTitle(R.string.title_photo_download)
-                        .setMessage( getString(R.string.download_success))
-                        .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
-                        }.setOnDismissListener {
-                        }.show(homeActivity.supportFragmentManager)
-                }
+                            Timber.d(
+                                "$file${File.separator}${url.substring(url.lastIndexOf("/") + 1)}"
+                            )
+                            NormalDialog.Builder(context)
+                                .setTitle(R.string.title_photo_download)
+                                .setMessage( getString(R.string.download_success))
+                                .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
+                                }.setOnDismissListener {
+                                }.show(homeActivity.supportFragmentManager)
+                        }
 
-                FILE_EXISTED -> {
-                    NormalDialog.Builder(context)
-                        .setTitle(R.string.title_photo_download)
-                        .setMessage(getString(R.string.photo_existed))
-                        .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
-                        }.setOnDismissListener {
-                        }.show(homeActivity.supportFragmentManager)
-                }
+                        FILE_EXISTED -> {
+                            NormalDialog.Builder(context)
+                                .setTitle(R.string.title_photo_download)
+                                .setMessage(getString(R.string.photo_existed))
+                                .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
+                                }.setOnDismissListener {
+                                }.show(homeActivity.supportFragmentManager)
+                        }
 
-                else -> {
-                    Toast.makeText(homeActivity, getString(R.string.no_photo), Toast.LENGTH_SHORT).show()
+                        else -> {
+                            Toast.makeText(homeActivity, getString(R.string.no_photo), Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
         }

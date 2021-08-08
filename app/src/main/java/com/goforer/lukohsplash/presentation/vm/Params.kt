@@ -16,7 +16,4 @@
 
 package com.goforer.lukohsplash.presentation.vm
 
-import javax.inject.Singleton
-
-@Singleton
 class Params constructor(val query: Query)

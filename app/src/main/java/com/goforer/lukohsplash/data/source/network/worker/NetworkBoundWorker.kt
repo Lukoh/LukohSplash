@@ -44,7 +44,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
         private const val LOADING = "loading"
     }
 
-    internal val asStateFlow = flow {
+    internal val asSharedFlow = flow {
         emit(resource.loading(LOADING))
         clearCache()
 
@@ -84,10 +84,10 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
                 }
             }
         }
-    }.stateIn(
+    }.shareIn(
         scope = lifecycleScope,
         started = WhileSubscribed(5000),
-        initialValue = resource.loading(LOADING)
+        replay = 1
     )
 
     protected open suspend fun onNetworkError(errorMessage: String, errorCode: Int) {

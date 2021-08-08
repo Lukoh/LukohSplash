@@ -27,7 +27,6 @@ import com.goforer.lukohsplash.data.source.network.response.Resource
 import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
 import com.goforer.lukohsplash.presentation.vm.Query
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,7 +40,7 @@ constructor(val pagingSource: UserCollectionsPagingSource) : Repository<Resource
             query.firstParam as String, YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT
         )
 
-        override fun load(value: MutableList<Collection>, itemCount: Int) =  Pager(
+        override fun load(value: MutableList<Collection>, itemCount: Int) = Pager(
             config = PagingConfig(
                 pageSize = itemCount,
                 prefetchDistance = itemCount,
@@ -51,6 +50,5 @@ constructor(val pagingSource: UserCollectionsPagingSource) : Repository<Resource
             pagingSource.setData(query, value)
             pagingSource
         }.flow.cachedIn(lifecycleScope)
-
-    }.asStateFlow
+    }.asSharedFlow
 }

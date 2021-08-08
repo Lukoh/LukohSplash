@@ -16,15 +16,12 @@
 
 package com.goforer.lukohsplash.presentation.vm
 
-import javax.inject.Singleton
-
 /**
  * set Queries to input the parameters to connect with REST API
  *
  * @param firstParam if the firstParam is -1, it means there is no first parameter to input REST API
  * @param secondParam if the secondParam is -1, it means there is no second parameter to input REST API
  */
-@Singleton
 class Query {
     lateinit var firstParam: Any
     lateinit var secondParam: Any

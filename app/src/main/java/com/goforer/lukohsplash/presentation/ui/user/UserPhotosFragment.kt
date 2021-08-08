@@ -21,7 +21,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -43,7 +45,9 @@ import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
 import com.goforer.base.extension.isNull
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.goforer.base.view.dialog.NormalDialog
+import com.goforer.lukohsplash.presentation.vm.Param
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -166,33 +170,40 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserPhotos(name: String) {
-        getUserPhotosViewModel.pullTrigger(Params(Query().apply {
-            firstParam = name
-            secondParam = false
-            thirdParam = "days"
-            forthParam = 30
-        }), lifecycleOwner = viewLifecycleOwner) { resource ->
-            when (resource.getStatus()) {
-                Status.SUCCESS -> {
-                    resource.getData()?.let {
-                        binding.swipeRefreshContainer.isRefreshing = false
-                        @Suppress("UNCHECKED_CAST")
-                        val photos = resource.getData() as? PagingData<Photo>
+        Param.setParams(
+            Params(Query().apply {
+                firstParam = name
+                secondParam = false
+                thirdParam = "days"
+                forthParam = 30
+            })
+        )
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getUserPhotosViewModel.value.collect { resource ->
+                    when (resource?.getStatus()) {
+                        Status.SUCCESS -> {
+                            resource.getData()?.let {
+                                binding.swipeRefreshContainer.isRefreshing = false
+                                @Suppress("UNCHECKED_CAST")
+                                val photos = resource.getData() as? PagingData<Photo>
 
-                        lifecycleScope.launchWhenCreated {
-                            photoAdapter?.submitData(photos!!)
+                                lifecycleScope.launchWhenCreated {
+                                    photoAdapter?.submitData(photos!!)
+                                }
+                            }
+                        }
+
+                        Status.ERROR -> {
+                            binding.swipeRefreshContainer.isRefreshing = false
+                            showErrorPopup(resource.getMessage()!!) {}
+
+                        }
+
+                        Status.LOADING -> {
+                            binding.swipeRefreshContainer.isRefreshing = true
                         }
                     }
-                }
-
-                Status.ERROR -> {
-                    binding.swipeRefreshContainer.isRefreshing = false
-                    showErrorPopup(resource.getMessage()!!) {}
-
-                }
-
-                Status.LOADING -> {
-                    binding.swipeRefreshContainer.isRefreshing = true
                 }
             }
         }

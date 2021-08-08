@@ -21,7 +21,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResultListener
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -42,9 +44,12 @@ import com.goforer.lukohsplash.presentation.vm.home.GetPhotosViewModel
 import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
 import com.goforer.base.extension.*
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
+import com.goforer.lukohsplash.presentation.vm.Param.setParams
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -185,32 +190,43 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhotos() {
-        getPhotosViewModel.pullTrigger(Params(Query().apply {
-            firstParam = 1
-            secondParam = NONE_ITEM_COUNT
-            thirdParam = LATEST
-        }), lifecycleOwner = viewLifecycleOwner) { resource ->
-            when (resource.getStatus()) {
-                Status.SUCCESS -> {
-                    resource.getData()?.let {
-                        binding.swipeRefreshContainer.isRefreshing = false
-                        @Suppress("UNCHECKED_CAST")
-                        val photos = resource.getData() as? PagingData<Photo>
+        setParams(
+            Params(Query().apply {
+                firstParam = 1
+                secondParam = NONE_ITEM_COUNT
+                thirdParam = LATEST
+            })
+        )
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getPhotosViewModel.value.collect { resource ->
+                    when (resource?.getStatus()) {
+                        Status.SUCCESS -> {
+                            resource.getData()?.let {
+                                binding.swipeRefreshContainer.isRefreshing = false
+                                @Suppress("UNCHECKED_CAST")
+                                val photos = resource.getData() as? PagingData<Photo>
 
-                        lifecycleScope.launchWhenCreated {
-                            photoAdapter?.submitData(photos!!)
+                                lifecycleScope.launchWhenCreated {
+                                    photoAdapter?.submitData(photos!!)
+                                }
+                            }
+                        }
+
+                        Status.ERROR -> {
+                            binding.swipeRefreshContainer.isRefreshing = false
+                            showErrorPopup(resource.getMessage()!!) {}
+
+                        }
+
+                        Status.LOADING -> {
+                            binding.swipeRefreshContainer.isRefreshing = true
+                        }
+
+                        else ->{
+
                         }
                     }
-                }
-
-                Status.ERROR -> {
-                    binding.swipeRefreshContainer.isRefreshing = false
-                    showErrorPopup(resource.getMessage()!!) {}
-
-                }
-
-                Status.LOADING -> {
-                    binding.swipeRefreshContainer.isRefreshing = true
                 }
             }
         }
