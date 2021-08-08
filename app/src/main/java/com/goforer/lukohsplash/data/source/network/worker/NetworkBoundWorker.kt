@@ -105,7 +105,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
     ): Flow<Result>? = null
 
     @MainThread
-    protected open fun load(value: ResponseValue, itemCount: Int): SharedFlow<Result>? = null
+    protected open fun load(value: ResponseValue, itemCount: Int): Flow<Result>? = null
 
     @MainThread
     protected abstract fun request(): Flow<ApiResponse<ResponseValue>>
