@@ -22,25 +22,22 @@ import com.goforer.lukohsplash.domain.UseCase
 import com.goforer.lukohsplash.presentation.vm.Param.getParams
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalCoroutinesApi::class)
-open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : ViewModel() {
+open class TriggerViewModel<Value>(val useCase: UseCase<Params, Value>) : ViewModel() {
     private var initValue: Value? = null
 
-    val value by lazy {
+    val value =
         useCase.run(viewModelScope, getParams())
-            .flatMapLatest { resource ->
+            .mapLatest { resource ->
                 initValue = resource
-                flow {
-                    emit(resource)
-                }
+                resource
             }.stateIn(
                 scope = viewModelScope,
-                started = WhileSubscribed(5000),
+                started = WhileSubscribed(),
                 initialValue = initValue
             )
-    }
+
 }

@@ -24,4 +24,4 @@ import javax.inject.Singleton
 @Singleton
 class DownloadPhotoViewModel
 @Inject
-constructor(override val useCase: DownloadPhotosUseCase) : TriggerViewModel<Int?>(useCase)
+constructor(useCase: DownloadPhotosUseCase) : TriggerViewModel<Int?>(useCase)

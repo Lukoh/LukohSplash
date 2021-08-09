@@ -25,4 +25,4 @@ import javax.inject.Singleton
 @Singleton
 class CropImageViewModel
 @Inject
-constructor(override val useCase: CropImageUseCase) : TriggerViewModel<Bitmap>(useCase)
+constructor(useCase: CropImageUseCase) : TriggerViewModel<Bitmap>(useCase)

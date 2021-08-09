@@ -25,4 +25,4 @@ import javax.inject.Singleton
 @Singleton
 class GetUserPhotosViewModel
 @Inject
-constructor(override val useCase: GetUserPhotosUseCase) : TriggerViewModel<Resource>(useCase)
+constructor(useCase: GetUserPhotosUseCase) : TriggerViewModel<Resource>(useCase)
