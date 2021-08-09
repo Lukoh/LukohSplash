@@ -31,22 +31,18 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
+import com.goforer.base.extension.isNull
+import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
+import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.user.adapter.UserPhotosAdapter
-import com.goforer.lukohsplash.presentation.vm.Params
-import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserLikesViewModel
-import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
-import com.goforer.base.extension.isNull
-import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
-import com.goforer.base.view.dialog.NormalDialog
-import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
-import com.goforer.lukohsplash.presentation.vm.Param
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -85,7 +81,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
         photoAdapter ?: observeUserName()
         binding.swipeRefreshContainer.setOnRefreshListener {
             if (userName != "")
-                getUserLikes(userName)
+                getUserLikes()
         }
 
         photoAdapter = photoAdapter ?: UserPhotosAdapter(homeActivity) { _, _ ->
@@ -124,7 +120,8 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                             }
                         }
                     }
-                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing = false
+                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
+                        false
                 }
 
                 Timber.e("state.toString() $state")
@@ -164,20 +161,13 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserLikes(name)
+                getUserLikes()
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getUserLikes(name: String) {
-        Param.setParams(
-            Params(Query().apply {
-                firstParam = name
-                secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
-                thirdParam = NetworkBoundWorker.LATEST
-            })
-        )
+    private fun getUserLikes() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserLikesViewModel.value.collect { resource ->

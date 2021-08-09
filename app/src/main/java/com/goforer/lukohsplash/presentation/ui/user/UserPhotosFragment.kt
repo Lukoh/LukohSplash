@@ -31,21 +31,18 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
+import com.goforer.base.extension.isNull
+import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
+import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.user.adapter.UserPhotosAdapter
-import com.goforer.lukohsplash.presentation.vm.Params
-import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserPhotosViewModel
-import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
-import com.goforer.base.extension.isNull
-import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
-import com.goforer.base.view.dialog.NormalDialog
-import com.goforer.lukohsplash.presentation.vm.Param
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -84,7 +81,7 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
         photoAdapter ?: observeUserName()
         binding.swipeRefreshContainer.setOnRefreshListener {
             if (userName != "")
-                getUserPhotos(userName)
+                getUserPhotos()
         }
 
         photoAdapter = photoAdapter ?: UserPhotosAdapter(homeActivity) { _, _ ->
@@ -123,7 +120,8 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
                             }
                         }
                     }
-                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing = false
+                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
+                        false
                 }
 
                 Timber.e("state.toString() $state")
@@ -163,21 +161,13 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserPhotos(name)
+                getUserPhotos()
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getUserPhotos(name: String) {
-        Param.setParams(
-            Params(Query().apply {
-                firstParam = name
-                secondParam = false
-                thirdParam = "days"
-                forthParam = 30
-            })
-        )
+    private fun getUserPhotos() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserPhotosViewModel.value.collect { resource ->

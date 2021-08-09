@@ -25,7 +25,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +32,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -42,12 +42,19 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.goforer.base.extension.*
+import com.goforer.base.view.decoration.SpacingItemDecoration
+import com.goforer.base.view.dialog.NormalDialog
+import com.goforer.base.view.widget.SwipeCoordinatorLayout
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentPhotoDetailBinding
 import com.goforer.lukohsplash.domain.processor.photo.DownloadPhotosUseCase.Companion.FILE_EXISTED
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
+import com.goforer.lukohsplash.presentation.ui.photo.adapter.ExifAdapter
+import com.goforer.lukohsplash.presentation.ui.photo.adapter.TagAdapter
+import com.goforer.lukohsplash.presentation.vm.Param.setParams
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
@@ -55,14 +62,6 @@ import com.goforer.lukohsplash.presentation.vm.photo.DownloadPhotoViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.GetPhotoInfoViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserViewModel
-import com.goforer.base.extension.*
-import com.goforer.base.view.decoration.SpacingItemDecoration
-import com.goforer.base.view.dialog.NormalDialog
-import com.goforer.base.view.widget.SwipeCoordinatorLayout
-import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
-import com.goforer.lukohsplash.presentation.ui.photo.adapter.ExifAdapter
-import com.goforer.lukohsplash.presentation.ui.photo.adapter.TagAdapter
-import com.goforer.lukohsplash.presentation.vm.Param.setParams
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -182,19 +181,12 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     private fun observePhotoID() {
         sharedPhotoIdViewModel.shared {
-            getPhoto(it)
+            getPhoto()
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getPhoto(id : String) {
-        setParams(
-            Params(Query().apply {
-                firstParam = id
-                secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
-                thirdParam = NetworkBoundWorker.LATEST
-            })
-        )
+    private fun getPhoto() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getPhotoInfoViewModel.value.collect { resource ->
@@ -258,7 +250,8 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         rvTag.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false).apply {
                 addItemDecoration(
-                    SpacingItemDecoration(context,
+                    SpacingItemDecoration(
+                        context,
                         R.dimen.dp_12,
                         RecyclerView.HORIZONTAL
                     )
@@ -281,6 +274,12 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
             }, { user ->
                 sharedUserNameViewModel.share(user.username)
                 sharedUserViewModel.share(user)
+                setParams(
+                    Params(Query().apply {
+                        firstParam = user.username!!
+                        secondParam = -1
+                    })
+                )
             })
             it.findNavController().navigate(
                 PhotoDetailFragmentDirections.actionPhotoDetailFragmentToUserFragment()
@@ -311,11 +310,12 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun downloadPhoto(url: String) {
-        val file  = File(Environment.DIRECTORY_PICTURES)
+        val file = File(Environment.DIRECTORY_PICTURES)
 
         setParams(
             Params(Query().apply {
-                firstParam = homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                firstParam =
+                    homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                 secondParam = url
                 thirdParam = file
             })
@@ -328,11 +328,19 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                             if (isLoading)
                                 makeLoading(false)
 
-                            Toast.makeText(homeActivity, getString(R.string.download_fail_phrase), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                homeActivity,
+                                getString(R.string.download_fail_phrase),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
 
                         DownloadManager.STATUS_PAUSED -> {
-                            Toast.makeText(homeActivity, getString(R.string.paused), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                homeActivity,
+                                getString(R.string.paused),
+                                Toast.LENGTH_SHORT
+                            ).show()
 
                         }
 
@@ -353,7 +361,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                             )
                             NormalDialog.Builder(context)
                                 .setTitle(R.string.title_photo_download)
-                                .setMessage( getString(R.string.download_success))
+                                .setMessage(getString(R.string.download_success))
                                 .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
                                 }.setOnDismissListener {
                                 }.show(homeActivity.supportFragmentManager)
@@ -369,7 +377,11 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         else -> {
-                            Toast.makeText(homeActivity, getString(R.string.no_photo), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                homeActivity,
+                                getString(R.string.no_photo),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }

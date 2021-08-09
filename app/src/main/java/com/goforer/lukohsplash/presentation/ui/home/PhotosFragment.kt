@@ -31,25 +31,22 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.goforer.base.extension.*
+import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
-import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.LATEST
-import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.NONE_ITEM_COUNT
 import com.goforer.lukohsplash.databinding.FragmentPhotosBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.home.adapter.PhotosAdapter
+import com.goforer.lukohsplash.presentation.vm.Param.setParams
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.home.GetPhotosViewModel
 import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
-import com.goforer.base.extension.*
-import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
-import com.goforer.lukohsplash.presentation.vm.Param.setParams
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -82,6 +79,12 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
         photoAdapter ?: getPhotos()
         photoAdapter = photoAdapter ?: PhotosAdapter(homeActivity) { itemView, item ->
             sharedPhotoIdViewModel.share(item.id)
+            setParams(
+                Params(Query().apply {
+                    firstParam = item.id
+                    secondParam = -1
+                })
+            )
             itemView.findNavController().navigate(
                 PhotosFragmentDirections.actionPhotosFragmentToPhotoDetailFragment()
             )
@@ -126,7 +129,8 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
                             }
                         }
                     }
-                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing = false
+                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
+                        false
                 }
 
                 Timber.e("state.toString() $state")
@@ -190,13 +194,6 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhotos() {
-        setParams(
-            Params(Query().apply {
-                firstParam = 1
-                secondParam = NONE_ITEM_COUNT
-                thirdParam = LATEST
-            })
-        )
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getPhotosViewModel.value.collect { resource ->
@@ -223,7 +220,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
                             binding.swipeRefreshContainer.isRefreshing = true
                         }
 
-                        else ->{
+                        else -> {
 
                         }
                     }

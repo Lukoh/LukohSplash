@@ -16,12 +16,15 @@
 
 package com.goforer.lukohsplash.presentation.vm
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.goforer.lukohsplash.domain.UseCase
 import com.goforer.lukohsplash.presentation.vm.Param.getParams
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalCoroutinesApi::class)
 open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : ViewModel() {
@@ -35,7 +38,7 @@ open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : V
                     emit(resource)
                 }
             }.stateIn(
-                scope =  viewModelScope,
+                scope = viewModelScope,
                 started = WhileSubscribed(5000),
                 initialValue = initValue
             )

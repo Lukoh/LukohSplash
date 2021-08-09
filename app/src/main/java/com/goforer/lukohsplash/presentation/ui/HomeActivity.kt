@@ -32,9 +32,12 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.annotation.GlideModule
 import com.goforer.base.extension.gone
 import com.goforer.base.extension.upShow
+import com.goforer.base.utility.keyboard.KeyboardObserver
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.databinding.ActivityHomeBinding
-import com.goforer.base.utility.keyboard.KeyboardObserver
+import com.goforer.lukohsplash.presentation.vm.Param.setParams
+import com.goforer.lukohsplash.presentation.vm.Params
+import com.goforer.lukohsplash.presentation.vm.Query
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import javax.inject.Inject
@@ -83,6 +86,15 @@ class HomeActivity : AppCompatActivity(), HasAndroidInjector {
                 }
             }
         }
+
+        setParams(
+            Params(Query().apply {
+                firstParam = ""
+                secondParam = ""
+                thirdParam = ""
+                forthParam = ""
+            })
+        )
     }
 
     override fun onSupportNavigateUp(): Boolean {

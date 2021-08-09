@@ -38,13 +38,9 @@ import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.data.source.model.entity.user.response.Collection
 import com.goforer.lukohsplash.data.source.network.response.Status
-import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.user.adapter.UserCollectionAdapter
-import com.goforer.lukohsplash.presentation.vm.Param
-import com.goforer.lukohsplash.presentation.vm.Params
-import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserCollectionsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -85,7 +81,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
         collectionAdapter ?: observeUserName()
         binding.swipeRefreshContainer.setOnRefreshListener {
             if (userName != "")
-                getUserCollection(userName)
+                getUserCollection()
         }
 
         collectionAdapter = collectionAdapter ?: UserCollectionAdapter(homeActivity) { _, _ ->
@@ -125,7 +121,8 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                             }
                         }
                     }
-                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing = false
+                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
+                        false
                 }
 
                 Timber.e("state.toString() $state")
@@ -165,20 +162,13 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserCollection(name)
+                getUserCollection()
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getUserCollection(name: String) {
-        Param.setParams(
-            Params(Query().apply {
-                firstParam = name
-                secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
-                thirdParam = NetworkBoundWorker.LATEST
-            })
-        )
+    private fun getUserCollection() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserCollectionsViewModel.value.collect { resource ->
