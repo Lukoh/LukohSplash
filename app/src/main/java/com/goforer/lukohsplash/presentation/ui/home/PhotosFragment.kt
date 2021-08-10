@@ -46,7 +46,7 @@ import com.goforer.lukohsplash.presentation.vm.home.GetPhotosViewModel
 import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -113,7 +113,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
         }
 
         lifecycleScope.launchWhenCreated {
-            photoAdapter?.loadStateFlow?.collectLatest {
+            photoAdapter?.loadStateFlow?.collect {
                 var state: LoadState = LoadState.Loading
 
                 when {
@@ -194,13 +194,13 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhotos() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getPhotosViewModel.pullTrigger(Params(Query().apply {
                     firstParam = 1
                     secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
                     thirdParam = NetworkBoundWorker.LATEST
-                })).value.collectLatest { resource ->
+                })).value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {

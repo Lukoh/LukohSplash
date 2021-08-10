@@ -170,7 +170,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserLikes(name: String) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserLikesViewModel.pullTrigger(Params(Query().apply {
                     firstParam = name

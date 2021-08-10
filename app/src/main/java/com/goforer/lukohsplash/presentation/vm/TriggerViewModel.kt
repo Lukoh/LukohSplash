@@ -19,6 +19,7 @@ package com.goforer.lukohsplash.presentation.vm
 import androidx.lifecycle.*
 import com.goforer.lukohsplash.domain.UseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
@@ -28,7 +29,8 @@ open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : V
     private var initValue: Value? = null
 
     private val _value = MutableStateFlow(initValue)
-    internal var value = flow {
+    internal val value = flow {
+        delay(500L)
         emit(_value.value)
     }.stateIn(
         scope = viewModelScope,
@@ -40,6 +42,7 @@ open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : V
     open fun pullTrigger(params: Params): TriggerViewModel<Value> {
         viewModelScope.launch {
             useCase.run(viewModelScope, params).collect {
+                initValue = it
                 _value.value = it
             }
         }

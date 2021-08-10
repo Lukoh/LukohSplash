@@ -171,7 +171,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserCollection(name: String) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserCollectionsViewModel.pullTrigger(Params(Query().apply {
                     firstParam = name

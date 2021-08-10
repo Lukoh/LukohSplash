@@ -187,7 +187,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhoto(id: String) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getPhotoInfoViewModel.pullTrigger(Params(Query().apply {
                     firstParam = id
@@ -315,7 +315,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     private fun downloadPhoto(url: String) {
         val file = File(Environment.DIRECTORY_PICTURES)
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 downloadPhotoViewModel.pullTrigger(Params(Query().apply {
                     firstParam =
@@ -325,9 +325,6 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                 })).value.collect {
                     when (it) {
                         DownloadManager.STATUS_FAILED -> {
-                            if (isLoading)
-                                makeLoading(false)
-
                             Toast.makeText(
                                 homeActivity,
                                 getString(R.string.download_fail_phrase),
@@ -345,17 +342,12 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         DownloadManager.STATUS_PENDING -> {
-                            if (!isLoading)
-                                makeLoading(true)
                         }
 
                         DownloadManager.STATUS_RUNNING -> {
                         }
 
                         DownloadManager.STATUS_SUCCESSFUL -> {
-                            if (isLoading)
-                                makeLoading(false)
-
                             Timber.d(
                                 "$file${File.separator}${url.substring(url.lastIndexOf("/") + 1)}"
                             )

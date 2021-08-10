@@ -41,7 +41,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
         internal const val NONE_ITEM_COUNT = 10
         internal const val LATEST = "latest"
 
-        private const val LOADING = "loading"
+        internal const val LOADING = "loading"
     }
 
     internal val asSharedFlow = flow {
@@ -86,7 +86,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
         }
     }.shareIn(
         scope = lifecycleScope,
-        started = WhileSubscribed(5000),
+        started = WhileSubscribed(),
         replay = 1
     )
 

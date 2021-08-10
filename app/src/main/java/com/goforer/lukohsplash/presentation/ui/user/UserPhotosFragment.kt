@@ -170,7 +170,7 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserPhotos(name: String) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserPhotosViewModel.pullTrigger(Params(Query().apply {
                     firstParam = name
