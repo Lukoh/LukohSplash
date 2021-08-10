@@ -29,8 +29,9 @@ open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : V
     private var initValue: Value? = null
 
     private val _value = MutableStateFlow(initValue)
-    internal val value = flow {
-        delay(500L)
+
+    val value = flow {
+        delay(800)
         emit(_value.value)
     }.stateIn(
         scope = viewModelScope,
@@ -39,7 +40,7 @@ open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : V
     )
 
     @ExperimentalCoroutinesApi
-    open fun pullTrigger(params: Params): TriggerViewModel<Value> {
+    open fun pullTrigger(params: Params, lifecycleOwner: LifecycleOwner): TriggerViewModel<Value> {
         viewModelScope.launch {
             useCase.run(viewModelScope, params).collect {
                 initValue = it

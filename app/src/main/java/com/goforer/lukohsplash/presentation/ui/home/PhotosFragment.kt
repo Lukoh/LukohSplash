@@ -195,12 +195,12 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhotos() {
         viewLifecycleOwner.lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getPhotosViewModel.pullTrigger(Params(Query().apply {
                     firstParam = 1
                     secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
                     thirdParam = NetworkBoundWorker.LATEST
-                })).value.collect { resource ->
+                }), viewLifecycleOwner).value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {

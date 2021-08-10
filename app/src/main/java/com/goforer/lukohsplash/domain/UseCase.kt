@@ -18,6 +18,7 @@ package com.goforer.lukohsplash.domain
 
 import com.goforer.lukohsplash.presentation.vm.Params
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Singleton
 

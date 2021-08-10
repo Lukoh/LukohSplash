@@ -188,11 +188,11 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhoto(id: String) {
         viewLifecycleOwner.lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getPhotoInfoViewModel.pullTrigger(Params(Query().apply {
                     firstParam = id
                     secondParam = -1
-                })).value.collect { resource ->
+                }), viewLifecycleOwner).value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {
@@ -316,13 +316,13 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         val file = File(Environment.DIRECTORY_PICTURES)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 downloadPhotoViewModel.pullTrigger(Params(Query().apply {
                     firstParam =
                         homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                     secondParam = url
                     thirdParam = file
-                })).value.collect {
+                }), viewLifecycleOwner).value.collect {
                     when (it) {
                         DownloadManager.STATUS_FAILED -> {
                             Toast.makeText(
