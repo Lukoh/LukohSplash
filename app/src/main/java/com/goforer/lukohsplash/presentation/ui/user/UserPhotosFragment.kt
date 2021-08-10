@@ -41,6 +41,8 @@ import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.user.adapter.UserPhotosAdapter
+import com.goforer.lukohsplash.presentation.vm.Params
+import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserPhotosViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -81,7 +83,7 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
         photoAdapter ?: observeUserName()
         binding.swipeRefreshContainer.setOnRefreshListener {
             if (userName != "")
-                getUserPhotos()
+                getUserPhotos(userName)
         }
 
         photoAdapter = photoAdapter ?: UserPhotosAdapter(homeActivity) { _, _ ->
@@ -161,16 +163,21 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserPhotos()
+                getUserPhotos(name)
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getUserPhotos() {
+    private fun getUserPhotos(name: String) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getUserPhotosViewModel.value.collect { resource ->
+                getUserPhotosViewModel.pullTrigger(Params(Query().apply {
+                    firstParam = name
+                    secondParam = false
+                    thirdParam = "days"
+                    forthParam = 30
+                })).value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {

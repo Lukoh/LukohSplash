@@ -41,6 +41,8 @@ import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.user.adapter.UserCollectionAdapter
+import com.goforer.lukohsplash.presentation.vm.Params
+import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserCollectionsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -81,7 +83,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
         collectionAdapter ?: observeUserName()
         binding.swipeRefreshContainer.setOnRefreshListener {
             if (userName != "")
-                getUserCollection()
+                getUserCollection(userName)
         }
 
         collectionAdapter = collectionAdapter ?: UserCollectionAdapter(homeActivity) { _, _ ->
@@ -162,16 +164,19 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserCollection()
+                getUserCollection(userName)
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getUserCollection() {
+    private fun getUserCollection(name: String) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getUserCollectionsViewModel.value.collect { resource ->
+                getUserCollectionsViewModel.pullTrigger(Params(Query().apply {
+                    firstParam = name
+                    secondParam = -1
+                })).value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {

@@ -35,6 +35,7 @@ import com.goforer.base.extension.*
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
+import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
 import com.goforer.lukohsplash.databinding.FragmentPhotosBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.home.adapter.PhotosAdapter
@@ -45,7 +46,6 @@ import com.goforer.lukohsplash.presentation.vm.home.GetPhotosViewModel
 import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -196,7 +196,11 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     private fun getPhotos() {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getPhotosViewModel.value.collect { resource ->
+                getPhotosViewModel.pullTrigger(Params(Query().apply {
+                    firstParam = 1
+                    secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
+                    thirdParam = NetworkBoundWorker.LATEST
+                })).value.collectLatest { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {

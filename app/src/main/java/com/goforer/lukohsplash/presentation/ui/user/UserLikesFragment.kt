@@ -41,6 +41,8 @@ import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.user.adapter.UserPhotosAdapter
+import com.goforer.lukohsplash.presentation.vm.Params
+import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserLikesViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -81,7 +83,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
         photoAdapter ?: observeUserName()
         binding.swipeRefreshContainer.setOnRefreshListener {
             if (userName != "")
-                getUserLikes()
+                getUserLikes(userName)
         }
 
         photoAdapter = photoAdapter ?: UserPhotosAdapter(homeActivity) { _, _ ->
@@ -161,16 +163,19 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserLikes()
+                getUserLikes(name)
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getUserLikes() {
+    private fun getUserLikes(name: String) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getUserLikesViewModel.value.collect { resource ->
+                getUserLikesViewModel.pullTrigger(Params(Query().apply {
+                    firstParam = name
+                    secondParam = -1
+                })).value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {

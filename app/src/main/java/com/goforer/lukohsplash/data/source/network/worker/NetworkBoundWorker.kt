@@ -18,8 +18,8 @@ package com.goforer.lukohsplash.data.source.network.worker
 
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
-import com.goforer.lukohsplash.data.source.network.response.*
 import com.goforer.base.extension.isNullOnFlow
+import com.goforer.lukohsplash.data.source.network.response.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed

@@ -181,15 +181,18 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     private fun observePhotoID() {
         sharedPhotoIdViewModel.shared {
-            getPhoto()
+            getPhoto(it)
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getPhoto() {
+    private fun getPhoto(id: String) {
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getPhotoInfoViewModel.value.collect { resource ->
+                getPhotoInfoViewModel.pullTrigger(Params(Query().apply {
+                    firstParam = id
+                    secondParam = -1
+                })).value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {
@@ -312,17 +315,14 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     private fun downloadPhoto(url: String) {
         val file = File(Environment.DIRECTORY_PICTURES)
 
-        setParams(
-            Params(Query().apply {
-                firstParam =
-                    homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                secondParam = url
-                thirdParam = file
-            })
-        )
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                downloadPhotoViewModel.value.collect {
+                downloadPhotoViewModel.pullTrigger(Params(Query().apply {
+                    firstParam =
+                        homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                    secondParam = url
+                    thirdParam = file
+                })).value.collect {
                     when (it) {
                         DownloadManager.STATUS_FAILED -> {
                             if (isLoading)
