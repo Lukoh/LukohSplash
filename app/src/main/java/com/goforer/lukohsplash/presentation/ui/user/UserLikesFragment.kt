@@ -106,7 +106,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
             layoutManager = gridManager
         }
 
-        lifecycleScope.launchWhenCreated {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             photoAdapter?.loadStateFlow?.collectLatest {
                 var state: LoadState = LoadState.Loading
 

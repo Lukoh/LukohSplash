@@ -107,7 +107,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
             layoutManager = gridManager
         }
 
-        lifecycleScope.launchWhenCreated {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             collectionAdapter?.loadStateFlow?.collectLatest {
                 var state: LoadState = LoadState.Loading
 

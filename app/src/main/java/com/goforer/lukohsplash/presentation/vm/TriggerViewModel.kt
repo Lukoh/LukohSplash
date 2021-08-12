@@ -19,14 +19,11 @@ package com.goforer.lukohsplash.presentation.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.goforer.lukohsplash.domain.UseCase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.stateIn
 
-@OptIn(ExperimentalCoroutinesApi::class)
 open class TriggerViewModel<Value>(val useCase: UseCase<Value>, params: Params) : ViewModel() {
     private var initValue: Value? = null
-
     val value = useCase.run(viewModelScope, params)
         .stateIn(
             scope = viewModelScope,

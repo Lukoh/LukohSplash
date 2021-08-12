@@ -40,7 +40,6 @@ import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
 import com.goforer.lukohsplash.databinding.FragmentPhotosBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.home.adapter.PhotosAdapter
-import com.goforer.lukohsplash.presentation.vm.Param.setParams
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.home.GetPhotosViewModel
@@ -48,6 +47,7 @@ import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -89,12 +89,6 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
         photoAdapter ?: getPhotos()
         photoAdapter = photoAdapter ?: PhotosAdapter(homeActivity) { itemView, item ->
             sharedPhotoIdViewModel.share(item.id)
-            setParams(
-                Params(Query().apply {
-                    firstParam = item.id
-                    secondParam = item.urls.raw
-                })
-            )
             itemView.findNavController().navigate(
                 PhotosFragmentDirections.actionPhotosFragmentToPhotoDetailFragment()
             )
@@ -122,7 +116,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
             getPhotos()
         }
 
-        lifecycleScope.launchWhenCreated {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             photoAdapter?.loadStateFlow?.collect {
                 var state: LoadState = LoadState.Loading
 
@@ -206,7 +200,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     private fun getPhotos() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getPhotosViewModel.value.collect { resource ->
+                getPhotosViewModel.value.collectLatest { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {

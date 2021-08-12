@@ -25,9 +25,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
 import com.goforer.lukohsplash.di.helper.AppInjector
-import com.goforer.lukohsplash.presentation.vm.Param.setParams
-import com.goforer.lukohsplash.presentation.vm.Params
-import com.goforer.lukohsplash.presentation.vm.Query
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import timber.log.Timber
@@ -65,15 +62,7 @@ open class LukohSplash : Application(), LifecycleObserver, HasAndroidInjector {
             Timber.uprootAll()
             Timber.plant(Timber.DebugTree())
         }
-
-        setParams(
-            Params(Query().apply {
-                firstParam = ""
-                secondParam = ""
-                thirdParam = ""
-                forthParam = ""
-            })
-        )
+        
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         registerComponentCallbacks(ComponentCallback(this))
         AppInjector.init(this)

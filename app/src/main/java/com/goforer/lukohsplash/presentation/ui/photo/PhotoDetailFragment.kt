@@ -55,7 +55,6 @@ import com.goforer.lukohsplash.domain.processor.photo.DownloadPhotosUseCase.Comp
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.ExifAdapter
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.TagAdapter
-import com.goforer.lukohsplash.presentation.vm.Param.getParams
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
@@ -120,18 +119,6 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     @Inject
     lateinit var sharedUserNameViewModel: SharedUserNameViewModel
-
-    private val downloadPhotoViewModel: DownloadPhotoViewModel by viewModels {
-        DownloadPhotoViewModel.provideFactory(
-            downloadPhotoViewModelFactory,
-            Params(Query().apply {
-                firstParam =
-                    homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                secondParam = getParams().query.secondParam
-                thirdParam = File(Environment.DIRECTORY_PICTURES)
-            })
-        )
-    }
 
     companion object {
         private const val RAW = "raw"
@@ -305,7 +292,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         ivDownload.setOnClickListener {
             setupPermission(object : PermissionCallback {
                 override fun onPermissionGranted() {
-                    downloadPhoto()
+                    downloadPhoto(photo.urls.raw)
                 }
             })
         }
@@ -325,9 +312,21 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun downloadPhoto() {
+    private fun downloadPhoto(url: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val downloadPhotoViewModel: DownloadPhotoViewModel by viewModels {
+                    DownloadPhotoViewModel.provideFactory(
+                        downloadPhotoViewModelFactory,
+                        Params(Query().apply {
+                            firstParam =
+                                homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                            secondParam = url
+                            thirdParam = File(Environment.DIRECTORY_PICTURES)
+                        })
+                    )
+                }
+
                 downloadPhotoViewModel.value.collect {
                     when (it) {
                         DownloadManager.STATUS_FAILED -> {
