@@ -197,7 +197,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getPhotoInfoViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
@@ -314,7 +314,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun downloadPhoto(url: String) {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val downloadPhotoViewModel: DownloadPhotoViewModel by viewModels {
                     DownloadPhotoViewModel.provideFactory(
                         downloadPhotoViewModelFactory,

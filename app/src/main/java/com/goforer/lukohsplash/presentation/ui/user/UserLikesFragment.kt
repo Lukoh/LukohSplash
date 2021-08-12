@@ -181,7 +181,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
             )
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserLikesViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {

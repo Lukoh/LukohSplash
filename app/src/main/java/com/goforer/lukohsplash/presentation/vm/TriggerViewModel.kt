@@ -19,15 +19,39 @@ package com.goforer.lukohsplash.presentation.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.goforer.lukohsplash.domain.UseCase
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-open class TriggerViewModel<Value>(val useCase: UseCase<Value>, params: Params) : ViewModel() {
+open class TriggerViewModel<Value>(private val useCase: UseCase<Value>, params: Params) :
+    ViewModel() {
     private var initValue: Value? = null
-    val value = useCase.run(viewModelScope, params)
-        .stateIn(
+
+    private val _value = MutableStateFlow(initValue)
+
+    //var value: StateFlow<Value?> = _value
+
+    val value by lazy {
+        flow {
+            delay(750)
+            emit(_value.value)
+        }.stateIn(
             scope = viewModelScope,
             started = WhileSubscribed(),
             initialValue = initValue
         )
+    }
+
+    init {
+        viewModelScope.launch {
+            useCase.run(viewModelScope, params).collect {
+                initValue = it
+                _value.value = it
+            }
+        }
+    }
 }

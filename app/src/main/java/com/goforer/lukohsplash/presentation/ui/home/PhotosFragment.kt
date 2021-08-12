@@ -84,9 +84,9 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
             isFromBackStack = bundle.getBoolean(FRAGMENT_RESULT_FROM_BACKSTACK)
         }
 
-
         setAppBar()
         photoAdapter ?: getPhotos()
+
         photoAdapter = photoAdapter ?: PhotosAdapter(homeActivity) { itemView, item ->
             sharedPhotoIdViewModel.share(item.id)
             itemView.findNavController().navigate(
@@ -199,7 +199,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhotos() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getPhotosViewModel.value.collectLatest { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
