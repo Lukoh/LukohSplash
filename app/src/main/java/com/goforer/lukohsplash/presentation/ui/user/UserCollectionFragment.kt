@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -63,7 +64,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
     private var collectionAdapter: UserCollectionAdapter? = null
 
     @Inject
-    internal lateinit var getUserCollectionsViewModel: GetUserCollectionsViewModel
+    lateinit var getUserCollectionsViewModelFactory: GetUserCollectionsViewModel.AssistedViewModelFactory
 
     @Inject
     internal lateinit var sharedUserNameViewModel: SharedUserNameViewModel
@@ -171,12 +172,18 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserCollection(name: String) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getUserCollectionsViewModel.pullTrigger(Params(Query().apply {
+        val getUserCollectionsViewModel: GetUserCollectionsViewModel by viewModels {
+            GetUserCollectionsViewModel.provideFactory(
+                getUserCollectionsViewModelFactory,
+                Params(Query().apply {
                     firstParam = name
                     secondParam = -1
-                }), viewLifecycleOwner).value.collect { resource ->
+                })
+            )
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getUserCollectionsViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {

@@ -21,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -63,10 +64,18 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     private var isFromBackStack = false
 
     @Inject
-    internal lateinit var getPhotosViewModel: GetPhotosViewModel
+    lateinit var getPhotosViewModelFactory: GetPhotosViewModel.AssistedViewModelFactory
 
     @Inject
     internal lateinit var sharedPhotoIdViewModel: SharedPhotoIdViewModel
+
+    private val getPhotosViewModel: GetPhotosViewModel by viewModels {
+        GetPhotosViewModel.provideFactory(getPhotosViewModelFactory, Params(Query().apply {
+            firstParam = 1
+            secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
+            thirdParam = NetworkBoundWorker.LATEST
+        }))
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -75,6 +84,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
             isFromBackStack = bundle.getBoolean(FRAGMENT_RESULT_FROM_BACKSTACK)
         }
 
+
         setAppBar()
         photoAdapter ?: getPhotos()
         photoAdapter = photoAdapter ?: PhotosAdapter(homeActivity) { itemView, item ->
@@ -82,7 +92,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
             setParams(
                 Params(Query().apply {
                     firstParam = item.id
-                    secondParam = -1
+                    secondParam = item.urls.raw
                 })
             )
             itemView.findNavController().navigate(
@@ -196,11 +206,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     private fun getPhotos() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getPhotosViewModel.pullTrigger(Params(Query().apply {
-                    firstParam = 1
-                    secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
-                    thirdParam = NetworkBoundWorker.LATEST
-                }), viewLifecycleOwner).value.collect { resource ->
+                getPhotosViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {

@@ -133,6 +133,7 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
     implementation "androidx.fragment:fragment-ktx:$arch_fragmentVersion"
+    implementation "androidx.activity:activity-ktx:$arch_activityVersion"
     implementation "androidx.recyclerview:recyclerview:$androidx_recyclerview_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$arch_lifecycle_extension_version"
     // alternatively, just ViewModel

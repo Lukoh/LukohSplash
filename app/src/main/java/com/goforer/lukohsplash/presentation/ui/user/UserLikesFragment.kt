@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -63,7 +64,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
     private var photoAdapter: UserPhotosAdapter? = null
 
     @Inject
-    internal lateinit var getUserLikesViewModel: GetUserLikesViewModel
+    lateinit var getUserLikesViewModelFactory: GetUserLikesViewModel.AssistedViewModelFactory
 
     @Inject
     internal lateinit var sharedUserNameViewModel: SharedUserNameViewModel
@@ -163,19 +164,25 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserLikes(name)
+                getUserLikes(userName)
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserLikes(name: String) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getUserLikesViewModel.pullTrigger(Params(Query().apply {
+        val getUserLikesViewModel: GetUserLikesViewModel by viewModels {
+            GetUserLikesViewModel.provideFactory(
+                getUserLikesViewModelFactory,
+                Params(Query().apply {
                     firstParam = name
                     secondParam = -1
-                }), viewLifecycleOwner).value.collect { resource ->
+                })
+            )
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getUserLikesViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {

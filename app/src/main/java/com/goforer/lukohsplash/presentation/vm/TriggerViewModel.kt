@@ -16,38 +16,21 @@
 
 package com.goforer.lukohsplash.presentation.vm
 
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.goforer.lukohsplash.domain.UseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalCoroutinesApi::class)
-open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : ViewModel() {
+open class TriggerViewModel<Value>(val useCase: UseCase<Value>, params: Params) : ViewModel() {
     private var initValue: Value? = null
 
-    private val _value = MutableStateFlow(initValue)
-
-    val value = flow {
-        delay(800)
-        emit(_value.value)
-    }.stateIn(
-        scope = viewModelScope,
-        started = WhileSubscribed(),
-        initialValue = initValue
-    )
-
-    @ExperimentalCoroutinesApi
-    open fun pullTrigger(params: Params, lifecycleOwner: LifecycleOwner): TriggerViewModel<Value> {
-        viewModelScope.launch {
-            useCase.run(viewModelScope, params).collect {
-                initValue = it
-                _value.value = it
-            }
-        }
-
-        return this@TriggerViewModel
-    }
+    val value = useCase.run(viewModelScope, params)
+        .stateIn(
+            scope = viewModelScope,
+            started = WhileSubscribed(),
+            initialValue = initValue
+        )
 }

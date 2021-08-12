@@ -16,12 +16,35 @@
 
 package com.goforer.lukohsplash.presentation.vm.photo
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.goforer.lukohsplash.domain.processor.photo.DownloadPhotosUseCase
+import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.TriggerViewModel
-import javax.inject.Inject
-import javax.inject.Singleton
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-@Singleton
 class DownloadPhotoViewModel
-@Inject
-constructor(useCase: DownloadPhotosUseCase) : TriggerViewModel<Int?>(useCase)
+@AssistedInject
+constructor(
+    useCase: DownloadPhotosUseCase,
+    @Assisted private val params: Params
+) : TriggerViewModel<Int?>(useCase, params) {
+    @AssistedFactory
+    interface AssistedViewModelFactory {
+        fun create(params: Params): DownloadPhotoViewModel
+    }
+
+    companion object {
+        fun provideFactory(
+            assistedFactory: AssistedViewModelFactory,
+            params: Params
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(params) as T
+            }
+        }
+    }
+}

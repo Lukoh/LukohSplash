@@ -34,6 +34,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -54,7 +55,7 @@ import com.goforer.lukohsplash.domain.processor.photo.DownloadPhotosUseCase.Comp
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.ExifAdapter
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.TagAdapter
-import com.goforer.lukohsplash.presentation.vm.Param.setParams
+import com.goforer.lukohsplash.presentation.vm.Param.getParams
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
@@ -65,7 +66,6 @@ import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -101,10 +101,10 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         }
 
     @Inject
-    lateinit var getPhotoInfoViewModel: GetPhotoInfoViewModel
+    lateinit var getPhotoInfoViewModelFactory: GetPhotoInfoViewModel.AssistedViewModelFactory
 
     @Inject
-    lateinit var downloadPhotoViewModel: DownloadPhotoViewModel
+    lateinit var downloadPhotoViewModelFactory: DownloadPhotoViewModel.AssistedViewModelFactory
 
     /*
     @Inject
@@ -120,6 +120,18 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     @Inject
     lateinit var sharedUserNameViewModel: SharedUserNameViewModel
+
+    private val downloadPhotoViewModel: DownloadPhotoViewModel by viewModels {
+        DownloadPhotoViewModel.provideFactory(
+            downloadPhotoViewModelFactory,
+            Params(Query().apply {
+                firstParam =
+                    homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                secondParam = getParams().query.secondParam
+                thirdParam = File(Environment.DIRECTORY_PICTURES)
+            })
+        )
+    }
 
     companion object {
         private const val RAW = "raw"
@@ -187,12 +199,19 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhoto(id: String) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getPhotoInfoViewModel.pullTrigger(Params(Query().apply {
+        val getPhotoInfoViewModel: GetPhotoInfoViewModel by viewModels {
+            GetPhotoInfoViewModel.provideFactory(
+                getPhotoInfoViewModelFactory,
+                Params(Query().apply {
                     firstParam = id
                     secondParam = -1
-                }), viewLifecycleOwner).value.collect { resource ->
+                })
+            )
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getPhotoInfoViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {
@@ -277,12 +296,6 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
             }, { user ->
                 sharedUserNameViewModel.share(user.username)
                 sharedUserViewModel.share(user)
-                setParams(
-                    Params(Query().apply {
-                        firstParam = user.username!!
-                        secondParam = -1
-                    })
-                )
             })
             it.findNavController().navigate(
                 PhotoDetailFragmentDirections.actionPhotoDetailFragmentToUserFragment()
@@ -292,7 +305,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         ivDownload.setOnClickListener {
             setupPermission(object : PermissionCallback {
                 override fun onPermissionGranted() {
-                    downloadPhoto(photo.urls.raw)
+                    downloadPhoto()
                 }
             })
         }
@@ -312,17 +325,10 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun downloadPhoto(url: String) {
-        val file = File(Environment.DIRECTORY_PICTURES)
-
+    private fun downloadPhoto() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                downloadPhotoViewModel.pullTrigger(Params(Query().apply {
-                    firstParam =
-                        homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                    secondParam = url
-                    thirdParam = file
-                }), viewLifecycleOwner).value.collect {
+                downloadPhotoViewModel.value.collect {
                     when (it) {
                         DownloadManager.STATUS_FAILED -> {
                             Toast.makeText(
@@ -348,9 +354,6 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         DownloadManager.STATUS_SUCCESSFUL -> {
-                            Timber.d(
-                                "$file${File.separator}${url.substring(url.lastIndexOf("/") + 1)}"
-                            )
                             NormalDialog.Builder(context)
                                 .setTitle(R.string.title_photo_download)
                                 .setMessage(getString(R.string.download_success))

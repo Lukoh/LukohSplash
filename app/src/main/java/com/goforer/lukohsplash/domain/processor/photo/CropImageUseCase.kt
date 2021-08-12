@@ -23,7 +23,6 @@ import com.goforer.lukohsplash.presentation.vm.Params
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
@@ -32,7 +31,7 @@ import javax.inject.Singleton
 @Singleton
 class CropImageUseCase
 @Inject
-constructor() : UseCase<Params, Bitmap>() {
+constructor() : UseCase<Bitmap>() {
     @Suppress("UNCHECKED_CAST")
     override fun run(lifecycleScope: CoroutineScope, params: Params) = flow {
         emit(cropImage(params.query.firstParam as Bitmap))

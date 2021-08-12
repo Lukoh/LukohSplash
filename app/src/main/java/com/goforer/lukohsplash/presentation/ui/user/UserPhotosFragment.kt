@@ -21,6 +21,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -63,7 +64,7 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
     private lateinit var userName: String
 
     @Inject
-    internal lateinit var getUserPhotosViewModel: GetUserPhotosViewModel
+    lateinit var getUserPhotosViewModelFactory: GetUserPhotosViewModel.AssistedViewModelFactory
 
     @Inject
     internal lateinit var sharedUserNameViewModel: SharedUserNameViewModel
@@ -163,21 +164,27 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserPhotos(name)
+                getUserPhotos(userName)
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserPhotos(name: String) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getUserPhotosViewModel.pullTrigger(Params(Query().apply {
+        val getUserPhotosViewModel: GetUserPhotosViewModel by viewModels {
+            GetUserPhotosViewModel.provideFactory(
+                getUserPhotosViewModelFactory,
+                Params(Query().apply {
                     firstParam = name
                     secondParam = false
                     thirdParam = "days"
                     forthParam = 30
-                }), viewLifecycleOwner).value.collect { resource ->
+                })
+            )
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getUserPhotosViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {
