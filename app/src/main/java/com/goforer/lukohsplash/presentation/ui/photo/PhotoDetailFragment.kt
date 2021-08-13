@@ -186,19 +186,19 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhoto(id: String) {
-        val getPhotoInfoViewModel: GetPhotoInfoViewModel by viewModels {
-            GetPhotoInfoViewModel.provideFactory(
-                getPhotoInfoViewModelFactory,
-                Params(Query().apply {
-                    firstParam = id
-                    secondParam = -1
-                }),
-                600
-            )
-        }
-
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val getPhotoInfoViewModel: GetPhotoInfoViewModel by viewModels {
+                    GetPhotoInfoViewModel.provideFactory(
+                        getPhotoInfoViewModelFactory,
+                        Params(Query().apply {
+                            firstParam = id
+                            secondParam = -1
+                        }),
+                        650
+                    )
+                }
+
                 getPhotoInfoViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
@@ -326,7 +326,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                             secondParam = url
                             thirdParam = File(Environment.DIRECTORY_PICTURES)
                         }),
-                        400
+                        5
                     )
                 }
 

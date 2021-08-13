@@ -37,19 +37,14 @@ open class TriggerViewModel<Value>(
     private var initValue: Value? = null
 
     private val _value = MutableStateFlow(initValue)
-
-    //val value: StateFlow<Value?> = _value
-
-    val value by lazy {
-        flow {
-            delay(delayTimeout)
-            emit(_value.value)
-        }.stateIn(
-            scope = viewModelScope,
-            started = WhileSubscribed(5000),
-            initialValue = initValue
-        )
-    }
+    val value = flow {
+        delay(delayTimeout)
+        emit(_value.value)
+    }.stateIn(
+        scope = viewModelScope,
+        started = WhileSubscribed(5000),
+        initialValue = initValue
+    )
 
     init {
         viewModelScope.launch {
@@ -60,10 +55,13 @@ open class TriggerViewModel<Value>(
         }
     }
 
+    /*
     @ExperimentalCoroutinesApi
     override fun onCleared() {
         super.onCleared()
 
         _value.value = initValue
     }
+
+     */
 }

@@ -68,18 +68,6 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     @Inject
     internal lateinit var sharedPhotoIdViewModel: SharedPhotoIdViewModel
 
-    private val getPhotosViewModel: GetPhotosViewModel by viewModels {
-        GetPhotosViewModel.provideFactory(
-            getPhotosViewModelFactory,
-            Params(Query().apply {
-                firstParam = 1
-                secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
-                thirdParam = NetworkBoundWorker.LATEST
-            }),
-            1000
-        )
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -203,6 +191,17 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     private fun getPhotos() {
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val getPhotosViewModel: GetPhotosViewModel by viewModels {
+                    GetPhotosViewModel.provideFactory(
+                        getPhotosViewModelFactory,
+                        Params(Query().apply {
+                            firstParam = 1
+                            secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
+                            thirdParam = NetworkBoundWorker.LATEST
+                        }),
+                        1000
+                    )
+                }
                 getPhotosViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
