@@ -178,11 +178,12 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                 Params(Query().apply {
                     firstParam = name
                     secondParam = -1
-                })
+                }),
+                750
             )
         }
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserCollectionsViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {

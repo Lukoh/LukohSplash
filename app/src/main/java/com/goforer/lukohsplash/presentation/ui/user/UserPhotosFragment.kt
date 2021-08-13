@@ -179,11 +179,12 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
                     secondParam = false
                     thirdParam = "days"
                     forthParam = 30
-                })
+                }),
+                700
             )
         }
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserPhotosViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {

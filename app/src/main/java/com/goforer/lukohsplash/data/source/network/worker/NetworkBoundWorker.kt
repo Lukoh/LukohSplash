@@ -86,8 +86,8 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
         }
     }.shareIn(
         scope = lifecycleScope,
-        started = WhileSubscribed(),
-        replay = 1
+        started = WhileSubscribed(5000),
+        replay = 10
     )
 
     protected open suspend fun onNetworkError(errorMessage: String, errorCode: Int) {

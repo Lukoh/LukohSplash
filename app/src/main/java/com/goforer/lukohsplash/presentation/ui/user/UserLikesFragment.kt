@@ -41,7 +41,7 @@ import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
-import com.goforer.lukohsplash.presentation.ui.user.adapter.UserPhotosAdapter
+import com.goforer.lukohsplash.presentation.ui.user.adapter.UerLikesAdapter
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
@@ -61,7 +61,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
 
     private lateinit var userName: String
 
-    private var photoAdapter: UserPhotosAdapter? = null
+    private var likesAdapter: UerLikesAdapter? = null
 
     @Inject
     lateinit var getUserLikesViewModelFactory: GetUserLikesViewModel.AssistedViewModelFactory
@@ -81,13 +81,13 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        photoAdapter ?: observeUserName()
+        likesAdapter ?: observeUserName()
         binding.swipeRefreshContainer.setOnRefreshListener {
             if (userName != "")
                 getUserLikes(userName)
         }
 
-        photoAdapter = photoAdapter ?: UserPhotosAdapter(homeActivity) { _, _ ->
+        likesAdapter = likesAdapter ?: UerLikesAdapter(homeActivity) { _, _ ->
         }
 
         binding.rvList.apply {
@@ -95,8 +95,8 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                 gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
             }
 
-            adapter = photoAdapter
-            photoAdapter?.stateRestorationPolicy = PREVENT_WHEN_EMPTY
+            adapter = likesAdapter
+            likesAdapter?.stateRestorationPolicy = PREVENT_WHEN_EMPTY
             gridManager.spanCount = 1
             gridManager.orientation = resources.configuration.orientation
             itemAnimator?.changeDuration = 0
@@ -107,7 +107,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
-            photoAdapter?.loadStateFlow?.collectLatest {
+            likesAdapter?.loadStateFlow?.collectLatest {
                 var state: LoadState = LoadState.Loading
 
                 when {
@@ -116,7 +116,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                     it.refresh is LoadState.NotLoading -> {
                         launch {
                             with(binding) {
-                                if (photoAdapter?.itemCount == 0)
+                                if (likesAdapter?.itemCount == 0)
                                     showNoPhotoMessage(rvList, noPhotoContainer.root, true)
                                 else
                                     showNoPhotoMessage(rvList, noPhotoContainer.root, false)
@@ -177,11 +177,12 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                 Params(Query().apply {
                     firstParam = name
                     secondParam = -1
-                })
+                }),
+                700
             )
         }
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserLikesViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
@@ -191,7 +192,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                                 val photos = resource.getData() as? PagingData<Photo>
 
                                 lifecycleScope.launchWhenCreated {
-                                    photoAdapter?.submitData(photos!!)
+                                    likesAdapter?.submitData(photos!!)
                                 }
                             }
                         }

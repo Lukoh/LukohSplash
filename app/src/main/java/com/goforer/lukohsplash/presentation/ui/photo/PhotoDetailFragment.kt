@@ -192,12 +192,13 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                 Params(Query().apply {
                     firstParam = id
                     secondParam = -1
-                })
+                }),
+                600
             )
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getPhotoInfoViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
@@ -232,6 +233,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     private fun displayPhotoDetails(photo: Photo) = with(binding) {
         photo.user?.let { user ->
+            swipeContainer.show()
             tvUser.text = user.name ?: getString(R.string.unknown)
             ivUser.loadProfilePicture(user)
         }
@@ -314,7 +316,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun downloadPhoto(url: String) {
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val downloadPhotoViewModel: DownloadPhotoViewModel by viewModels {
                     DownloadPhotoViewModel.provideFactory(
                         downloadPhotoViewModelFactory,
@@ -323,7 +325,8 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                                 homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                             secondParam = url
                             thirdParam = File(Environment.DIRECTORY_PICTURES)
-                        })
+                        }),
+                        400
                     )
                 }
 

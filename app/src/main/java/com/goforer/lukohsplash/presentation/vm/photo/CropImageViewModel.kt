@@ -30,21 +30,26 @@ class CropImageViewModel
 @AssistedInject
 constructor(
     useCase: CropImageUseCase,
-    @Assisted private val params: Params
-) : TriggerViewModel<Bitmap>(useCase, params) {
+    @Assisted private val params: Params,
+    @Assisted private val delayTimeout: Long
+) : TriggerViewModel<Bitmap>(useCase, params, delayTimeout) {
     @AssistedFactory
     interface AssistedCropImageFactory {
-        fun create(params: Params): CropImageViewModel
+        fun create(
+            params: Params,
+            delayTimeout: Long
+        ): CropImageViewModel
     }
 
     companion object {
         fun provideFactory(
             assistedFactory: AssistedCropImageFactory,
-            params: Params
+            params: Params,
+            delayTimeout: Long
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return assistedFactory.create(params) as T
+                return assistedFactory.create(params, delayTimeout) as T
             }
         }
     }

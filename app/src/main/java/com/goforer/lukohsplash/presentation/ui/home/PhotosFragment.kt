@@ -47,7 +47,6 @@ import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -70,11 +69,15 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     internal lateinit var sharedPhotoIdViewModel: SharedPhotoIdViewModel
 
     private val getPhotosViewModel: GetPhotosViewModel by viewModels {
-        GetPhotosViewModel.provideFactory(getPhotosViewModelFactory, Params(Query().apply {
-            firstParam = 1
-            secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
-            thirdParam = NetworkBoundWorker.LATEST
-        }))
+        GetPhotosViewModel.provideFactory(
+            getPhotosViewModelFactory,
+            Params(Query().apply {
+                firstParam = 1
+                secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
+                thirdParam = NetworkBoundWorker.LATEST
+            }),
+            1000
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -198,9 +201,9 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhotos() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                getPhotosViewModel.value.collectLatest { resource ->
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getPhotosViewModel.value.collect { resource ->
                     when (resource?.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {
@@ -208,7 +211,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
                                 @Suppress("UNCHECKED_CAST")
                                 val photos = resource.getData() as? PagingData<Photo>
 
-                                lifecycleScope.launchWhenCreated {
+                                viewLifecycleOwner.lifecycleScope.launchWhenCreated {
                                     photoAdapter?.submitData(photos!!)
                                 }
                             }

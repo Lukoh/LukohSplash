@@ -29,21 +29,26 @@ class DownloadPhotoViewModel
 @AssistedInject
 constructor(
     useCase: DownloadPhotosUseCase,
-    @Assisted private val params: Params
-) : TriggerViewModel<Int?>(useCase, params) {
+    @Assisted private val params: Params,
+    @Assisted private val delayTimeout: Long
+) : TriggerViewModel<Int?>(useCase, params, delayTimeout) {
     @AssistedFactory
     interface AssistedViewModelFactory {
-        fun create(params: Params): DownloadPhotoViewModel
+        fun create(
+            params: Params,
+            delayTimeout: Long
+        ): DownloadPhotoViewModel
     }
 
     companion object {
         fun provideFactory(
             assistedFactory: AssistedViewModelFactory,
-            params: Params
+            params: Params,
+            delayTimeout: Long
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return assistedFactory.create(params) as T
+                return assistedFactory.create(params, delayTimeout) as T
             }
         }
     }
