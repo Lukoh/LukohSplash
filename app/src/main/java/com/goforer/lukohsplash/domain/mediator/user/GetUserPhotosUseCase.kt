@@ -14,14 +14,14 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.goforer.lukohsplash.domain.intermediator.photo
+package com.goforer.lukohsplash.domain.mediator.user
 
-import com.goforer.lukohsplash.data.repository.remote.photo.GetPhotoInfoRepository
+import com.goforer.lukohsplash.data.repository.remote.user.GetUserPhotosRepository
 import com.goforer.lukohsplash.domain.RepoUseCase
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GetPhotoInfoUseCase
+class GetUserPhotosUseCase
 @Inject
-constructor(override val repository: GetPhotoInfoRepository) : RepoUseCase(repository)
+constructor(override val repository: GetUserPhotosRepository) : RepoUseCase(repository)

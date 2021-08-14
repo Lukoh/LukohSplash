@@ -16,9 +16,9 @@
 
 package com.goforer.lukohsplash.data.repository
 
+import com.goforer.base.network.NetworkErrorHandler
 import com.goforer.lukohsplash.data.source.network.api.RestAPI
 import com.goforer.lukohsplash.presentation.vm.Query
-import com.goforer.base.network.NetworkErrorHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 import javax.inject.Inject

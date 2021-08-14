@@ -21,7 +21,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -44,6 +47,7 @@ import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserCollectionsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -60,7 +64,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
     private var collectionAdapter: UserCollectionAdapter? = null
 
     @Inject
-    internal lateinit var getUserCollectionsViewModel: GetUserCollectionsViewModel
+    lateinit var getUserCollectionsViewModelFactory: GetUserCollectionsViewModel.AssistedUserCollectionsFactory
 
     @Inject
     internal lateinit var sharedUserNameViewModel: SharedUserNameViewModel
@@ -103,7 +107,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
             layoutManager = gridManager
         }
 
-        lifecycleScope.launchWhenCreated {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             collectionAdapter?.loadStateFlow?.collectLatest {
                 var state: LoadState = LoadState.Loading
 
@@ -120,7 +124,8 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                             }
                         }
                     }
-                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing = false
+                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
+                        false
                 }
 
                 Timber.e("state.toString() $state")
@@ -160,38 +165,48 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserCollection(name)
+                getUserCollection(userName)
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserCollection(name: String) {
-        getUserCollectionsViewModel.pullTrigger(Params(Query().apply {
-            firstParam = name
-            secondParam = -1
-        }), lifecycleOwner = viewLifecycleOwner) { resource ->
-            when (resource.getStatus()) {
-                Status.SUCCESS -> {
-                    resource.getData()?.let {
-                        binding.swipeRefreshContainer.isRefreshing = false
-                        @Suppress("UNCHECKED_CAST")
-                        val collections = resource.getData() as? PagingData<Collection>
+        val getUserCollectionsViewModel: GetUserCollectionsViewModel by viewModels {
+            GetUserCollectionsViewModel.provideFactory(
+                getUserCollectionsViewModelFactory,
+                Params(Query().apply {
+                    firstParam = name
+                    secondParam = -1
+                })
+            )
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getUserCollectionsViewModel.value.collect { resource ->
+                    when (resource.getStatus()) {
+                        Status.SUCCESS -> {
+                            resource.getData()?.let {
+                                binding.swipeRefreshContainer.isRefreshing = false
+                                @Suppress("UNCHECKED_CAST")
+                                val collections = resource.getData() as? PagingData<Collection>
 
-                        lifecycleScope.launchWhenCreated {
-                            collectionAdapter?.submitData(collections!!)
+                                lifecycleScope.launchWhenCreated {
+                                    collectionAdapter?.submitData(collections!!)
+                                }
+                            }
+                        }
+
+                        Status.ERROR -> {
+                            binding.swipeRefreshContainer.isRefreshing = false
+                            showErrorPopup(resource.getMessage()!!) {}
+
+                        }
+
+                        Status.LOADING -> {
+                            binding.swipeRefreshContainer.isRefreshing = true
                         }
                     }
-                }
-
-                Status.ERROR -> {
-                    binding.swipeRefreshContainer.isRefreshing = false
-                    showErrorPopup(resource.getMessage()!!) {}
-
-                }
-
-                Status.LOADING -> {
-                    binding.swipeRefreshContainer.isRefreshing = true
                 }
             }
         }

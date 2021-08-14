@@ -14,9 +14,9 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.goforer.lukohsplash.domain.intermediator.user
+package com.goforer.lukohsplash.domain.mediator.home
 
-import com.goforer.lukohsplash.data.repository.remote.user.GetUserLikesRepository
+import com.goforer.lukohsplash.data.repository.remote.home.GetPhotosRepository
 import com.goforer.lukohsplash.domain.UseCaseTest
 import com.goforer.test.kit.flow.test
 import io.mockk.junit5.MockKExtension
@@ -33,11 +33,11 @@ import org.mockito.junit.MockitoJUnitRunner
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 @RunWith(MockitoJUnitRunner::class)
-class GetUserLikesUseCaseTest : UseCaseTest() {
+class GetPhotosUseCaseTest : UseCaseTest() {
     @Before
     fun setup() {
-        setBaseRepository(GetUserLikesRepository::class.java)
-        useCase = GetUserLikesUseCase(repository as GetUserLikesRepository)
+        setBaseRepository(GetPhotosRepository::class.java)
+        useCase = GetPhotosUseCase(repository as GetPhotosRepository)
     }
 
     @Test

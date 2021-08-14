@@ -14,7 +14,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.goforer.lukohsplash.domain.intermediator.user
+package com.goforer.lukohsplash.domain.mediator.user
 
 import com.goforer.lukohsplash.data.repository.remote.user.GetUserPhotosRepository
 import com.goforer.lukohsplash.domain.UseCaseTest

@@ -36,7 +36,6 @@ import com.goforer.lukohsplash.data.source.model.entity.user.response.Collection
 import com.goforer.lukohsplash.databinding.ItemCollectionBinding
 import com.goforer.lukohsplash.presentation.scheduler.UIJobScheduler
 import com.goforer.lukohsplash.presentation.ui.HomeActivity
-import com.goforer.lukohsplash.presentation.ui.home.adapter.PhotosAdapter
 
 class UserCollectionAdapter(
     private val context: Context,
@@ -98,20 +97,15 @@ class UserCollectionAdapter(
         private val adapter: UserCollectionAdapter
     ) : BaseViewHolder<Collection>(binding.root) {
         @SuppressLint("SetTextI18n")
-        override fun bindItemHolder(holder: BaseViewHolder<Collection>, item: Collection, position: Int) {
+        override fun bindItemHolder(
+            holder: BaseViewHolder<Collection>,
+            item: Collection,
+            position: Int
+        ) {
             val context = adapter.context
             val coroutineScope = (context as HomeActivity).lifecycleScope
 
             with(binding) {
-                item.cover_photo?.let { photo ->
-                    val url = getPhotoUrl(photo, THUMB)
-
-                    UIJobScheduler.submitJob(coroutineScope) {
-                        ivCollection.minimumHeight = itemView.resources.getDimensionPixelSize(R.dimen.dp_250)
-                        ivCollection.loadPhotoUrlWithThumbnail(url, photo.urls.full, photo.color, true)
-                    }
-                }
-
                 UIJobScheduler.submitJob(coroutineScope) {
                     tvCollectionName.text = item.title
                     tvCollectionCount.text = itemView.resources.getQuantityString(
@@ -120,6 +114,21 @@ class UserCollectionAdapter(
                         item.total_photos
                     )
                     ivCollectionPrivate.isVisible = item.private ?: false
+                }
+
+                item.cover_photo?.let { photo ->
+                    val url = getPhotoUrl(photo, THUMB)
+
+                    UIJobScheduler.submitJob(coroutineScope) {
+                        ivCollection.minimumHeight =
+                            itemView.resources.getDimensionPixelSize(R.dimen.dp_250)
+                        ivCollection.loadPhotoUrlWithThumbnail(
+                            url,
+                            photo.urls.thumb,
+                            photo.color,
+                            true
+                        )
+                    }
                 }
 
                 item.cover_photo?.let {

@@ -38,8 +38,8 @@ constructor(val pagingSource: UserPhotosPagingSource) : Repository<Resource>() {
         NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false, lifecycleScope) {
         override fun request() = restAPI.getUserPhotos(
             query.firstParam as String, YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT, LATEST,
-            query.secondParam as Boolean, query.thirdParam as String,
-            query.forthParam as Int, null
+            false, "days",
+            30, null
         )
 
         override fun load(value: MutableList<Photo>, itemCount: Int) = Pager(

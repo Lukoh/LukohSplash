@@ -27,12 +27,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.goforer.base.extension.*
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.data.source.model.entity.user.response.User
 import com.goforer.lukohsplash.databinding.FragmentUserBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserViewModel
-import com.goforer.base.extension.*
 import com.google.android.material.appbar.AppBarLayout
 import javax.inject.Inject
 import kotlin.math.abs
@@ -132,18 +132,16 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
                 }
             })
 
-            with(binding) {
-                tabItemPhotos.setOnClickListener {
-                    viewPager.currentItem = USER_PHOTOS
-                }
+            tabItemPhotos.setOnClickListener {
+                currentTab = USER_PHOTOS
+            }
 
-                tabItemLikes.setOnClickListener {
-                    viewPager.currentItem = USER_LIKES
-                }
+            tabItemLikes.setOnClickListener {
+                currentTab = USER_LIKES
+            }
 
-                tabItemCollection.setOnClickListener {
-                    viewPager.currentItem = USER_COLLECTION
-                }
+            tabItemCollection.setOnClickListener {
+                currentTab = USER_COLLECTION
             }
 
             viewPager.currentItem = currentTab
@@ -161,7 +159,7 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
         user.location.isNull({
             tvLocation.hide()
         }, { location ->
-            tvLocation.setTextAndVisibility (location)
+            tvLocation.setTextAndVisibility(location)
         })
 
         bioTextView.setTextAndVisibility(user.bio?.trimEnd())

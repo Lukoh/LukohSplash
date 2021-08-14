@@ -18,8 +18,8 @@ package com.goforer.lukohsplash.data.source.network.worker
 
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
-import com.goforer.lukohsplash.data.source.network.response.*
 import com.goforer.base.extension.isNullOnFlow
+import com.goforer.lukohsplash.data.source.network.response.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -41,7 +41,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
         internal const val NONE_ITEM_COUNT = 10
         internal const val LATEST = "latest"
 
-        private const val LOADING = "loading"
+        internal const val LOADING = "loading"
     }
 
     internal val asSharedFlow = flow {
@@ -87,7 +87,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
     }.shareIn(
         scope = lifecycleScope,
         started = WhileSubscribed(5000),
-        replay = 1
+        replay = 10
     )
 
     protected open suspend fun onNetworkError(errorMessage: String, errorCode: Int) {
