@@ -64,7 +64,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
     private var collectionAdapter: UserCollectionAdapter? = null
 
     @Inject
-    lateinit var getUserCollectionsViewModelFactory: GetUserCollectionsViewModel.AssistedViewModelFactory
+    lateinit var getUserCollectionsViewModelFactory: GetUserCollectionsViewModel.AssistedUserCollectionsFactory
 
     @Inject
     internal lateinit var sharedUserNameViewModel: SharedUserNameViewModel
@@ -178,14 +178,13 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                 Params(Query().apply {
                     firstParam = name
                     secondParam = -1
-                }),
-                750
+                })
             )
         }
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserCollectionsViewModel.value.collect { resource ->
-                    when (resource?.getStatus()) {
+                    when (resource.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {
                                 binding.swipeRefreshContainer.isRefreshing = false

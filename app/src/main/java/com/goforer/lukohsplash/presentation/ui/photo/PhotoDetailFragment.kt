@@ -100,10 +100,10 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         }
 
     @Inject
-    lateinit var getPhotoInfoViewModelFactory: GetPhotoInfoViewModel.AssistedViewModelFactory
+    lateinit var getPhotoInfoViewModelFactory: GetPhotoInfoViewModel.AssistedPhotoInfoFactory
 
     @Inject
-    lateinit var downloadPhotoViewModelFactory: DownloadPhotoViewModel.AssistedViewModelFactory
+    lateinit var downloadPhotoViewModelFactory: DownloadPhotoViewModel.AssistedDownloadPhotoFactory
 
     /*
     @Inject
@@ -194,13 +194,12 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         Params(Query().apply {
                             firstParam = id
                             secondParam = -1
-                        }),
-                        650
+                        })
                     )
                 }
 
                 getPhotoInfoViewModel.value.collect { resource ->
-                    when (resource?.getStatus()) {
+                    when (resource.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {
                                 val photo = it as Photo
@@ -233,7 +232,6 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     private fun displayPhotoDetails(photo: Photo) = with(binding) {
         photo.user?.let { user ->
-            swipeContainer.show()
             tvUser.text = user.name ?: getString(R.string.unknown)
             ivUser.loadProfilePicture(user)
         }
@@ -325,8 +323,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                                 homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                             secondParam = url
                             thirdParam = File(Environment.DIRECTORY_PICTURES)
-                        }),
-                        5
+                        })
                     )
                 }
 

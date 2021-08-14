@@ -134,20 +134,14 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
 
             tabItemPhotos.setOnClickListener {
                 currentTab = USER_PHOTOS
-                onTabChanged(USER_PHOTOS)
-                viewPager.currentItem = USER_PHOTOS
             }
 
             tabItemLikes.setOnClickListener {
                 currentTab = USER_LIKES
-                onTabChanged(USER_LIKES)
-                viewPager.currentItem = USER_LIKES
             }
 
             tabItemCollection.setOnClickListener {
                 currentTab = USER_COLLECTION
-                onTabChanged(USER_COLLECTION)
-                viewPager.currentItem = USER_COLLECTION
             }
 
             viewPager.currentItem = currentTab

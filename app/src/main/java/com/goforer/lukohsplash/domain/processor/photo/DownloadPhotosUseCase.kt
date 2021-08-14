@@ -38,7 +38,7 @@ class DownloadPhotosUseCase
 constructor(
     private val context: Context,
     private val downloaderQueryInterface: DownloaderQueryWrapper
-) : UseCase<Int?>() {
+) : UseCase<Int>() {
     private lateinit var params: Params
 
     companion object {

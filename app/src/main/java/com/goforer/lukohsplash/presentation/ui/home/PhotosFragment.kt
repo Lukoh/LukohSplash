@@ -63,7 +63,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     private var isFromBackStack = false
 
     @Inject
-    lateinit var getPhotosViewModelFactory: GetPhotosViewModel.AssistedViewModelFactory
+    lateinit var getPhotosViewModelFactory: GetPhotosViewModel.AssistedPhotosFactory
 
     @Inject
     internal lateinit var sharedPhotoIdViewModel: SharedPhotoIdViewModel
@@ -198,12 +198,11 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
                             firstParam = 1
                             secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
                             thirdParam = NetworkBoundWorker.LATEST
-                        }),
-                        1000
+                        })
                     )
                 }
                 getPhotosViewModel.value.collect { resource ->
-                    when (resource?.getStatus()) {
+                    when (resource.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {
                                 binding.swipeRefreshContainer.isRefreshing = false
@@ -224,10 +223,6 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 
                         Status.LOADING -> {
                             binding.swipeRefreshContainer.isRefreshing = true
-                        }
-
-                        else -> {
-
                         }
                     }
                 }

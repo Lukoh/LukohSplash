@@ -64,7 +64,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
     private var likesAdapter: UerLikesAdapter? = null
 
     @Inject
-    lateinit var getUserLikesViewModelFactory: GetUserLikesViewModel.AssistedViewModelFactory
+    lateinit var getUserLikesViewModelFactory: GetUserLikesViewModel.AssistedUserLikesFactory
 
     @Inject
     internal lateinit var sharedUserNameViewModel: SharedUserNameViewModel
@@ -177,14 +177,13 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                 Params(Query().apply {
                     firstParam = name
                     secondParam = -1
-                }),
-                700
+                })
             )
         }
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserLikesViewModel.value.collect { resource ->
-                    when (resource?.getStatus()) {
+                    when (resource.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {
                                 binding.swipeRefreshContainer.isRefreshing = false

@@ -64,7 +64,7 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
     private lateinit var userName: String
 
     @Inject
-    lateinit var getUserPhotosViewModelFactory: GetUserPhotosViewModel.AssistedViewModelFactory
+    lateinit var getUserPhotosViewModelFactory: GetUserPhotosViewModel.AssistedUserPhotosFactory
 
     @Inject
     internal lateinit var sharedUserNameViewModel: SharedUserNameViewModel
@@ -179,14 +179,13 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
                     secondParam = false
                     thirdParam = "days"
                     forthParam = 30
-                }),
-                700
+                })
             )
         }
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserPhotosViewModel.value.collect { resource ->
-                    when (resource?.getStatus()) {
+                    when (resource.getStatus()) {
                         Status.SUCCESS -> {
                             resource.getData()?.let {
                                 binding.swipeRefreshContainer.isRefreshing = false

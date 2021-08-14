@@ -73,7 +73,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
 
         runBlockingTest {
             coroutineTestRule.managedCoroutineScope.launch {
-                resource.asSharedFlow().test(this) {
+                resource.asSharedFlow.test(this) {
                     println(this.values())
                     assertValueAt(0, Resource().success(ResponseResult("OK")))
                 }
@@ -94,7 +94,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
 
         runBlockingTest {
             coroutineTestRule.managedCoroutineScope.launch {
-                resource.asSharedFlow().test(this) {
+                resource.asSharedFlow.test(this) {
                     println(this.values())
                     assertValueAt(0, Resource().success(ResponseResult("OK")))
                 }
@@ -115,7 +115,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
 
         runBlockingTest {
             coroutineTestRule.managedCoroutineScope.launch {
-                resource.asSharedFlow().test(this) {
+                resource.asSharedFlow.test(this) {
                     println(this.values())
                     assertValueAt(0, Resource().success(""))
                 }
@@ -136,7 +136,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
 
         runBlockingTest {
             coroutineTestRule.managedCoroutineScope.launch {
-                resource.asSharedFlow().test(this) {
+                resource.asSharedFlow.test(this) {
                     println(this.values())
                     assertValueAt(0, Resource().error("unknown error", -1))
                 }
@@ -165,7 +165,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
 
         runBlockingTest {
             coroutineTestRule.managedCoroutineScope.launch {
-                resource.asSharedFlow().test(this) {
+                resource.asSharedFlow.test(this) {
                     println(this.values())
                     assertValueAt(0, Resource().success(ResponseResult("OK")))
                 }

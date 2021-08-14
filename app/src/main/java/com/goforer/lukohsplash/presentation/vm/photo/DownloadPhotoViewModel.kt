@@ -17,10 +17,10 @@
 package com.goforer.lukohsplash.presentation.vm.photo
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.Factory
 import com.goforer.lukohsplash.domain.processor.photo.DownloadPhotosUseCase
 import com.goforer.lukohsplash.presentation.vm.Params
-import com.goforer.lukohsplash.presentation.vm.TriggerViewModel
+import com.goforer.lukohsplash.presentation.vm.ProcessorViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -30,25 +30,18 @@ class DownloadPhotoViewModel
 constructor(
     useCase: DownloadPhotosUseCase,
     @Assisted private val params: Params,
-    @Assisted private val delayTimeout: Long
-) : TriggerViewModel<Int?>(useCase, params, delayTimeout) {
+) : ProcessorViewModel<Int>(useCase, params) {
     @AssistedFactory
-    interface AssistedViewModelFactory {
-        fun create(
-            params: Params,
-            delayTimeout: Long
-        ): DownloadPhotoViewModel
+    interface AssistedDownloadPhotoFactory {
+        fun create(params: Params): DownloadPhotoViewModel
     }
 
     companion object {
         fun provideFactory(
-            assistedFactory: AssistedViewModelFactory,
-            params: Params,
-            delayTimeout: Long
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            assistedFactory: AssistedDownloadPhotoFactory, params: Params) = object : Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return assistedFactory.create(params, delayTimeout) as T
+                return assistedFactory.create(params) as T
             }
         }
     }

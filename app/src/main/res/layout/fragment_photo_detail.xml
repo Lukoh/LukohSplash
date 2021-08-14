@@ -5,7 +5,6 @@
     android:id="@+id/swipe_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:visibility="gone"
     tools:context=".presentation.ui.photo.PhotoDetailFragment"
     tools:ignore="UnusedAttribute">
 

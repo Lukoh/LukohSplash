@@ -19,9 +19,9 @@ package com.goforer.lukohsplash.domain
 import com.goforer.lukohsplash.data.repository.Repository
 import com.goforer.lukohsplash.data.source.model.cache.entity.BaseTest
 import com.goforer.lukohsplash.data.source.network.response.Resource
+import com.goforer.lukohsplash.presentation.vm.MediatorViewModel
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
-import com.goforer.lukohsplash.presentation.vm.TriggerViewModel
 import com.nhaarman.mockitokotlin2.isA
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -33,11 +33,11 @@ import org.junit.rules.TestWatcher
 import org.mockito.Mockito
 
 open class UseCaseTest : TestWatcher() {
-    lateinit var useCase: UseCase<Params, Resource>
+    lateinit var useCase: UseCase<Resource>
 
     lateinit var repository: Repository<Resource>
 
-    lateinit var viewModel: TriggerViewModel<*>
+    lateinit var viewModel: MediatorViewModel
 
     var defaultQuery = Query()
     var defaultParams = Params(defaultQuery)

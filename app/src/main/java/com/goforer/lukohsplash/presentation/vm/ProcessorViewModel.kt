@@ -3,26 +3,14 @@ package com.goforer.lukohsplash.presentation.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.goforer.lukohsplash.domain.UseCase
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class ProcessorViewModel<Value>(
-    private val useCase: UseCase<Value>,
-    params: Params,
-    delayTimeout: Long
-) : ViewModel() {
+open class ProcessorViewModel<Value>(private val useCase: UseCase<Value>, params: Params) : ViewModel() {
     private var initValue: Value? = null
 
     private val _value = MutableStateFlow(initValue)
-    val value = flow {
-        delay(delayTimeout)
-        emit(_value.value)
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = initValue
-    )
+    val value = _value
 
     init {
         viewModelScope.launch {

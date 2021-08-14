@@ -18,50 +18,46 @@ package com.goforer.lukohsplash.presentation.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.goforer.lukohsplash.data.source.network.response.Resource
+import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.LOADING
 import com.goforer.lukohsplash.domain.UseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
-open class TriggerViewModel<Value>(
-    private val useCase: UseCase<Value>,
-    params: Params,
-    delayTimeout: Long
-) : ViewModel() {
-    private var initValue: Value? = null
-
-    private val _value = MutableStateFlow(initValue)
-    val value = flow {
-        delay(delayTimeout)
-        emit(_value.value)
+open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewModel() {
+    val value = useCase.run(viewModelScope, params).flatMapLatest {
+        flow {
+            emit(it)
+        }
     }.stateIn(
         scope = viewModelScope,
         started = WhileSubscribed(5000),
-        initialValue = initValue
+        initialValue = Resource().loading(LOADING)
     )
+
+
+    // You can implement code blow:
+    // Just please visit below link if you'd like to know [StatFlow & SharedFlow]
+    // Link : https://developer.android.com/kotlin/flow/stateflow-and-sharedflow
+    /*
+    private val _value = MutableStateFlow(Resource().loading(LOADING))
+    val value = _value
 
     init {
         viewModelScope.launch {
             useCase.run(viewModelScope, params).collect {
-                initValue = it
                 _value.value = it
             }
         }
     }
 
-    /*
     @ExperimentalCoroutinesApi
     override fun onCleared() {
         super.onCleared()
 
-        _value.value = initValue
+        _value.value = Resource().loading(LOADING)
     }
-
      */
 }
