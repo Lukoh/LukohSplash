@@ -20,7 +20,7 @@
 
             <include
                 android:id="@+id/no_photo_container"
-                layout="@layout/no_photo_item"
+                layout="@layout/item_no_photo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp_20"

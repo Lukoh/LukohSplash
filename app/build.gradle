@@ -127,6 +127,7 @@ android {
     lintOptions {
         checkDependencies true
     }
+    
 }
 
 dependencies {
