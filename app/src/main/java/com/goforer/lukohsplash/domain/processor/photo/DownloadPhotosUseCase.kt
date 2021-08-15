@@ -25,9 +25,7 @@ import com.goforer.lukohsplash.data.source.model.entity.photo.SaveFileInfo
 import com.goforer.lukohsplash.domain.UseCase
 import com.goforer.lukohsplash.presentation.vm.Params
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -81,9 +79,5 @@ constructor(
 
             }
         }
-    }.stateIn(
-        scope = lifecycleScope,
-        started = WhileSubscribed(5000),
-        initialValue = 1
-    )
+    }
 }

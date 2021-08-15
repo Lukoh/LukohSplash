@@ -37,7 +37,7 @@ class GetPhotosRepository
 constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
     @ExperimentalCoroutinesApi
     override fun doWork(lifecycleScope: CoroutineScope, query: Query) = object :
-        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false, lifecycleScope) {
+        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false) {
         override fun request() = restAPI.getPhotos(YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT, LATEST)
 
         override fun load(value: MutableList<Photo>, itemCount: Int) = Pager(
@@ -50,5 +50,5 @@ constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
             pagingSource.setData(query, value)
             pagingSource
         }.flow.cachedIn(lifecycleScope)
-    }.asSharedFlow
+    }.asFlow
 }
