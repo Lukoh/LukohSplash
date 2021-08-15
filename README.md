@@ -132,10 +132,11 @@ StateFlow can also be used to achieve the same behavior: it is a specialized Sha
 
 After reading many tech blogs and learning about Koltin-Flow, I have come to the conclusion that the structure like below will be preferred.
 The Flow implementation is similar but it doesn’t have LiveData conversions:
-![alt StateFlow-Flow-Flow-Flow end-to-end](http://url/to/img.png)
+
+![alt StateFlow-Flow-Flow-Flow end-to-end](https://github.com/Lukoh/LukohSplash/blob/main/New-Architecture2.png?raw=true)
 Using StateFlow-Flow-Flow-Flow end-to-end
 
-![alt StateFlow-ShardFlow-ShardFlow-Flow end-to-end](http://url/to/img.png)
+![alt StateFlow-ShardFlow-ShardFlow-Flow end-to-end](https://github.com/Lukoh/LukohSplash/blob/main/New-Architecture1.png?raw=true)
 Using StateFlow-ShardFlow-ShardFlow-Flow end-to-end
 
 
