@@ -16,13 +16,29 @@
 
 package com.goforer.lukohsplash.presentation.vm.photo
 
-import com.goforer.lukohsplash.data.source.network.response.Resource
-import com.goforer.lukohsplash.domain.intermediator.photo.GetPhotoInfoUseCase
-import com.goforer.lukohsplash.presentation.vm.TriggerViewModel
-import javax.inject.Inject
-import javax.inject.Singleton
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider.Factory
+import com.goforer.lukohsplash.domain.mediator.photo.GetPhotoInfoUseCase
+import com.goforer.lukohsplash.presentation.vm.Params
+import com.goforer.lukohsplash.presentation.vm.MediatorViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-@Singleton
 class GetPhotoInfoViewModel
-@Inject
-constructor(override val useCase: GetPhotoInfoUseCase) : TriggerViewModel<Resource>(useCase)
+@AssistedInject
+constructor(useCase: GetPhotoInfoUseCase, @Assisted private val params: Params) : MediatorViewModel(useCase, params) {
+    @AssistedFactory
+    interface AssistedPhotoInfoFactory {
+        fun create(params: Params): GetPhotoInfoViewModel
+    }
+
+    companion object {
+        fun provideFactory(assistedFactory: AssistedPhotoInfoFactory, params: Params) = object : Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(params) as T
+            }
+        }
+    }
+}

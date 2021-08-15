@@ -21,7 +21,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -29,10 +32,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.goforer.base.extension.*
+import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
-import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.LATEST
-import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.NONE_ITEM_COUNT
+import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
 import com.goforer.lukohsplash.databinding.FragmentPhotosBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.home.adapter.PhotosAdapter
@@ -40,11 +44,9 @@ import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.home.GetPhotosViewModel
 import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
-import com.goforer.base.extension.*
-import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -61,7 +63,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     private var isFromBackStack = false
 
     @Inject
-    internal lateinit var getPhotosViewModel: GetPhotosViewModel
+    lateinit var getPhotosViewModelFactory: GetPhotosViewModel.AssistedPhotosFactory
 
     @Inject
     internal lateinit var sharedPhotoIdViewModel: SharedPhotoIdViewModel
@@ -75,6 +77,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 
         setAppBar()
         photoAdapter ?: getPhotos()
+
         photoAdapter = photoAdapter ?: PhotosAdapter(homeActivity) { itemView, item ->
             sharedPhotoIdViewModel.share(item.id)
             itemView.findNavController().navigate(
@@ -104,8 +107,8 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
             getPhotos()
         }
 
-        lifecycleScope.launchWhenCreated {
-            photoAdapter?.loadStateFlow?.collectLatest {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            photoAdapter?.loadStateFlow?.collect {
                 var state: LoadState = LoadState.Loading
 
                 when {
@@ -121,7 +124,8 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
                             }
                         }
                     }
-                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing = false
+                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
+                        false
                 }
 
                 Timber.e("state.toString() $state")
@@ -185,32 +189,42 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhotos() {
-        getPhotosViewModel.pullTrigger(Params(Query().apply {
-            firstParam = 1
-            secondParam = NONE_ITEM_COUNT
-            thirdParam = LATEST
-        }), lifecycleOwner = viewLifecycleOwner) { resource ->
-            when (resource.getStatus()) {
-                Status.SUCCESS -> {
-                    resource.getData()?.let {
-                        binding.swipeRefreshContainer.isRefreshing = false
-                        @Suppress("UNCHECKED_CAST")
-                        val photos = resource.getData() as? PagingData<Photo>
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val getPhotosViewModel: GetPhotosViewModel by viewModels {
+                    GetPhotosViewModel.provideFactory(
+                        getPhotosViewModelFactory,
+                        Params(Query().apply {
+                            firstParam = 1
+                            secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
+                            thirdParam = NetworkBoundWorker.LATEST
+                        })
+                    )
+                }
+                getPhotosViewModel.value.collect { resource ->
+                    when (resource.getStatus()) {
+                        Status.SUCCESS -> {
+                            resource.getData()?.let {
+                                binding.swipeRefreshContainer.isRefreshing = false
+                                @Suppress("UNCHECKED_CAST")
+                                val photos = resource.getData() as? PagingData<Photo>
 
-                        lifecycleScope.launchWhenCreated {
-                            photoAdapter?.submitData(photos!!)
+                                viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+                                    photoAdapter?.submitData(photos!!)
+                                }
+                            }
+                        }
+
+                        Status.ERROR -> {
+                            binding.swipeRefreshContainer.isRefreshing = false
+                            showErrorPopup(resource.getMessage()!!) {}
+
+                        }
+
+                        Status.LOADING -> {
+                            binding.swipeRefreshContainer.isRefreshing = true
                         }
                     }
-                }
-
-                Status.ERROR -> {
-                    binding.swipeRefreshContainer.isRefreshing = false
-                    showErrorPopup(resource.getMessage()!!) {}
-
-                }
-
-                Status.LOADING -> {
-                    binding.swipeRefreshContainer.isRefreshing = true
                 }
             }
         }

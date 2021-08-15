@@ -17,12 +17,32 @@
 package com.goforer.lukohsplash.presentation.vm.photo
 
 import android.graphics.Bitmap
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider.Factory
 import com.goforer.lukohsplash.domain.processor.photo.CropImageUseCase
-import com.goforer.lukohsplash.presentation.vm.TriggerViewModel
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.goforer.lukohsplash.presentation.vm.Params
+import com.goforer.lukohsplash.presentation.vm.ProcessorViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-@Singleton
 class CropImageViewModel
-@Inject
-constructor(override val useCase: CropImageUseCase) : TriggerViewModel<Bitmap?>(useCase)
+@AssistedInject
+constructor(
+    useCase: CropImageUseCase,
+    @Assisted private val params: Params,
+) : ProcessorViewModel<Bitmap>(useCase, params) {
+    @AssistedFactory
+    interface AssistedCropImageFactory {
+        fun create(params: Params): CropImageViewModel
+    }
+
+    companion object {
+        fun provideFactory(assistedFactory: AssistedCropImageFactory, params: Params) = object : Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(params) as T
+            }
+        }
+    }
+}

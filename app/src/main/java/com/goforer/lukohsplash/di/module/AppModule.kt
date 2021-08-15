@@ -22,24 +22,24 @@ import android.content.DialogInterface
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.goforer.base.network.entity.NetworkError
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
-import com.goforer.lukohsplash.LukohSplash
-import com.goforer.lukohsplash.BuildConfig
-import com.goforer.lukohsplash.R
-import com.goforer.lukohsplash.data.source.network.api.RestAPI
-import com.goforer.lukohsplash.data.source.network.factory.FlowCallAdapterFactory
-import com.goforer.lukohsplash.data.source.network.factory.NullOnEmptyConverterFactory
-import com.goforer.lukohsplash.presentation.Caller.preparingService
-import com.goforer.lukohsplash.presentation.Caller
 import com.goforer.base.network.NetworkErrorHandler
+import com.goforer.base.network.entity.NetworkError
 import com.goforer.base.utility.ConnectionUtils
 import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.base.worker.download.DownloaderQuery
 import com.goforer.base.worker.download.wrapper.DownloaderQueryWrapper
+import com.goforer.lukohsplash.BuildConfig
+import com.goforer.lukohsplash.LukohSplash
+import com.goforer.lukohsplash.R
+import com.goforer.lukohsplash.data.source.network.api.RestAPI
+import com.goforer.lukohsplash.data.source.network.factory.FlowCallAdapterFactory
+import com.goforer.lukohsplash.data.source.network.factory.NullOnEmptyConverterFactory
+import com.goforer.lukohsplash.presentation.Caller
+import com.goforer.lukohsplash.presentation.Caller.preparingService
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
 import com.google.gson.Gson
@@ -75,15 +75,16 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun appContext(application: Application) : Context = application.applicationContext
+    fun appContext(application: Application): Context = application.applicationContext
 
     @Provides
     @Singleton
-    fun provideGSon() : Gson = GsonBuilder().create()
+    fun provideGSon(): Gson = GsonBuilder().create()
 
     @Provides
     @Singleton
-    fun provideDownloaderQueryWrapper(context: Context) : DownloaderQueryWrapper = DownloaderQuery(context)
+    fun provideDownloaderQueryWrapper(context: Context): DownloaderQueryWrapper =
+        DownloaderQuery(context)
 
     @Singleton
     @Provides
@@ -242,5 +243,4 @@ class AppModule {
     @Provides
     fun providesInAppUpdateManager(application: Application): AppUpdateManager =
         AppUpdateManagerFactory.create(application)
-
 }

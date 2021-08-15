@@ -21,7 +21,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -29,21 +32,22 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
+import com.goforer.base.extension.isNull
+import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
+import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
-import com.goforer.lukohsplash.presentation.ui.user.adapter.UserPhotosAdapter
+import com.goforer.lukohsplash.presentation.ui.user.adapter.UerLikesAdapter
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserLikesViewModel
-import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
-import com.goforer.base.extension.isNull
-import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
-import com.goforer.base.view.dialog.NormalDialog
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -57,10 +61,10 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
 
     private lateinit var userName: String
 
-    private var photoAdapter: UserPhotosAdapter? = null
+    private var likesAdapter: UerLikesAdapter? = null
 
     @Inject
-    internal lateinit var getUserLikesViewModel: GetUserLikesViewModel
+    lateinit var getUserLikesViewModelFactory: GetUserLikesViewModel.AssistedUserLikesFactory
 
     @Inject
     internal lateinit var sharedUserNameViewModel: SharedUserNameViewModel
@@ -77,13 +81,13 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        photoAdapter ?: observeUserName()
+        likesAdapter ?: observeUserName()
         binding.swipeRefreshContainer.setOnRefreshListener {
             if (userName != "")
                 getUserLikes(userName)
         }
 
-        photoAdapter = photoAdapter ?: UserPhotosAdapter(homeActivity) { _, _ ->
+        likesAdapter = likesAdapter ?: UerLikesAdapter(homeActivity) { _, _ ->
         }
 
         binding.rvList.apply {
@@ -91,8 +95,8 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                 gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
             }
 
-            adapter = photoAdapter
-            photoAdapter?.stateRestorationPolicy = PREVENT_WHEN_EMPTY
+            adapter = likesAdapter
+            likesAdapter?.stateRestorationPolicy = PREVENT_WHEN_EMPTY
             gridManager.spanCount = 1
             gridManager.orientation = resources.configuration.orientation
             itemAnimator?.changeDuration = 0
@@ -102,8 +106,8 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
             layoutManager = gridManager
         }
 
-        lifecycleScope.launchWhenCreated {
-            photoAdapter?.loadStateFlow?.collectLatest {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            likesAdapter?.loadStateFlow?.collectLatest {
                 var state: LoadState = LoadState.Loading
 
                 when {
@@ -112,14 +116,15 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                     it.refresh is LoadState.NotLoading -> {
                         launch {
                             with(binding) {
-                                if (photoAdapter?.itemCount == 0)
+                                if (likesAdapter?.itemCount == 0)
                                     showNoPhotoMessage(rvList, noPhotoContainer.root, true)
                                 else
                                     showNoPhotoMessage(rvList, noPhotoContainer.root, false)
                             }
                         }
                     }
-                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing = false
+                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
+                        false
                 }
 
                 Timber.e("state.toString() $state")
@@ -159,38 +164,48 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserLikes(name)
+                getUserLikes(userName)
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserLikes(name: String) {
-        getUserLikesViewModel.pullTrigger(Params(Query().apply {
-            firstParam = name
-            secondParam = -1
-        }), lifecycleOwner = viewLifecycleOwner) { resource ->
-            when (resource.getStatus()) {
-                Status.SUCCESS -> {
-                    resource.getData()?.let {
-                        binding.swipeRefreshContainer.isRefreshing = false
-                        @Suppress("UNCHECKED_CAST")
-                        val photos = resource.getData() as? PagingData<Photo>
+        val getUserLikesViewModel: GetUserLikesViewModel by viewModels {
+            GetUserLikesViewModel.provideFactory(
+                getUserLikesViewModelFactory,
+                Params(Query().apply {
+                    firstParam = name
+                    secondParam = -1
+                })
+            )
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getUserLikesViewModel.value.collect { resource ->
+                    when (resource.getStatus()) {
+                        Status.SUCCESS -> {
+                            resource.getData()?.let {
+                                binding.swipeRefreshContainer.isRefreshing = false
+                                @Suppress("UNCHECKED_CAST")
+                                val photos = resource.getData() as? PagingData<Photo>
 
-                        lifecycleScope.launchWhenCreated {
-                            photoAdapter?.submitData(photos!!)
+                                lifecycleScope.launchWhenCreated {
+                                    likesAdapter?.submitData(photos!!)
+                                }
+                            }
+                        }
+
+                        Status.ERROR -> {
+                            binding.swipeRefreshContainer.isRefreshing = false
+                            showErrorPopup(resource.getMessage()!!) {}
+
+                        }
+
+                        Status.LOADING -> {
+                            binding.swipeRefreshContainer.isRefreshing = true
                         }
                     }
-                }
-
-                Status.ERROR -> {
-                    binding.swipeRefreshContainer.isRefreshing = false
-                    showErrorPopup(resource.getMessage()!!) {}
-
-                }
-
-                Status.LOADING -> {
-                    binding.swipeRefreshContainer.isRefreshing = true
                 }
             }
         }

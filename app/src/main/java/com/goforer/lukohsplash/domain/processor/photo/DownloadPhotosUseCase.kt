@@ -17,16 +17,17 @@
 package com.goforer.lukohsplash.domain.processor.photo
 
 import android.app.DownloadManager
-import android.app.DownloadManager.STATUS_SUCCESSFUL
 import android.content.Context
 import android.database.Cursor
 import android.os.Environment
+import com.goforer.base.worker.download.wrapper.DownloaderQueryWrapper
 import com.goforer.lukohsplash.data.source.model.entity.photo.SaveFileInfo
 import com.goforer.lukohsplash.domain.UseCase
 import com.goforer.lukohsplash.presentation.vm.Params
-import com.goforer.base.worker.download.wrapper.DownloaderQueryWrapper
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -37,7 +38,7 @@ class DownloadPhotosUseCase
 constructor(
     private val context: Context,
     private val downloaderQueryInterface: DownloaderQueryWrapper
-) : UseCase<Params, Int?>() {
+) : UseCase<Int>() {
     private lateinit var params: Params
 
     companion object {
@@ -50,13 +51,17 @@ constructor(
         val url = params.query.secondParam as String
         val file = params.query.thirdParam as File
         val fileName = url.substring(url.lastIndexOf("/") + 1).take(19)
-        val myFile = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${fileName}.jpg")
+        val myFile =
+            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${fileName}.jpg")
 
         this@DownloadPhotosUseCase.params = params
         if (myFile.exists()) {
             emit(FILE_EXISTED)
         } else {
-            val query = downloaderQueryInterface.takeQuery(downloadManager, SaveFileInfo(url, file, fileName))
+            val query = downloaderQueryInterface.takeQuery(
+                downloadManager,
+                SaveFileInfo(url, file, fileName)
+            )
 
             while (downloading) {
                 val cursor: Cursor = downloadManager.query(query)
@@ -64,7 +69,7 @@ constructor(
                 if (cursor.getInt(
                         cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
                     )
-                    == STATUS_SUCCESSFUL
+                    == DownloadManager.STATUS_SUCCESSFUL
                 ) {
                     downloading = false
                 }
@@ -76,5 +81,9 @@ constructor(
 
             }
         }
-    }
+    }.stateIn(
+        scope = lifecycleScope,
+        started = WhileSubscribed(5000),
+        initialValue = 1
+    )
 }

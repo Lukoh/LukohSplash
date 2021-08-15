@@ -35,11 +35,11 @@ class GetUserPhotosRepository
 @Inject
 constructor(val pagingSource: UserPhotosPagingSource) : Repository<Resource>() {
     override fun doWork(lifecycleScope: CoroutineScope, query: Query) = object :
-        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false) {
+        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false, lifecycleScope) {
         override fun request() = restAPI.getUserPhotos(
             query.firstParam as String, YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT, LATEST,
-            query.secondParam as Boolean, query.thirdParam as String,
-            query.forthParam as Int, null
+            false, "days",
+            30, null
         )
 
         override fun load(value: MutableList<Photo>, itemCount: Int) = Pager(
@@ -52,5 +52,5 @@ constructor(val pagingSource: UserPhotosPagingSource) : Repository<Resource>() {
             pagingSource.setData(query, value)
             pagingSource
         }.flow.cachedIn(lifecycleScope)
-    }.asFlow
+    }.asSharedFlow
 }

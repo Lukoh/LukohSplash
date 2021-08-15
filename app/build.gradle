@@ -51,8 +51,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlinOptions {
@@ -99,13 +99,13 @@ android {
     }
 
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
 
         kotlinOptions {
             suppressWarnings = true
-            jvmTarget = '1.8'
-            jvmTarget = JavaVersion.VERSION_1_8
+            jvmTarget = '11'
+            jvmTarget = JavaVersion.VERSION_11
             apiVersion = '1.4'
             languageVersion = '1.4'
             freeCompilerArgs += [
@@ -123,6 +123,11 @@ android {
     testOptions {
         unitTests.includeAndroidResources = true
     }
+
+    lintOptions {
+        checkDependencies true
+    }
+    
 }
 
 dependencies {
@@ -133,6 +138,7 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:$androidx_appcompat_version"
     implementation "androidx.fragment:fragment-ktx:$arch_fragmentVersion"
+    implementation "androidx.activity:activity-ktx:$arch_activityVersion"
     implementation "androidx.recyclerview:recyclerview:$androidx_recyclerview_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$arch_lifecycle_extension_version"
     // alternatively, just ViewModel

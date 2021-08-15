@@ -21,7 +21,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -29,6 +32,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
+import com.goforer.base.extension.isNull
+import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
+import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
@@ -39,11 +46,8 @@ import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserPhotosViewModel
-import com.goforer.base.extension.RECYCLER_VIEW_CACHE_SIZE
-import com.goforer.base.extension.isNull
-import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
-import com.goforer.base.view.dialog.NormalDialog
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -60,7 +64,7 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
     private lateinit var userName: String
 
     @Inject
-    internal lateinit var getUserPhotosViewModel: GetUserPhotosViewModel
+    lateinit var getUserPhotosViewModelFactory: GetUserPhotosViewModel.AssistedUserPhotosFactory
 
     @Inject
     internal lateinit var sharedUserNameViewModel: SharedUserNameViewModel
@@ -102,7 +106,7 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
             layoutManager = gridManager
         }
 
-        lifecycleScope.launchWhenCreated {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             photoAdapter?.loadStateFlow?.collectLatest {
                 var state: LoadState = LoadState.Loading
 
@@ -119,7 +123,8 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
                             }
                         }
                     }
-                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing = false
+                    it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
+                        false
                 }
 
                 Timber.e("state.toString() $state")
@@ -159,40 +164,50 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserPhotos(name)
+                getUserPhotos(userName)
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getUserPhotos(name: String) {
-        getUserPhotosViewModel.pullTrigger(Params(Query().apply {
-            firstParam = name
-            secondParam = false
-            thirdParam = "days"
-            forthParam = 30
-        }), lifecycleOwner = viewLifecycleOwner) { resource ->
-            when (resource.getStatus()) {
-                Status.SUCCESS -> {
-                    resource.getData()?.let {
-                        binding.swipeRefreshContainer.isRefreshing = false
-                        @Suppress("UNCHECKED_CAST")
-                        val photos = resource.getData() as? PagingData<Photo>
+        val getUserPhotosViewModel: GetUserPhotosViewModel by viewModels {
+            GetUserPhotosViewModel.provideFactory(
+                getUserPhotosViewModelFactory,
+                Params(Query().apply {
+                    firstParam = name
+                    secondParam = false
+                    thirdParam = "days"
+                    forthParam = 30
+                })
+            )
+        }
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                getUserPhotosViewModel.value.collect { resource ->
+                    when (resource.getStatus()) {
+                        Status.SUCCESS -> {
+                            resource.getData()?.let {
+                                binding.swipeRefreshContainer.isRefreshing = false
+                                @Suppress("UNCHECKED_CAST")
+                                val photos = resource.getData() as? PagingData<Photo>
 
-                        lifecycleScope.launchWhenCreated {
-                            photoAdapter?.submitData(photos!!)
+                                lifecycleScope.launchWhenCreated {
+                                    photoAdapter?.submitData(photos!!)
+                                }
+                            }
+                        }
+
+                        Status.ERROR -> {
+                            binding.swipeRefreshContainer.isRefreshing = false
+                            showErrorPopup(resource.getMessage()!!) {}
+
+                        }
+
+                        Status.LOADING -> {
+                            binding.swipeRefreshContainer.isRefreshing = true
                         }
                     }
-                }
-
-                Status.ERROR -> {
-                    binding.swipeRefreshContainer.isRefreshing = false
-                    showErrorPopup(resource.getMessage()!!) {}
-
-                }
-
-                Status.LOADING -> {
-                    binding.swipeRefreshContainer.isRefreshing = true
                 }
             }
         }

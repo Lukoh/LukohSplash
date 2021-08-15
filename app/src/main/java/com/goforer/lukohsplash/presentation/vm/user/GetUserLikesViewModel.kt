@@ -16,13 +16,29 @@
 
 package com.goforer.lukohsplash.presentation.vm.user
 
-import com.goforer.lukohsplash.data.source.network.response.Resource
-import com.goforer.lukohsplash.domain.intermediator.user.GetUserLikesUseCase
-import com.goforer.lukohsplash.presentation.vm.TriggerViewModel
-import javax.inject.Inject
-import javax.inject.Singleton
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider.Factory
+import com.goforer.lukohsplash.domain.mediator.user.GetUserLikesUseCase
+import com.goforer.lukohsplash.presentation.vm.Params
+import com.goforer.lukohsplash.presentation.vm.MediatorViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-@Singleton
 class GetUserLikesViewModel
-@Inject
-constructor(override val useCase: GetUserLikesUseCase) : TriggerViewModel<Resource>(useCase)
+@AssistedInject
+constructor(useCase: GetUserLikesUseCase, @Assisted private val params: Params) : MediatorViewModel(useCase, params) {
+    @AssistedFactory
+    interface AssistedUserLikesFactory {
+        fun create(params: Params): GetUserLikesViewModel
+    }
+
+    companion object {
+        fun provideFactory(assistedFactory: AssistedUserLikesFactory, params: Params) = object : Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(params) as T
+            }
+        }
+    }
+}

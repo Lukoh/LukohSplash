@@ -62,7 +62,7 @@ open class LukohSplash : Application(), LifecycleObserver, HasAndroidInjector {
             Timber.uprootAll()
             Timber.plant(Timber.DebugTree())
         }
-
+        
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         registerComponentCallbacks(ComponentCallback(this))
         AppInjector.init(this)

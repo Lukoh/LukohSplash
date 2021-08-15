@@ -18,9 +18,11 @@ package com.goforer.lukohsplash.data.source.network.worker
 
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
-import com.goforer.lukohsplash.data.source.network.response.*
 import com.goforer.base.extension.isNullOnFlow
+import com.goforer.lukohsplash.data.source.network.response.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import timber.log.Timber
 
 /**
@@ -30,19 +32,19 @@ import timber.log.Timber
  * Guide</a>.
  */
 abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
-    private val enabledCache: Boolean
+    private val enabledCache: Boolean, lifecycleScope: CoroutineScope
 ) {
+    private val resource = Resource()
+
     companion object {
-        internal const val YOUR_ACCESS_KEY = "ogfHK8SPaobznFUnD4jXUe4TIIgsh5pmUdfZ4Ra91Zw"
+        internal const val YOUR_ACCESS_KEY = "V9sYHDmwcPc46chEOLA_bhTV3hwsWG0P1ta1vNZjmLs"
         internal const val NONE_ITEM_COUNT = 10
         internal const val LATEST = "latest"
 
-        private const val LOADING = "loading"
+        internal const val LOADING = "loading"
     }
 
-    private val resource = Resource()
-
-    internal val asFlow = flow {
+    internal val asSharedFlow = flow {
         emit(resource.loading(LOADING))
         clearCache()
 
@@ -64,9 +66,9 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
                             resource.success(apiResponse.body)
                         })
                     }, {
-                        it.collect { data ->
-                            Timber.e("NetworkBoundWorker refreshed $data")
-                            emit(resource.success(data))
+                        it.collect { result ->
+                            Timber.e("NetworkBoundWorker refreshed $result")
+                            emit(resource.success(result))
                         }
                     })
                 }
@@ -82,7 +84,11 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
                 }
             }
         }
-    }
+    }.shareIn(
+        scope = lifecycleScope,
+        started = WhileSubscribed(5000),
+        replay = 10
+    )
 
     protected open suspend fun onNetworkError(errorMessage: String, errorCode: Int) {
     }

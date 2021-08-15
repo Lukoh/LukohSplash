@@ -14,8 +14,6 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Suppress("KDocUnresolvedReference")
-
 package com.goforer.base.view.holder
 
 import android.content.Context

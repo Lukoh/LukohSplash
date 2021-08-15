@@ -18,7 +18,7 @@ package com.goforer.lukohsplash.domain
 
 import androidx.paging.PagingData
 import com.goforer.lukohsplash.data.repository.Repository
-import com.goforer.lukohsplash.presentation.vm.TriggerViewModel
+import com.goforer.lukohsplash.presentation.vm.MediatorViewModel
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.nhaarman.mockitokotlin2.isA
@@ -32,14 +32,15 @@ import org.junit.rules.TestWatcher
 import org.mockito.Mockito
 
 open class PagingDataUseCaseTest<P : Any> : TestWatcher() {
-    lateinit var useCase: UseCase<Params, PagingData<P>>
+    lateinit var useCase: UseCase<PagingData<P>>
     lateinit var repository: Repository<PagingData<P>>
-    lateinit var viewModel: TriggerViewModel<PagingData<P>>
+    lateinit var viewModel: MediatorViewModel
     var defaultQuery = Query()
     var defaultParams = Params(defaultQuery)
 
     @DelicateCoroutinesApi
     fun <T> setBaseRepository(repoClass: Class<T>) {
+        @Suppress("UNCHECKED_CAST")
         repository = Mockito.mock(repoClass as Class<Repository<PagingData<P>>>)
         Mockito.`when`(repository.doWork(isA<CoroutineScope>(), isA<Query>()))
             .thenReturn(

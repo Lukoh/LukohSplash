@@ -20,6 +20,7 @@ import androidx.paging.PagingData
 import com.goforer.lukohsplash.data.repository.paging.source.home.PhotosPagingSource
 import com.goforer.lukohsplash.data.repository.remote.RepositoryTest
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
+import com.goforer.lukohsplash.data.source.model.entity.user.response.Collection
 import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.test.kit.QueryTool
