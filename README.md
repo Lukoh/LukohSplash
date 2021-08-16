@@ -78,7 +78,7 @@ In this demp App, the Entity is the data model of the business logic layer.
 * In the Datasource layer, the “datasource” package, we create the Datasource class that develops the logic to get the API data and return them in a data model to be able to work with them. In our example, the Datasource is instantiated with the library with which the API connection is going to be used to consume the data, so the Datasource must instantiate this library in order to call its methods.
 
 
-Advanced latest Architecture
+## Advanced latest Architecture
 
 Let’s dive migrating from LiveData to Kolin’s Flow
 
