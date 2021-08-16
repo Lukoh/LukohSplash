@@ -163,30 +163,17 @@ State flow always has an initial value, replays one most recent value to new sub
 Use SharedFlow when you need a StateFlow that adjusts behavior such as additional buffering, playing more values, or omitting initial values. 
 However, note the obvious compromise in choosing SharedFlow: you will lose StateFlow<T>.value .
 
-open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : ViewModel() {
-   
-   private var value: Any? = null
-
-   @ExperimentalCoroutinesApi
-   
-   open fun pullTrigger(params: Params, lifecycleOwner: LifecycleOwner, doOnResult: (result: Value) -> Unit) {
-       
-	lifecycleOwner.lifecycleScope.launch {
-           useCase.run(this, params)
-               .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-               .flatMapLatest { resource ->
-                   value = resource
-                   flow {
-                       emit(doOnResult(resource))
-                   }
-               }.stateIn(
-                   scope = viewModelScope,
-                   started = Eagerly,
-                   initialValue = value
-               )
-       }
-   }
-}
+@OptIn(ExperimentalCoroutinesApi::class)
+open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewModel() {
+    val value = useCase.run(viewModelScope, params).flatMapLatest {
+        flow {
+            emit(it)
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = WhileSubscribed(5000),
+        initialValue = Resource().loading(LOADING)
+    )
 
 	 	 		
 The exposed StateFlow will receive updates whenever the user changes or the user’s data in the repository is changed.
