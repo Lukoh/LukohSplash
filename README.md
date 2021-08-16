@@ -22,10 +22,6 @@ Basic principles of architecture:
    
    It is a design principle for separating a computer program into distinct sections such that each section addresses a separate concern. 
    A concern is anything that matters in providing a solution to a problem.
-					
-					
-  ❏ This principle is closely related to the Single Responsibility Principle of object-oriented programming which states that “every module, class, or function         should have responsibility over a single part of the functionality provided by the software, and that responsibility should be entirely encapsulated by the 
-    class, module or function.”
 						
 **2. Drive UI from a model:** 
     
