@@ -243,8 +243,7 @@ In this open-source project, I also used the [Shared-ViewModel](https://github.c
 
 If you are about to start the new app, I think it worth a try using Single-Activity Architecture with the Navigation component. However, in the case where you want to use it with the existing app with many Activities, you can start off by transforming the flow to use this architecture. For example, in the authentication flow, instead of having multiple Activity for Login, Sign up, etc, you can combine that into one Activity with Fragment representing each screen in the flow.
 
-Please visit the link below if you'd like to dive deep into Single activity architecture.
-(https://developer.android.com/guide/navigation)
+Please visit the link below if you'd like to dive deep into [Single activity architecture](https://developer.android.com/guide/navigation).
 
 MVVM with Clean Architecture: A Solid Combination
 
