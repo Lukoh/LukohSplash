@@ -405,7 +405,7 @@ In this open-source project, I also used the [Shared-ViewModel](https://github.c
 	
 #### Mediator-ViewModel
 	
-In this open-source project, I also used the [Mediator-ViewModel](https://github.com/Lukoh/SingleSharedSample/blob/master/app/src/main/java/com/goforer/singlesharedsample/presentation/vm/MediatorViewModel.kt) for delivering data-information as parmeters or paths being used in REST APIs to UseCase and Repository.
+In this open-source project, I also used the [Mediator-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/MediatorViewModel.kt) for delivering data-information as parmeters or paths being used in REST APIs to UseCase and Repository.
 
 ### MVVM with Clean Architecture: A Solid Combination
 
