@@ -22,8 +22,10 @@ import com.goforer.lukohsplash.data.source.network.response.Resource
 import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.LOADING
 import com.goforer.lukohsplash.domain.UseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 
 @OptIn(ExperimentalCoroutinesApi::class)
 open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewModel() {
@@ -57,7 +59,7 @@ open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewM
     override fun onCleared() {
         super.onCleared()
 
-        _value.value = Resource().loading(LOADING)
+        value.value = Resource().loading(LOADING)
     }
      */
 }
