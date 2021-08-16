@@ -34,9 +34,11 @@ Basic principles of architecture:
  * The package structure is even easier to navigate.
  * The project is even easier to maintain.
  * Your team can add new features even more quickly.
+ 
 **Disadvantages of Clean Architecture**
  * It has a slightly steep learning curve. How all the layers work together may take some time to understand, especially if you are coming from patterns like simple MVVM or MVP.
  * It adds a lot of extra classes, so it’s not ideal for low-complexity projects.
+
 	 	 							
 **Architecture of LukoSplash consists of 3 layer, **Presentation Layer** & **Domain(Business Logic) Layer** & **Data Laery**.
 
