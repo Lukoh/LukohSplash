@@ -18,13 +18,13 @@ MVVM decouple all views (i.e. Activitys and Fragments) from all business logics.
 MVVM with Clean Architecture is pretty good in such cases. It goes one step further in separating the responsibilities of your code base. It clearly abstracts the logic of the actions that can be performed in your app. 	 	 							
 Basic principles of architecture:	
 			
-1. ​Separation of concerns (SoC):​ It is a design principle for separating a computer program into distinct sections such that each section addresses a separate 
+1.​Separation of concerns (SoC):​ It is a design principle for separating a computer program into distinct sections such that each section addresses a separate 
     concern. A concern is anything that matters in providing a solution to a problem.
 						
   ❏ This principle is closely related to the Single Responsibility Principle of object-oriented programming which states that “every module, class, or function         should have responsibility over a single part of the functionality provided by the software, and that responsibility should be entirely encapsulated by the 
     class, module or function.”
 						
-2. ​Drive UI from a model:​ App should drive the UI from a model, preferably a persistent model. Models are independent from the View objects and app components, 
+2.​Drive UI from a model:​ App should drive the UI from a model, preferably a persistent model. Models are independent from the View objects and app components, 
     so they're unaffected by the app's life-cycle and the associated concerns. Business logic is completely separated from UI. It makes our code very easy to 
     maintain and test.It makes all code very easy to maintain and test.
 
