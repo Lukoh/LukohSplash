@@ -459,7 +459,7 @@ constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
 Unlike the previous versions of Paging library, in Paging3, I have to implement a PagingSource<Key, Value> to define a data source. The PagingSource takes two parameters a Key and a Value. The Key parameter is the identifier of the data to be loaded such as page number and the Value is the type of the data itself.
 
 	
-[PhotosPagingSource Code](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/data/repository/remote/home/GetPhotosRepository.kt)
+[PhotosPagingSource Code](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/data/repository/paging/source/home/PhotosPagingSource.kt)
 
 ```
 @Singleton
