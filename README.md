@@ -422,7 +422,7 @@ You can check out it how to implment all code of Paging3. Please refer to code b
 #### Get the PagingData in Repository
 Now I created an instance of Pager in my Repository to get a stream of data from the PhotosPagingSource that I just created.
 
-[GetPhotosRepository Code]()
+[GetPhotosRepository Code](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/data/repository/remote/home/GetPhotosRepository.kt)
 	
 ```
 @Singleton
@@ -459,7 +459,7 @@ constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
 Unlike the previous versions of Paging library, in Paging3, I have to implement a PagingSource<Key, Value> to define a data source. The PagingSource takes two parameters a Key and a Value. The Key parameter is the identifier of the data to be loaded such as page number and the Value is the type of the data itself.
 
 	
-[PhotosPagingSource Code]()
+[PhotosPagingSource Code](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/data/repository/remote/home/GetPhotosRepository.kt)
 
 ```
 @Singleton
