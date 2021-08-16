@@ -538,7 +538,7 @@ Please refer to [this PhotosAdapter](https://github.com/Lukoh/LukohSplash/blob/m
 	
 Finally, I implemented the coee in the fragment to show the list of all photos.
 
-[]()	
+[PhotosFragment](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/ui/home/PhotosFragment.kt)	
 	
 @OptIn(ExperimentalCoroutinesApi::class)
 private fun getPhotos() {
