@@ -221,7 +221,7 @@ Any other combination will keep the upstream Flows active, wasting resources:
  - ❌ Expose using Lazily/Eagerly and collect with repeatOnLifecycle
 
 	
-<span style="#b68834">**CAUTION!**</span> 	
+<span style="#b68834">CAUTION!</span> 	
 
 Please avoid creating new instances on each function call**
 	
