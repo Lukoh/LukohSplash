@@ -32,21 +32,23 @@ Your team can add new features even more quickly.
 Disadvantages of Clean Architecture
 It has a slightly steep learning curve. How all the layers work together may take some time to understand, especially if you are coming from patterns like simple MVVM or MVP.
 It adds a lot of extra classes, so it’s not ideal for low-complexity projects.
-
-Architecture of LukoSplash consists of 3 separate layers, Presentation Layer & Domain(Business Logic) Layer & Data Layer 	 	 							
-**Advanced App-Architecture consists of 3 layer, **Presentation Layer** & **Domain(Business Logic) Layer** & **Data Laery**.
+	 	 							
+**Architecture of LukoSplash consists of 3 layer, **Presentation Layer** & **Domain(Business Logic) Layer** & **Data Laery**.
 
 **1. The presentation layer**
+
 The presentation layer is the user layer, the graphical interface that captures the user’s events and shows the results. It also performs operations such as verifying that there are no formatting errors in the user’s data entry and formatting data to be displayed in a certain way.
 In this demo App, these operations are shared between the UI layer and the ViewModel layer:
  * The UI layer contains the activities and fragments, capturing user events and displaying data.
  * The ViewModel layer formats the data so that the UI shows them in a certain way and verifies that the user’s entries have the correct format.
 
 **2. The business logic layer**
+
 In this layer all the rules that a business must comply with are business. For this, they receive the data provided by the user and perform the necessary operations. In our example, the ordering of beers from lowest to highest alcoholic strength are the business rules for what the UseCase class will do.
 It is the most stable layer and the one that indicates what is happening in the software architecture developed.
 
 **3. The data layer**
+
 In this layer is where the data is and where they can be accessed.
 These operations are divided between the Repository layer and Datasource:
  * The Repository layer is the one that performs the logic of data access. Your responsibility is to obtain them and check where they are, deciding where to look at each moment. For example, you can first check the database and, if they are not, search them on the web, save them in the local database and now return the saved data. That is, it defines the flow of access to the data. In our example, it asks beers directly to the data layer that communicates with the API.
