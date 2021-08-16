@@ -211,7 +211,7 @@ Please read [Substituting Android’s LiveData: StateFlow or SharedFlow?](https:
 I also recommend to visit the Android official below tech blog to know how migrating from LiveData to Kotlin’s Flow and : 
 [Migrating from LiveData to Kotlin’s Flow](https://medium.com/androiddevelopers/migrating-from-livedata-to-kotlins-flow-379292f419fb)
 
-## Dependency Injection
+### Dependency Injection
 
 What is Dependency Injection?
 First, what is a dependency? Any non-trivial software program is going to contain components that pass information and send message calls back and forth between one another.
