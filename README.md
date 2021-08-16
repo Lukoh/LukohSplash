@@ -6,7 +6,7 @@ I was confident that I could develop high performance apps using Android archite
 
 Now let’s dive into my open-source project, LukohSplash, which is based on the Android MVVM with Clean Architecture and the latest libraries like Jetpack.
 
-Better Android Apps Using MVVM with Clean Architecture
+## Better Android Apps Using MVVM with Clean Architecture
 
 ​​If you don’t choose the well-structured architecture for your Android project, you will have a hard time maintaining it as your codebase grows and your team expands.
 
