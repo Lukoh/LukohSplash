@@ -87,7 +87,8 @@ Let’s dive migrating from LiveData to Kolin’s Flow
 Live data is part of Android Architecture Components which are basically a collection of libraries that help you design robust, testable, and maintainable apps.
 This set of libraries contains classes which you can use in your app.
 One of these classes is LiveData.
-It is an Observable data class — Meaning it can be observed by other components — most profoundly UI controllers (Activities/Fragments). So, instead of having a reference of the activity/fragment in your viewModel( which you shouldn’t have due to leaks), you now have a reference to the viewModel in the activity/fragment
+It is an Observable data class — Meaning it can be observed by other components — most profoundly UI controllers (Activities/Fragments). 
+So, instead of having a reference of the activity/fragment in your viewModel( which you shouldn’t have due to leaks), you now have a reference to the viewModel in the activity/fragment)
 It is Lifecycle aware— Meaning it sends updates to our UI (Activities/Fragments) only when our view is in the active state. (No memory leaks)
 
 Using LiveData provides the following advantages:
@@ -200,7 +201,7 @@ I also recommend to visit the Android official below tech blog to know how migra
 
 ## Dependency Injection
 
-	What is Dependency Injection?
+What is Dependency Injection?
 First, what is a dependency? Any non-trivial software program is going to contain components that pass information and send message calls back and forth between one another.
 
 For example, when using an Object Oriented Programming language (such as Java/Kotlin on Android), objects will call methods on other objects that they have references to. A dependency is when one of the objects depends on the concrete implementation of another object.
@@ -210,7 +211,7 @@ Dependency injection is often discussed in conjunction with one of the five SOLI
 
 The gist of the Dependency Inversion principle is that it is important to depend on abstractions rather than concrete implementations.
 
-Dagger2
+### Dagger2
 A fast dependency injector for Android and Kotlin, Java.
 Dagger2 is a great library that allows you to @Inject everything you need where you need it and handle the lifecycle of created objects. Dagger2 is used to avoid detail-complicated boilerplate code of connecting architecture elements one to another.
 
@@ -238,7 +239,7 @@ Instead of having one Activity represent one screen, we view an Activity as a bi
 
 I've used this architecture in several production and my open-source apps and so far there are no issues. You might wonder what if we want to pass the data back and forth between Fragments like startActivityForResult? 
 
-In this open-source project, I also used the Shared-ViewModel(https://github.com/Lukoh/SingleSharedSample/blob/master/app/src/main/java/com/goforer/singlesharedsample/presentation/vm/SharedViewModel.kt) for communication between fragments. However, recently, Google has just added a new ability to FragmentManager which allows the FragmentManager to act as a central store for fragment results. We can pass the data back and forth between Fragments easily. You can read more about it here https://developer.android.com/training/basics/fragments/pass-data-between#kotlin
+In this open-source project, I also used the [Shared-ViewModel](https://github.com/Lukoh/SingleSharedSample/blob/master/app/src/main/java/com/goforer/singlesharedsample/presentation/vm/SharedViewModel.kt) for communication between fragments. However, recently, Google has just added a new ability to FragmentManager which allows the FragmentManager to act as a central store for fragment results. We can pass the data back and forth between Fragments easily. You can read more about it [here] (https://developer.android.com/training/basics/fragments/pass-data-between#kotlin)
 
 If you are about to start the new app, I think it worth a try using Single-Activity Architecture with the Navigation component. However, in the case where you want to use it with the existing app with many Activities, you can start off by transforming the flow to use this architecture. For example, in the authentication flow, instead of having multiple Activity for Login, Sign up, etc, you can combine that into one Activity with Fragment representing each screen in the flow.
 
