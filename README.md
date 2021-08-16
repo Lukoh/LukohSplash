@@ -9,7 +9,9 @@ And I'm learning Jetpack Compose and will apply it to LukohSplash.
 
 Here is the [demo video](https://www.youtube.com/watch?v=7_bfUPWxrk8). 
 
-I used Unsplash-common REST APIs.
+Pleaes get in touch with me via email if you're intersted in my technical experience and all techs which are applied into LukohSplash. Also visit my [LinkedIn profile]O(https://www.linkedin.com/in/lukoh-nam-68207941/?senderId=lukoh-nam-68207941) if you want to know more about me. Here is my email address below:
+
+lukoh.nam@gmail.com
 
 ## Better Android Apps Using MVVM with Clean Architecture
 
