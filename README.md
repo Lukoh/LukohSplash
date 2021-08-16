@@ -207,6 +207,26 @@ Any other combination will keep the upstream Flows active, wasting resources:
 	
 ❌ Expose using Lazily/Eagerly and collect with repeatOnLifecycle
 
+	
+**CAUTION! Do't create new instances on each function call**
+NEVER use shareIn or stateIn to create a new flow that’s returned when calling a function. That’d create a new SharedFlow or StateFlow on each function invocation that will remain in memory until the scope is cancelled or is garbage collected when there are no references to it.	
+
+```
+class UserRepository(
+    private val userLocalDataSource: UserLocalDataSource,
+    private val externalScope: CoroutineScope
+) {
+    // DO NOT USE shareIn or stateIn in a function like this.
+    // It creates a new SharedFlow/StateFlow per invocation which is not reused!
+    fun getUser(): Flow<User> =
+        userLocalDataSource.getUser()
+            .shareIn(externalScope, WhileSubscribed())    
+
+    // DO USE shareIn or stateIn in a property
+    val user: Flow<User> = 
+        userLocalDataSource.getUser().shareIn(externalScope, WhileSubscribed())
+}
+```
 
 Please read [Substituting Android’s LiveData: StateFlow or SharedFlow?](https://proandroiddev.com/should-we-choose-kotlins-stateflow-or-sharedflow-to-substitute-for-android-s-livedata-2d69f2bd6fa5)  If you want to know which to choose, StateFlow or SharedFlow?
 
