@@ -5,6 +5,7 @@ LukohSplahs is based on Android latest architectural components,Jetpack, and fol
 I was confident that I could develop high performance apps using Android architecture components and Kotlin Coroutine and Flow without using LiveData and RxJava, RxKotlin about a couple of months ago. And I proved it.
 
 Now let’s dive into my open-source project, LukohSplash, which is based on the Android MVVM with Clean Architecture and the latest libraries like Jetpack.
+And I'm learning Jetpack Compose and will apply it to LukohSplash. 
 
 ## Better Android Apps Using MVVM with Clean Architecture
 
