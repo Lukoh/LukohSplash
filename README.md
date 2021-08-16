@@ -161,6 +161,7 @@ StateFlow can also be used to achieve the same behavior: it is a specialized Sha
 
 After reading many tech blogs and learning about Koltin-Flow, I have come to the conclusion that the structure like below will be preferred.
 The Flow implementation is similar but it doesn’t have LiveData conversions:
+The exposed StateFlow will receive updates whenever the user changes or the user’s data in the repository is changed.
 
 ![alt StateFlow-Flow-Flow-Flow end-to-end](https://github.com/Lukoh/LukohSplash/blob/main/New-Architecture2.png?raw=true)
 **Using StateFlow-Flow-Flow-Flow end-to-end**
