@@ -112,7 +112,9 @@ From these two facts in the Clean Architecture term, I can reach the following c
 Even though the use case of Flow seems very similar to LiveData, it has more advantages like:
 						
 ❏ Asynchronous by itself with structured concurrency
+
 ❏ Simple to transform data with operators like map, filter ... 
+
 ❏ Easy to test
 						
 The main purpose of LiveData is not designed to make data transformation and ​LiveData was never designed as a fully fledged reactive stream builder.
