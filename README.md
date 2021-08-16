@@ -194,7 +194,7 @@ State flow always has an initial value, replays one most recent value to new sub
 Use SharedFlow when you need a StateFlow that adjusts behavior such as additional buffering, playing more values, or omitting initial values. 
 However, note the obvious compromise in choosing SharedFlow: you will lose StateFlow<T>.value .
 
-```	
+``kotlin	
 @OptIn(ExperimentalCoroutinesApi::class)
 open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewModel() {
     val value = useCase.run(viewModelScope, params).flatMapLatest {
