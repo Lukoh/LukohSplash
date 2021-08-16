@@ -228,7 +228,7 @@ Please avoid creating new instances on each function call**
 	
 NEVER use shareIn or stateIn to create a new flow that’s returned when calling a function. That’d create a new SharedFlow or StateFlow on each function invocation that will remain in memory until the scope is cancelled or is garbage collected when there are no references to it.	
 
-```
+```kotlin
 open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewModel() {
     // DO NOT USE shareIn or stateIn in a function like this.
     // It creates a new SharedFlow/StateFlow per invocation which is not reused!
@@ -304,7 +304,7 @@ Here is my ViewModel: it uses params which deliver parameters to REST APIs and a
 	
 To use Dagger’s assisted injection, annotate the constructor of an object with @AssistedInject and annotate any assisted parameters with @Assisted, as shown below:
 
-```
+```kotlin
 class GetPhotosViewModel
 @AssistedInject
 constructor(
@@ -317,7 +317,7 @@ constructor(
 
 Next, define a factory that can be used to create an instance of the object. The factory must be annotated with @AssistedFactory and must contain an abstract method that returns the @AssistedInject type and takes in all @Assisted parameters defined in its constructor (in the same order). This is shown below:
 
-```
+```kotlin
 @AssistedFactory
 interface AssistedPhotosFactory {
     fun create(params: Params): GetPhotosViewModel
@@ -335,7 +335,7 @@ companion object {
 
 Finally, Dagger will create the implementation for the assisted factory and provide a binding for it. The factory can be injected as a dependency as shown below.
 
-```
+```kotlin
 class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     @Inject
     lateinit var getPhotosViewModelFactory: GetPhotosViewModel.AssistedPhotosFactory
@@ -431,7 +431,7 @@ Now I created an instance of Pager in my Repository to get a stream of data from
 
 [GetPhotosRepository Code](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/data/repository/remote/home/GetPhotosRepository.kt)
 	
-```
+```kotlin
 @Singleton
 class GetPhotosRepository
 @Inject
@@ -468,7 +468,7 @@ Unlike the previous versions of Paging library, in Paging3, I have to implement 
 	
 [PhotosPagingSource Code](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/data/repository/paging/source/home/PhotosPagingSource.kt)
 
-```
+```kotlin
 @Singleton
 class PhotosPagingSource
 @Inject
@@ -547,7 +547,7 @@ Finally, I implemented the coee in the fragment to show the list of all photos.
 
 [PhotosFragment](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/ui/home/PhotosFragment.kt)	
 
-```
+```kotlin
 @OptIn(ExperimentalCoroutinesApi::class)
 private fun getPhotos() {
     ...
