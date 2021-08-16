@@ -410,6 +410,14 @@ In this open-source project, I also used the [Mediator-ViewModel](https://github
 #### Processor-ViewModel
 	
 In this open-source project, I also used the [Processor-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/ProcessorViewModel.kt) for hanlding the business logic. Once dealing with the business logic, the work of this ViewModel get back to UI with the result and update or refresh the UI. I implemented this ViewModel with a couple of methods. I implemented this ViewModel with a couple of methods.
+	
+### Paging3
+	
+### ViewPager2
+	
+ViewPager2 is an improved version of the ViewPager library that offers enhanced functionality and addresses common difficulties with using ViewPager. If your app already uses ViewPager, [read this page](https://developer.android.com/training/animation/vp2-migration) to learn more about migrating to ViewPager2.
+
+If you want to use ViewPager2 in your app and are not currently using ViewPager, read [Slide between fragments using ViewPager2](https://developer.android.com/training/animation/screen-slide-2) and [Create swipe views with tabs using ViewPager2](https://developer.android.com/guide/navigation/navigation-swipe-view-2) for more information.
 
 ### MVVM with Clean Architecture: A Solid Combination
 
