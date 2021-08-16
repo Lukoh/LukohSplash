@@ -413,6 +413,12 @@ In this open-source project, I also used the [Processor-ViewModel](https://githu
 	
 ### Paging3
 	
+The Jetpack Component Library helps you load and display pages of data from a larger dataset from local storage or over network. This approach allows your app to use both network bandwidth and system resources more efficiently. The components of the Paging library are designed to fit into the recommended Android app architecture, integrate cleanly with other Jetpack components, and provide first-class Kotlin support.
+	
+Also the Paging 3.0 Jetpack Component Library is a major update to the previous version of the Paging library and has been completely re-implemented from the previous version of the Paging library. Full support for Kotlin coroutines and other reactive streams like RxJava and LiveData. It also has built-in error handling and support for managing loading state, making it very easy to implement paging in your app.
+
+Please read [this page](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) and [How to Use the Paging 3 Library in Android](https://proandroiddev.com/how-to-use-the-paging-3-library-in-android-5d128bb5b1d8) if you'd like to learn how to apply and implement it.
+	
 ### ViewPager2
 	
 ViewPager2 is an improved version of the ViewPager library that offers enhanced functionality and addresses common difficulties with using ViewPager. If your app already uses ViewPager, [read this page](https://developer.android.com/training/animation/vp2-migration) to learn more about migrating to ViewPager2.
