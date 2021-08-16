@@ -409,7 +409,8 @@ In this open-source project, I also used the [Mediator-ViewModel](https://github
 	
 #### Processor-ViewModel
 	
-In this open-source project, I also used the [Processor-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/ProcessorViewModel.kt) for hanlding the business logic. Once dealing with the business logic, the work of this ViewModel get back to UI with the result and update or refresh the UI. I implemented this ViewModel with a couple of methods. I implemented this ViewModel with a couple of methods.
+In this open-source project, I also used the [Processor-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/ProcessorViewModel.kt) for hanlding the business logic. Once dealing with the business logic, the work of this ViewModel get back to UI with the result and update or refresh the UI. I implemented this ViewModel with a couple of methods. I implemented this ViewModel with a couple of methods. Business logic is completely separated from UI. It makes our code very easy to 
+maintain and test.It makes all code very easy to maintain and test.
 	
 ### Paging3
 	
