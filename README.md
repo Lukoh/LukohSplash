@@ -45,7 +45,7 @@ In this layer is where the data is and where they can be accessed. These operati
 The source layer is what the implementation performs in order to access the data. In this demo App, it is the one that implements the logic to be able to access the API data of beers. 
 The repository layer is the one that performs the logic of data access. Your responsibility is to obtain them and check where they are, deciding where to look at each moment. For example, you can first check the database and, if they are not, search them on the web, save them in the local database and now return the saved data. That is, it defines the flow of access to the data. In our example, it asks beers directly to the data layer that communicates with the API. 	 
 
-![alt StateFlow-Flow-Flow-Flow end-to-end](https://github.com/Lukoh/LukohSplash/blob/main/New-Architecture2.png?raw=true)
+![alt Layer Communication](https://raw.githubusercontent.com/Lukoh/LukohSplash/main/Layer%20Communication.jpeg)
 			 	 	 								
 Each layer should talk only with their immediate friends. In this case, if we look at the software architecture scheme:
 The UI can only communicate with the ViewModel
