@@ -247,6 +247,8 @@ open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewM
 }
 ```
 
+Please read [Things to know about Flow’s shareIn and stateIn operators](https://medium.com/androiddevelopers/things-to-know-about-flows-sharein-and-statein-operators-20e6ccb2bc74) if you learn more as I mentioned above. I'm confident it helps you to use StateFlow or SharedFlow very well.
+	
 Please read [Substituting Android’s LiveData: StateFlow or SharedFlow?](https://proandroiddev.com/should-we-choose-kotlins-stateflow-or-sharedflow-to-substitute-for-android-s-livedata-2d69f2bd6fa5)  If you want to know which to choose, StateFlow or SharedFlow?
 
 I also recommend to visit the Android official below tech blog to know how migrating from LiveData to Kotlin’s Flow and : 
