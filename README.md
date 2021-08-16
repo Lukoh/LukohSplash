@@ -270,17 +270,104 @@ Dagger2 is a great library that allows you to @Inject everything you need where 
 
 Any Android apps rely on instantiating objects that often require other dependencies. For instance, a Unsplash API client may be built using a networking library such as Retrofit. To use this library, you might also need to add parsing libraries such as Gson. In addition, classes that implement authentication or caching may require accessing shared preferences or other common storage, requiring instantiating them first and creating an inherent dependency chain.
 
-Dagger 2 analyzes these dependencies for you and generates code to help wire them together. While there are other Java dependency injection frameworks, many of them suffered limitations in relying on XML, required validation dependency issues at run-time, or incurred performance penalties during startup. Dagger 2 relies purely on using Java annotation processors and compile-time checks to analyze and verify dependencies. It is considered to be one of the most efficient dependency injection frameworks built to date.
+Dagger2 analyzes these dependencies for you and generates code to help wire them together. While there are other Java dependency injection frameworks, many of them suffered limitations in relying on XML, required validation dependency issues at run-time, or incurred performance penalties during startup. Dagger 2 relies purely on using Java annotation processors and compile-time checks to analyze and verify dependencies. It is considered to be one of the most efficient dependency injection frameworks built to date.
 Advantages
-Here is a list of other advantages for using Dagger 2:
+Here is a list of other advantages for using Dagger2:
 
 Simplifies access to shared instances. Just as the ButterKnife library makes it easier to define references to Views, event handlers, and resources, Dagger 2 provides a simple way to obtain references to shared instances. 
 Easy configuration of complex dependencies. There is an implicit order in which your objects are often created. Dagger 2 walks through the dependency graph and generates code that is both easy to understand and trace, while also saving you from writing the large amount of boilerplate code you would normally need to write by hand to obtain references and pass them to other objects as dependencies. It also helps simplify refactoring, since you can focus on what modules to build rather than focusing on the order in which they need to be created.
 Easier unit and integration testing Because the dependency graph is created for us, we can easily swap out modules that make network responses and mock out this behavior.
 Scoped instances Not only can you easily manage instances that can last the entire application lifecycle, you can also leverage Dagger 2 to define instances with shorter lifetimes (i.e. bound to a user session, activity lifecycle, etc.).
 
-Note: I prefer using Dagger 2 for dependency injection in complex projects. But with its extremely steep learning curve, it’s beyond the scope of this article. So if you’re interested in going deeper, I highly recommend Hari Vignesh Jayapalan’s introduction to Dagger 2 and Dependency Injection with Dagger 2, Getting started with Dagger 2.27 on Android by example
+Note: I prefer using Dagger2 for dependency injection in complex projects. But with its extremely steep learning curve, it’s beyond the scope of this article. So if you’re interested in going deeper, I highly recommend Hari Vignesh Jayapalan’s introduction to Dagger 2 and Dependency Injection with Dagger 2, Getting started with Dagger 2.27 on Android by example
+	
+In release 2.31 Dagger2 gives us the ability to use assisted injection. And now I can create my view models in more simple way like below.
+Here is my ViewModel: it uses params which deliver parameters to REST APIs and an useCase. This means we can pass the parameters to REST APIs as the query or paths.
+	
+To use Dagger’s assisted injection, annotate the constructor of an object with @AssistedInject and annotate any assisted parameters with @Assisted, as shown below:
 
+```
+class GetPhotosViewModel
+@AssistedInject
+constructor(
+    useCase: GetPhotosUseCase,
+    @Assisted private val params: Params
+) : MediatorViewModel(useCase, params) {
+    ...
+}
+```
+
+Next, define a factory that can be used to create an instance of the object. The factory must be annotated with @AssistedFactory and must contain an abstract method that returns the @AssistedInject type and takes in all @Assisted parameters defined in its constructor (in the same order). This is shown below:
+
+```
+@AssistedFactory
+interface AssistedPhotosFactory {
+    fun create(params: Params): GetPhotosViewModel
+}
+
+companion object {
+    fun provideFactory(assistedFactory: AssistedPhotosFactory, params: Params) = object : Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return assistedFactory.create(params) as T
+        }
+    }	
+}
+```
+
+Finally, Dagger will create the implementation for the assisted factory and provide a binding for it. The factory can be injected as a dependency as shown below.
+
+```
+class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
+    @Inject
+    lateinit var getPhotosViewModelFactory: GetPhotosViewModel.AssistedPhotosFactory
+	
+    ...
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun getPhotos() {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val getPhotosViewModel: GetPhotosViewModel by viewModels {
+                    GetPhotosViewModel.provideFactory(
+                        getPhotosViewModelFactory,
+                        Params(Query().apply {
+                            firstParam = 1
+                            secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
+                            thirdParam = NetworkBoundWorker.LATEST
+                        })
+                    )
+                }
+                getPhotosViewModel.value.collect { resource ->
+                    when (resource.getStatus()) {
+                        Status.SUCCESS -> {
+                            resource.getData()?.let {
+                                binding.swipeRefreshContainer.isRefreshing = false
+                                @Suppress("UNCHECKED_CAST")
+                                val photos = resource.getData() as? PagingData<Photo>
+
+                                viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+                                    photoAdapter?.submitData(photos!!)
+                                }
+                            }
+                        }
+
+                        Status.ERROR -> {
+                            binding.swipeRefreshContainer.isRefreshing = false
+                            showErrorPopup(resource.getMessage()!!) {}
+
+                        }
+
+                        Status.LOADING -> {
+                            binding.swipeRefreshContainer.isRefreshing = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```	
 
 ### Single-Activity Architecture with the Navigation component 
 
