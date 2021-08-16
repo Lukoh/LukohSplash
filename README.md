@@ -419,7 +419,10 @@ Also the Paging 3.0 Jetpack Component Library is a major update to the previous 
 	
 You can check out it how to implment all code of Paging3. Please refer to code below:
 
-Repository Code
+#### Get the PagingData in Repository
+Now I created an instance of Pager in my Repository to get a stream of data from the PhotosPagingSource that I just created.
+
+[GetPhotosRepository Code]()
 	
 ```
 @Singleton
@@ -445,7 +448,106 @@ constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
 }
 ```
 	
+ * The Pager object calls the load() method from the MoviePagingSource object, providing it with the LoadParams object and receiving the LoadResult object in return.
+	
+ * We also have to provide configurations such as pageSize with the PagingConfig object.
 
+ * The cachedIn(viewModelScope) caches the data from the MoviePagingSource to survive the screen orientation changes.
+
+#### Create a Data Source
+
+Unlike the previous versions of Paging library, in Paging3, I have to implement a PagingSource<Key, Value> to define a data source. The PagingSource takes two parameters a Key and a Value. The Key parameter is the identifier of the data to be loaded such as page number and the Value is the type of the data itself.
+
+	
+[PhotosPagingSource Code]()
+
+```
+@Singleton
+class PhotosPagingSource
+@Inject
+constructor() : BasePagingSource<Int, Photo>() {
+    override fun setData(query: Query, value: MutableList<Photo>) {
+        this.query = query
+        pagingList = value
+    }
+
+    @SuppressWarnings("unchecked")
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
+        return try {
+            params.key.isNullOnFlow({}, {
+                restAPI.getPhotos(
+                    YOUR_ACCESS_KEY, params.key?.plus(1), query.secondParam as Int,  query.thirdParam as String
+                ).collect { apiResponse ->
+                    pagingList = when (apiResponse) {
+                        is ApiSuccessResponse -> {
+                            apiResponse.body
+                        }
+
+                        is ApiEmptyResponse -> {
+                            errorMessage = ERROR_MESSAGE_PAGING_EMPTY
+                            arrayListOf()
+                        }
+
+                        is ApiErrorResponse -> {
+                            errorMessage = apiResponse.errorMessage
+                            arrayListOf()
+                        }
+                    }
+                }
+            })
+
+            if (pagingList.isNotEmpty())
+                LoadResult.Page(
+                    data = pagingList,
+                    prevKey = null,
+                    nextKey = params.key?.plus(1) ?: 1
+                )
+            else
+                LoadResult.Error(Throwable(errorMessage))
+        } catch (exception: IOException) {
+            return LoadResult.Error(exception)
+        } catch (exception: HttpException) {
+            return LoadResult.Error(exception)
+        } catch (exception: Exception) {
+            // Handle errors in this block
+            return LoadResult.Error(exception)
+        }
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, Photo>): Int? {
+        // Try to find the page key of the closest page to anchorPosition, from
+        // either the prevKey or the nextKey, but you need to handle nullability
+        // here:
+        //  * prevKey == null -> anchorPage is the first page.
+        //  * nextKey == null -> anchorPage is the last page.
+        //  * both prevKey and nextKey null -> anchorPage is the initial page, so
+        //    just return null.
+        return state.anchorPosition?.let { anchorPosition ->
+            val anchorPage = state.closestPageToPosition(anchorPosition)
+            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+        }
+    }
+}
+```
+
+#### Display data in RecyclerView
+	
+First I have to create a RecyclerView'S adapter class which extends from the PagingDataAdapter. This is the same as a normal RecyclerView adapter. The PagingDataAdapter takes two parameters, the first one is the type of the data(which in our case is the Movie object), and the second one is a RecyclerView.ViewHolder.
+
+Please refer to [this PhotosAdapter]() if you'd like to see the code of it.
+	
+Finally, I implemented the coee in the fragment to show the list of all photos.
+
+@OptIn(ExperimentalCoroutinesApi::class)
+private fun getPhotos() {
+    ...
+    getPhotosViewModel.value.collect { resource ->
+	...
+	viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            photoAdapter?.submitData(photos!!)
+        }
+    }
+}
 
 Please read [this page](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) and [How to Use the Paging 3 Library in Android](https://proandroiddev.com/how-to-use-the-paging-3-library-in-android-5d128bb5b1d8) if you'd like to learn how to apply and implement it.
 	
