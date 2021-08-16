@@ -534,10 +534,12 @@ constructor() : BasePagingSource<Int, Photo>() {
 	
 First I have to create a RecyclerView'S adapter class which extends from the PagingDataAdapter. This is the same as a normal RecyclerView adapter. The PagingDataAdapter takes two parameters, the first one is the type of the data(which in our case is the Movie object), and the second one is a RecyclerView.ViewHolder.
 
-Please refer to [this PhotosAdapter]() if you'd like to see the code of it.
+Please refer to [this PhotosAdapter](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/ui/home/adapter/PhotosAdapter.kt) if you'd like to see the code of it.
 	
 Finally, I implemented the coee in the fragment to show the list of all photos.
 
+[]()	
+	
 @OptIn(ExperimentalCoroutinesApi::class)
 private fun getPhotos() {
     ...
