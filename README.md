@@ -92,12 +92,12 @@ It is Lifecycle aware— Meaning it sends updates to our UI (Activities/Fragment
 
 Using LiveData provides the following advantages:
 
-No memory leaks
-Ensures your UI matches your data state
-No crashes due to stopped activities
-Always up to date data
-Proper configuration changes
-Sharing resources
+ * No memory leaks
+ * Ensures your UI matches your data state
+ * No crashes due to stopped activities
+ * Always up to date data
+ * Proper configuration changes
+ * Sharing resources
 
 LiveData was introduced as part of Architecture Components and it has integrated well in many projects since that time. It’s helpful for getting rid of callbacks and allows us to observe Lifecycle and act accordingly, getting rid of potential memory leaks.
 						
