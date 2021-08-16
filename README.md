@@ -396,7 +396,16 @@ Please visit the link below if you'd like to dive deep into [Single activity arc
 	
 ### ViewModel
 	
+I made 3 ViewModel to decouple the role of ViewModels.
+The role of each ViewModelbelow are below:	
+	
+#### Shared-ViewModel
+	
 In this open-source project, I also used the [Shared-ViewModel](https://github.com/Lukoh/SingleSharedSample/blob/master/app/src/main/java/com/goforer/singlesharedsample/presentation/vm/SharedViewModel.kt) for communication between fragments. However, recently, Google has just added a new ability to FragmentManager which allows the FragmentManager to act as a central store for fragment results. We can pass the data back and forth between Fragments easily. You can read more about it [here](https://developer.android.com/training/basics/fragments/pass-data-between)
+	
+#### Mediator-ViewModel
+	
+In this open-source project, I also used the [Mediator-ViewModel](https://github.com/Lukoh/SingleSharedSample/blob/master/app/src/main/java/com/goforer/singlesharedsample/presentation/vm/MediatorViewModel.kt) for delivering data-information as parmeters or paths being used in REST APIs to UseCase and Repository.
 
 ### MVVM with Clean Architecture: A Solid Combination
 
