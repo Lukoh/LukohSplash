@@ -40,10 +40,11 @@ The UI layer contains the activities and fragments, capturing user events and di
 The ViewModel layer formats the data so that the UI shows them in a certain way and verifies that the user’s entries have the correct format.
 The domain layer
 In this layer all the rules that a business must comply with are business. The domain layer contains all the use cases of LukohSplash. For this, they receive the data provided by the user and perform the necessary operations. In our example, the ordering of beers from lowest to highest alcoholic strength are the business rules for what the UseCase class will do. It is the most stable layer and the one that indicates what is happening in the software architecture developed. The purpose of the UseCases is to be an inter-mediator between your ViewModels and Repositories and handle business logic such as downloading a photo or cropping a photo to fit well on the frame. 
+
 The data layer
 In this layer is where the data is and where they can be accessed. These operations are divided between the repository layer and source:					
 The source layer is what the implementation performs in order to access the data. In this demo App, it is the one that implements the logic to be able to access the API data of beers. 
-The repository layer is the one that performs the logic of data access. Your responsibility is to obtain them and check where they are, deciding where to look at each moment. For example, you can first check the database and, if they are not, search them on the web, save them in the local database and now return the saved data. That is, it defines the flow of access to the data. In our example, it asks beers directly to the data layer that communicates with the API. 	 
+The repository layer is the one that performs the logic of data access. Your responsibility is to obtain them and check where they are, deciding where to look at each moment. For example, you can first check the database and, if they are not, search them on the web, save them in the local database and now return the saved data. That is, it defines the flow of access to the data. In our example, it asks beers directly to the data layer that communicates with the API. 	  	 
 
 ![alt Layer Communication](https://raw.githubusercontent.com/Lukoh/LukohSplash/main/Layer%20Communication.jpeg)
 			 	 	 								
