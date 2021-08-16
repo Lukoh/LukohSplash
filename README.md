@@ -148,10 +148,10 @@ After reading many tech blogs and learning about Koltin-Flow, I have come to the
 The Flow implementation is similar but it doesn’t have LiveData conversions:
 
 ![alt StateFlow-Flow-Flow-Flow end-to-end](https://github.com/Lukoh/LukohSplash/blob/main/New-Architecture2.png?raw=true)
-Using StateFlow-Flow-Flow-Flow end-to-end
+**Using StateFlow-Flow-Flow-Flow end-to-end**
 
 ![alt StateFlow-ShardFlow-ShardFlow-Flow end-to-end](https://github.com/Lukoh/LukohSplash/blob/main/New-Architecture1.png?raw=true)
-Using StateFlow-ShardFlow-ShardFlow-Flow end-to-end
+**Using StateFlow-ShardFlow-ShardFlow-Flow end-to-end**
 
 
 It may help to think of a SharedFlow as a flow collector itself, that materializes our cold flow upstream into a hot flow, and shares the collected values between the many collectors downstream. 
