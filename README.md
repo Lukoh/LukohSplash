@@ -163,6 +163,7 @@ State flow always has an initial value, replays one most recent value to new sub
 Use SharedFlow when you need a StateFlow that adjusts behavior such as additional buffering, playing more values, or omitting initial values. 
 However, note the obvious compromise in choosing SharedFlow: you will lose StateFlow<T>.value .
 
+```	
 @OptIn(ExperimentalCoroutinesApi::class)
 open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewModel() {
     val value = useCase.run(viewModelScope, params).flatMapLatest {
@@ -174,7 +175,7 @@ open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewM
         started = WhileSubscribed(5000),
         initialValue = Resource().loading(LOADING)
     )
-
+```
 	 	 		
 The exposed StateFlow will receive updates whenever the user changes or the user’s data in the repository is changed.
 The best way to expose data from a ViewModel and collect it from a view is:
