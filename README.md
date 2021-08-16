@@ -213,19 +213,37 @@ Any other combination will keep the upstream Flows active, wasting resources:
 NEVER use shareIn or stateIn to create a new flow that’s returned when calling a function. That’d create a new SharedFlow or StateFlow on each function invocation that will remain in memory until the scope is cancelled or is garbage collected when there are no references to it.	
 
 ```
-class UserRepository(
-    private val userLocalDataSource: UserLocalDataSource,
-    private val externalScope: CoroutineScope
-) {
+open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewModel() {
     // DO NOT USE shareIn or stateIn in a function like this.
     // It creates a new SharedFlow/StateFlow per invocation which is not reused!
-    fun getUser(): Flow<User> =
-        userLocalDataSource.getUser()
-            .shareIn(externalScope, WhileSubscribed())    
+    private var value: Value? = null		
+	
+    open fun pullTrigger(params: Params, lifecycleOwner: LifecycleOwner, doOnResult: (result: Value) -> Unit) {
+        lifecycleOwner.lifecycleScope.launch {
+            useCase.run(this, params)
+                .flatMapLatest { resource ->
+                    value = resource
+                    flow {
+                        emit(doOnResult(resource))
+                    }
+                }.shareIn(
+                    scope = lifecycleOwner.lifecycleScope,
+                    started = Eagerly,
+                    replay = 1
+                )
+        }
+    }    
 
     // DO USE shareIn or stateIn in a property
-    val user: Flow<User> = 
-        userLocalDataSource.getUser().shareIn(externalScope, WhileSubscribed())
+    val value = useCase.run(viewModelScope, params).flatMapLatest {
+        flow {
+            emit(it)
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = WhileSubscribed(5000),
+        initialValue = Resource().loading(LOADING)
+    )
 }
 ```
 
