@@ -222,6 +222,8 @@ Any other combination will keep the upstream Flows active, wasting resources:
 
 	
 <span style="#b68834">CAUTION!</span> 	
+	
+<span style="color:yellow">노란 글씨입니다.</span>
 
 Please avoid creating new instances on each function call**
 	
