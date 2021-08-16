@@ -45,7 +45,7 @@ Basic principles of architecture:
  * It adds a lot of extra classes, so it’s not ideal for low-complexity projects.
 
 	 	 							
-**Architecture of LukoSplash consists of 3 layer, **Presentation Layer** & **Domain(Business Logic) Layer** & **Data Laery**.
+Architecture of LukoSplash consists of 3 layer, **Presentation Layer** & **Domain(Business Logic) Layer** & **Data Laery**.
 
 **1. The presentation layer**
  
