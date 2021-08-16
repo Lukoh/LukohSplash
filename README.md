@@ -18,25 +18,30 @@ MVVM decouple all views (i.e. Activitys and Fragments) from all business logics.
 MVVM with Clean Architecture is pretty good in such cases. It goes one step further in separating the responsibilities of your code base. It clearly abstracts the logic of the actions that can be performed in your app. 	 	 							
 Basic principles of architecture:	
 			
-1. ​Separation of concerns (SoC):​ It is a design principle for separating a computer program into distinct sections such that each section addresses a separate concern. A concern is anything that matters in providing a solution to a problem.
+1. ​Separation of concerns (SoC):​ It is a design principle for separating a computer program into distinct sections such that each section addresses a separate 
+    concern. A concern is anything that matters in providing a solution to a problem.
 						
-❏ This principle is closely related to the Single Responsibility Principle of object-oriented programming which states that “every module, class, or function should have responsibility over a single part of the functionality provided by the software, and that responsibility should be entirely encapsulated by the class, module or function.”
+  ❏ This principle is closely related to the Single Responsibility Principle of object-oriented programming which states that “every module, class, or function         should have responsibility over a single part of the functionality provided by the software, and that responsibility should be entirely encapsulated by the 
+    class, module or function.”
 						
-2. ​Drive UI from a model:​ App should drive the UI from a model, preferably a persistent model. Models are independent from the View objects and app components, so they're unaffected by the app's life-cycle and the associated concerns. Business logic is completely separated from UI. It makes our code very easy to maintain and test.It makes all code very easy to maintain and test.
-Advantages of Using Clean Architecture
-Your code is even more easily testable than with plain MVVM.
-Your code is further decoupled (the biggest advantage.)
-The package structure is even easier to navigate.
-The project is even easier to maintain.
-Your team can add new features even more quickly.
-Disadvantages of Clean Architecture
-It has a slightly steep learning curve. How all the layers work together may take some time to understand, especially if you are coming from patterns like simple MVVM or MVP.
-It adds a lot of extra classes, so it’s not ideal for low-complexity projects.
+2. ​Drive UI from a model:​ App should drive the UI from a model, preferably a persistent model. Models are independent from the View objects and app components, 
+    so they're unaffected by the app's life-cycle and the associated concerns. Business logic is completely separated from UI. It makes our code very easy to 
+    maintain and test.It makes all code very easy to maintain and test.
+
+**Advantages of Using Clean Architecture**
+ * Your code is even more easily testable than with plain MVVM.
+ * Your code is further decoupled (the biggest advantage.)
+ * The package structure is even easier to navigate.
+ * The project is even easier to maintain.
+ * Your team can add new features even more quickly.
+**Disadvantages of Clean Architecture**
+ * It has a slightly steep learning curve. How all the layers work together may take some time to understand, especially if you are coming from patterns like simple MVVM or MVP.
+ * It adds a lot of extra classes, so it’s not ideal for low-complexity projects.
 	 	 							
 **Architecture of LukoSplash consists of 3 layer, **Presentation Layer** & **Domain(Business Logic) Layer** & **Data Laery**.
 
 **1. The presentation layer**
-
+ 
 The presentation layer is the user layer, the graphical interface that captures the user’s events and shows the results. It also performs operations such as verifying that there are no formatting errors in the user’s data entry and formatting data to be displayed in a certain way.
 In this demo App, these operations are shared between the UI layer and the ViewModel layer:
  * The UI layer contains the activities and fragments, capturing user events and displaying data.
