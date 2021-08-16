@@ -188,7 +188,9 @@ open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : V
 	 	 		
 The exposed StateFlow will receive updates whenever the user changes or the user’s data in the repository is changed.
 The best way to expose data from a ViewModel and collect it from a view is:
+	
 ✔️ Expose a StateFlow, using the WhileSubscribed strategy, with a timeout. [example]
+	
 ✔️ Collect with repeatOnLifecycle or flowWithLifecycle. [example]
 
 Any other combination will keep the upstream Flows active, wasting resources:
