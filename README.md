@@ -194,7 +194,7 @@ Any other combination will keep the upstream Flows active, wasting resources:
 Please read [Substituting Android’s LiveData: StateFlow or SharedFlow?](https://proandroiddev.com/should-we-choose-kotlins-stateflow-or-sharedflow-to-substitute-for-android-s-livedata-2d69f2bd6fa5)  If you want to know which to choose, StateFlow or SharedFlow?
 
 I also recommend to visit the Android official below tech blog to know how migrating from LiveData to Kotlin’s Flow and : 
-Migrating from LiveData to Kotlin’s Flow
+[Migrating from LiveData to Kotlin’s Flow](https://medium.com/androiddevelopers/migrating-from-livedata-to-kotlins-flow-379292f419fb)
 
 Dependency Injection
 What is Dependency Injection?
