@@ -221,7 +221,7 @@ Any other combination will keep the upstream Flows active, wasting resources:
  - ❌ Expose using Lazily/Eagerly and collect with repeatOnLifecycle
 
 	
-**<span style="color:red">CAUTION!</span> Please avoid creating new instances on each function call**
+**<span style="#b68834">CAUTION!</span> Please avoid creating new instances on each function call**
 	
 NEVER use shareIn or stateIn to create a new flow that’s returned when calling a function. That’d create a new SharedFlow or StateFlow on each function invocation that will remain in memory until the scope is cancelled or is garbage collected when there are no references to it.	
 
