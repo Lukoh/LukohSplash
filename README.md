@@ -172,8 +172,12 @@ The exposed StateFlow will receive updates whenever the user changes or the user
 ![alt StateFlow-Flow-Flow-Flow end-to-end](https://github.com/Lukoh/LukohSplash/blob/main/New-Architecture2.png?raw=true)
 **Using StateFlow-Flow-Flow-Flow end-to-end**
 
+Let you hit [SataFlow branch]() if you're interested in above architecture.
+
 ![alt StateFlow-ShardFlow-ShardFlow-Flow end-to-end](https://github.com/Lukoh/LukohSplash/blob/main/New-Architecture1.png?raw=true)
 **Using StateFlow-ShardFlow-ShardFlow-Flow end-to-end**
+
+Let you hit [Main Branch]() or [Challenge branch]() if you're interested in above architecture.
 
 
 It may help to think of a SharedFlow as a flow collector itself, that materializes our cold flow upstream into a hot flow, and shares the collected values between the many collectors downstream. 
