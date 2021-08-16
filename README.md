@@ -192,7 +192,9 @@ The best way to expose data from a ViewModel and collect it from a view is:
 ✔️ Collect with repeatOnLifecycle or flowWithLifecycle. [example]
 
 Any other combination will keep the upstream Flows active, wasting resources:
+	
 ❌ Expose using WhileSubscribedand collect inside lifecycleScope.launch/launchWhenX
+	
 ❌ Expose using Lazily/Eagerly and collect with repeatOnLifecycle
 
 
