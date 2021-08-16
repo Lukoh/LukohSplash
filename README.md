@@ -241,7 +241,7 @@ Scoped instances Not only can you easily manage instances that can last the enti
 Note: I prefer using Dagger 2 for dependency injection in complex projects. But with its extremely steep learning curve, it’s beyond the scope of this article. So if you’re interested in going deeper, I highly recommend Hari Vignesh Jayapalan’s introduction to Dagger 2 and Dependency Injection with Dagger 2, Getting started with Dagger 2.27 on Android by example
 
 
-Single-Activity Architecture with the Navigation component 
+### Single-Activity Architecture with the Navigation component 
 
 I've applied the Single-Activity Architecture with the Navigation component to this LukohSplash open-source project
 
@@ -257,7 +257,7 @@ If you are about to start the new app, I think it worth a try using Single-Activ
 
 Please visit the link below if you'd like to dive deep into [Single activity architecture](https://developer.android.com/guide/navigation).
 
-MVVM with Clean Architecture: A Solid Combination
+### MVVM with Clean Architecture: A Solid Combination
 
 My purpose with this open-source project was to understand MVVM with Clean Architecture and latest Jetpack libraries, so I skipped over a few things that you can try to improve it further:
 
