@@ -164,11 +164,14 @@ Use SharedFlow when you need a StateFlow that adjusts behavior such as additiona
 However, note the obvious compromise in choosing SharedFlow: you will lose StateFlow<T>.value .
 
 open class TriggerViewModel<Value>(open val useCase: UseCase<Params, Value>) : ViewModel() {
+   
    private var value: Any? = null
 
    @ExperimentalCoroutinesApi
+   
    open fun pullTrigger(params: Params, lifecycleOwner: LifecycleOwner, doOnResult: (result: Value) -> Unit) {
-       lifecycleOwner.lifecycleScope.launch {
+       
+	lifecycleOwner.lifecycleScope.launch {
            useCase.run(this, params)
                .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                .flatMapLatest { resource ->
