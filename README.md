@@ -416,6 +416,36 @@ In this open-source project, I also used the [Processor-ViewModel](https://githu
 The Jetpack Component Library helps you load and display pages of data from a larger dataset from local storage or over network. This approach allows your app to use both network bandwidth and system resources more efficiently. The components of the Paging library are designed to fit into the recommended Android app architecture, integrate cleanly with other Jetpack components, and provide first-class Kotlin support.
 	
 Also the Paging 3.0 Jetpack Component Library is a major update to the previous version of the Paging library and has been completely re-implemented from the previous version of the Paging library. Full support for Kotlin coroutines and other reactive streams like RxJava and LiveData. It also has built-in error handling and support for managing loading state, making it very easy to implement paging in your app.
+	
+You can check out it how to implment all code of Paging3. Please refer to code below:
+
+Repository Code
+	
+```
+@Singleton
+class GetPhotosRepository
+@Inject
+constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
+    @ExperimentalCoroutinesApi
+    override fun doWork(lifecycleScope: CoroutineScope, query: Query) = object :
+        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false, lifecycleScope) {
+        override fun request() = restAPI.getPhotos(YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT, LATEST)
+
+        override fun load(value: MutableList<Photo>, itemCount: Int) = Pager(
+            config = PagingConfig(
+                pageSize = itemCount,
+                prefetchDistance = itemCount,
+                initialLoadSize = itemCount
+            )
+        ) {
+            pagingSource.setData(query, value)
+            pagingSource
+        }.flow.cachedIn(lifecycleScope)
+    }.asSharedFlow
+}
+```
+	
+
 
 Please read [this page](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) and [How to Use the Paging 3 Library in Android](https://proandroiddev.com/how-to-use-the-paging-3-library-in-android-5d128bb5b1d8) if you'd like to learn how to apply and implement it.
 	
