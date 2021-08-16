@@ -82,6 +82,8 @@ In this demp App, the Entity is the data model of the business logic layer.
 
 Let’s dive migrating from LiveData to Kolin’s Flow
 
+### Flow
+
 Live data is part of Android Architecture Components which are basically a collection of libraries that help you design robust, testable, and maintainable apps.
 This set of libraries contains classes which you can use in your app.
 One of these classes is LiveData.
