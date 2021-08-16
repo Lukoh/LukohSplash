@@ -405,7 +405,11 @@ In this open-source project, I also used the [Shared-ViewModel](https://github.c
 	
 #### Mediator-ViewModel
 	
-In this open-source project, I also used the [Mediator-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/MediatorViewModel.kt) for delivering data-information as parmeters or paths being used in REST APIs to UseCase and Repository.
+In this open-source project, I also used the [Mediator-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/MediatorViewModel.kt) for delivering data-information as parmeters or paths being used in REST APIs to UseCase and Repository. I implemented this ViewModel with a couple of methods.
+	
+#### Processor-ViewModel
+	
+In this open-source project, I also used the [Processor-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/ProcessorViewModel.kt) for hanlding the business logic. Once dealing with the business logic, the work of this ViewModel get back to UI with the result and update or refresh the UI. I implemented this ViewModel with a couple of methods. I implemented this ViewModel with a couple of methods.
 
 ### MVVM with Clean Architecture: A Solid Combination
 
