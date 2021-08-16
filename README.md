@@ -277,12 +277,12 @@ Dagger2 analyzes these dependencies for you and generates code to help wire them
 Advantages
 Here is a list of other advantages for using Dagger2:
 
-Simplifies access to shared instances. Just as the ButterKnife library makes it easier to define references to Views, event handlers, and resources, Dagger 2 provides a simple way to obtain references to shared instances. 
-Easy configuration of complex dependencies. There is an implicit order in which your objects are often created. Dagger 2 walks through the dependency graph and generates code that is both easy to understand and trace, while also saving you from writing the large amount of boilerplate code you would normally need to write by hand to obtain references and pass them to other objects as dependencies. It also helps simplify refactoring, since you can focus on what modules to build rather than focusing on the order in which they need to be created.
+Simplifies access to shared instances. Just as the ButterKnife library makes it easier to define references to Views, event handlers, and resources, Dagger2 provides a simple way to obtain references to shared instances. 
+Easy configuration of complex dependencies. There is an implicit order in which your objects are often created. Dagger2 walks through the dependency graph and generates code that is both easy to understand and trace, while also saving you from writing the large amount of boilerplate code you would normally need to write by hand to obtain references and pass them to other objects as dependencies. It also helps simplify refactoring, since you can focus on what modules to build rather than focusing on the order in which they need to be created.
 Easier unit and integration testing Because the dependency graph is created for us, we can easily swap out modules that make network responses and mock out this behavior.
-Scoped instances Not only can you easily manage instances that can last the entire application lifecycle, you can also leverage Dagger 2 to define instances with shorter lifetimes (i.e. bound to a user session, activity lifecycle, etc.).
+Scoped instances Not only can you easily manage instances that can last the entire application lifecycle, you can also leverage Dagger2 to define instances with shorter lifetimes (i.e. bound to a user session, activity lifecycle, etc.).
 
-Note: I prefer using Dagger2 for dependency injection in complex projects. But with its extremely steep learning curve, it’s beyond the scope of this article. So if you’re interested in going deeper, I highly recommend Hari Vignesh Jayapalan’s introduction to Dagger 2 and Dependency Injection with Dagger 2, Getting started with Dagger 2.27 on Android by example
+Note: I prefer using Dagger2 for dependency injection in complex projects. But with its extremely steep learning curve, it’s beyond the scope of this article. So if you’re interested in going deeper, I highly recommend Hari Vignesh Jayapalan’s introduction to Dagger2 and Dependency Injection with Dagger2, Getting started with Dagger 2.27 on Android by example
 	
 Since version 2.31,  Dagger2 gives us the ability to use assisted injection. And now I can create my view models in more simple way like below.
 Here is my ViewModel: it uses params which deliver parameters to REST APIs and an useCase. This means we can pass the parameters to REST APIs as the query or paths. That is, it's possible to achieve passing everything manually.
@@ -394,7 +394,7 @@ My purpose with this open-source project was to understand MVVM with Clean Archi
 
 Use Kotlin Coroutine and Flow to remove callbacks and make it a little neater.
 Use states to represent your UI. (For that, check out this amazing talk by Jake Wharton.)
-Use Dagger 2 to inject dependencies.
+Use Dagger2 to inject dependencies.
 
 This is one of the best and most scalable architectures for Android apps. I hope you enjoyed this article, and I look forward to hearing how you’ve used this approach in your own apps!
 
