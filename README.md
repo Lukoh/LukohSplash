@@ -1,3 +1,4 @@
+![header](https://capsule-render.vercel.app/api?type=slice&color=gradient&text=%20JisuPark%20%20&height=200&fontSize=100)
 # LukohSplash
 
 LukohSplahs is based on Android latest architectural components,Jetpack, and follows MVVM design pattern. Also LukohSplahs App Architecture consist of Presentation layer, Domain layer and Repository layer. And new latest technologies were applied into LukohSplahs App as Advanced Android App Architecture. The many advanced functions already were applied into LukohSplahs App. These stuff make Android Apps to be extended being more competitive power and help them to maintain consistency. And I'm also applying Kotlin Language into all modules in Grabph and almost codes are written with Kotlin. I'd like to help someone who are trying to learn Kotlin Language to apply Kotlin Language into their project.
@@ -221,9 +222,7 @@ Any other combination will keep the upstream Flows active, wasting resources:
  - ❌ Expose using Lazily/Eagerly and collect with repeatOnLifecycle
 
 	
-<span style="#b68834">CAUTION!</span> 	
-	
-<span style="color:yellow">노란 글씨입니다.</span>
+<span style="#b68834">**CAUTION!**</span> 	
 
 Please avoid creating new instances on each function call**
 	
