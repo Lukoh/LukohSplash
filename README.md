@@ -7,6 +7,10 @@ I was confident that I could develop high performance apps using Android archite
 Now let’s dive into my open-source project, LukohSplash, which is based on the Android MVVM with Clean Architecture and the latest libraries like Jetpack.
 And I'm learning Jetpack Compose and will apply it to LukohSplash. 
 
+Here is the [demo video](https://www.youtube.com/watch?v=7_bfUPWxrk8). 
+
+I used Unsplash-common REST APIs.
+
 ## Better Android Apps Using MVVM with Clean Architecture
 
 ​​If you don’t choose the well-structured architecture for your Android project, you will have a hard time maintaining it as your codebase grows and your team expands.
@@ -382,6 +386,9 @@ Instead of having one Activity represent one screen, we view an Activity as a bi
 
 I've used this architecture in several production and my open-source apps and so far there are no issues. You might wonder what if we want to pass the data back and forth between Fragments like startActivityForResult? 
 
+	
+### ViewModel
+	
 In this open-source project, I also used the [Shared-ViewModel](https://github.com/Lukoh/SingleSharedSample/blob/master/app/src/main/java/com/goforer/singlesharedsample/presentation/vm/SharedViewModel.kt) for communication between fragments. However, recently, Google has just added a new ability to FragmentManager which allows the FragmentManager to act as a central store for fragment results. We can pass the data back and forth between Fragments easily. You can read more about it [here](https://developer.android.com/training/basics/fragments/pass-data-between)
 
 If you are about to start the new app, I think it worth a try using Single-Activity Architecture with the Navigation component. However, in the case where you want to use it with the existing app with many Activities, you can start off by transforming the flow to use this architecture. For example, in the authentication flow, instead of having multiple Activity for Login, Sign up, etc, you can combine that into one Activity with Fragment representing each screen in the flow.
