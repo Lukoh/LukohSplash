@@ -575,6 +575,7 @@ View binding is a feature that allows you to more easily write code that interac
 In most cases, view binding replaces findViewById.
 
 Main advantages
+	
 The new ViewBinding feature has some advantages compared to the traditional approach and some of the libraries:
  * **Null safety**: view binding creates direct references to views, there’s no risk of a NullPointerException due to an invalid view ID. Also, when a view is only     exists regarding some conditions, the field containing its reference in the binding class is marked with @Nullable .
  * **Type safety**: All the View binding fields are generated matching the same type as the ones referenced in XML, so there’s no need to typecast. This means that the risk of a class cast exception is much lower, since If for some reason your layout and code doesn’t match, the build will fail at compile time instead at runtime.
