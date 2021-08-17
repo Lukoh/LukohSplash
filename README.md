@@ -491,10 +491,10 @@ constructor(
 
             }
         }
-    }.stateIn(
+    }.shareIn(
         scope = lifecycleScope,
         started = WhileSubscribed(5000),
-        initialValue = 1
+        replay = 1
     )
 }
 ```
