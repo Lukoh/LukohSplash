@@ -78,24 +78,24 @@ These operations are divided between the Repository layer and Datasource:
 			 	 	 								
 **Communication between the layers of a clean architecture on Android**
 
-Each layer should talk only with their immediate friends. In this case, if we look at the software architecture scheme:
+Each layer should talk only with their immediate friends. In this case, if you look at the software architecture scheme:
  * **The UI can only communicate with the ViewModel**
  * **The ViewModel can only communicate with the UseCase**
  * **The UseCase can only communicate with the Repository**
  * **The Repository can only communicate with the Datasource**
  
-In this way we are respecting the work in the chain of the factory, each area communicates with the next immediate and never with others.
+In this way I'm respecting the work in the chain of the factory, each area communicates with the next immediate and never with others.
 
 **In practice:**
-* We have a package structure where the classes are created, in which each one implements its responsibility.
+* I have a package structure where the classes are created, in which each one implements its responsibility.
 * In the user interface layer, the “ui” package, the Activity or Fragment is created. This class must communicate with the ViewModel layer. For this, the Activity must instantiate the ViewModel object and observe the declared LiveData.
-* In the presentation logic layer, the “vm” package, we create the ViewModel. This class creates the LiveData that will be observed by the Activity or Fragment. The ViewModel communicates with the UseCase layer, for this you must instantiate the UseCase object.
-* In the business logic layer, the “domain — use case” package, we create the UseCase class. This class is instantiated with the following layer, which is the Repository, but it does not do it directly with the object, but it does so with an interface that is in the UseCase package. This is because the UseCase is the most stable layer, which means that the libraries or classes that matter, must also be, and the Repository is one of the most unstable. In this way, it is the Repository that will have an import from the “domain — use case” package and the UseCase will not know it. The UseCase is at the center of the architecture, and this can be seen in the following scheme:
+* In the presentation logic layer, the “vm” package, I create the ViewModel. This class creates the LiveData that will be observed by the Activity or Fragment. The ViewModel communicates with the UseCase layer, for this you must instantiate the UseCase object.
+* In the business logic layer, the “domain — use case” package, I create the UseCase class. This class is instantiated with the following layer, which is the Repository, but it does not do it directly with the object, but it does so with an interface that is in the UseCase package. This is because the UseCase is the most stable layer, which means that the libraries or classes that matter, must also be, and the Repository is one of the most unstable. In this way, it is the Repository that will have an import from the “domain — use case” package and the UseCase will not know it. The UseCase is at the center of the architecture, and this can be seen in the following scheme:
 <img src="https://github.com/goforers/Grabph/blob/master/Clean%20Architecture.jpeg?raw=true" alt="Architecture" width="880" />
 
 In this demp App, the Entity is the data model of the business logic layer.
-* In the Repository layer, the “repository” package, we create the each Repository class is inherited from BaseRepository class that implements the interface that is in the “domain-use case” package. The Repository calls the Datasource layer, so you must instantiate this class.
-* In the Datasource layer, the “datasource” package, we create the Datasource class that develops the logic to get the API data and return them in a data model to be able to work with them. In our example, the Datasource is instantiated with the library with which the API connection is going to be used to consume the data, so the Datasource must instantiate this library in order to call its methods.
+* In the Repository layer, the “repository” package, I created the each Repository class is inherited from BaseRepository class that implements the interface that is in the “domain-use case” package. The Repository calls the Datasource layer, so you must instantiate this class.
+* In the Datasource layer, the “datasource” package, I created the Datasource class that develops the logic to get the API data and return them in a data model to be able to work with them. In our example, the Datasource is instantiated with the library with which the API connection is going to be used to consume the data, so the Datasource must instantiate this library in order to call its methods.
 
 
 ## Advanced latest Architecture
@@ -141,10 +141,10 @@ Even though the use case of Flow seems very similar to LiveData, it has more adv
   - **❏ Easy to test**
 						
 The main purpose of LiveData is not designed to make data transformation and ​LiveData was never designed as a fully fledged reactive stream builder.
-LiveData does not support changing threads though. But Flow can easily change the thread we work on using Flow-function and handle back-pressure by calling Flow-function on the Flow chain that skips values emitted by this Flow if the collector is slower than emitter.
+LiveData does not support changing threads though. But Flow can easily change the thread I work on using Flow-function and handle back-pressure by calling Flow-function on the Flow chain that skips values emitted by this Flow if the collector is slower than emitter.
 						
 LiveData is a lifecycle aware component, it is best to use it in view and ViewModel layer. The biggest problem of using LiveData in the repository level is all data transformation will be done on the main thread unless you start a coroutine and do the work inside.
-That means we can use the suspend-functions in the data layer. 
+That means I can use the suspend-functions in the data layer. 
 
 I couldn't just substitute LiveData with pure Flow, though. The main issues by using pure Flow as the LiveData's substitute on all app layers are blow:
 
@@ -158,7 +158,7 @@ For (3), I could already use LifecycleCoroutineScope extensions such as launchWh
 And there are problems below:
 The first problem with this approach is the handling of the Lifecycle, which LiveData does automatically for us. 
 The second problem is below:
-Because the Flow is declarative and is only run (materialized) upon collection, if we have multiple collectors, a new flow will be run for each collector, completely independent from each other. Depending on the operations done, such as database or network operations, this can be very ineffective. It can even result in erroneous states.
+Because the Flow is declarative and is only run (materialized) upon collection, if I have multiple collectors, a new flow will be run for each collector, completely independent from each other. Depending on the operations done, such as database or network operations, this can be very ineffective. It can even result in erroneous states.
 
 So I couldn’t use Flow in the UI View Layer.
 
@@ -293,13 +293,13 @@ Here is a list of other advantages for using Dagger2:
 
 Simplifies access to shared instances. Just as the ButterKnife library makes it easier to define references to Views, event handlers, and resources, Dagger2 provides a simple way to obtain references to shared instances. 
 Easy configuration of complex dependencies. There is an implicit order in which your objects are often created. Dagger2 walks through the dependency graph and generates code that is both easy to understand and trace, while also saving you from writing the large amount of boilerplate code you would normally need to write by hand to obtain references and pass them to other objects as dependencies. It also helps simplify refactoring, since you can focus on what modules to build rather than focusing on the order in which they need to be created.
-Easier unit and integration testing Because the dependency graph is created for us, we can easily swap out modules that make network responses and mock out this behavior.
+Easier unit and integration testing Because the dependency graph is created for us, You can easily swap out modules that make network responses and mock out this behavior.
 Scoped instances Not only can you easily manage instances that can last the entire application lifecycle, you can also leverage Dagger2 to define instances with shorter lifetimes (i.e. bound to a user session, activity lifecycle, etc.).
 
 Note: I prefer using Dagger2 for dependency injection in complex projects. But with its extremely steep learning curve, it’s beyond the scope of this article. So if you’re interested in going deeper, I highly recommend [Hari Vignesh Jayapalan’s introduction to Dagger2](https://medium.com/@harivigneshjayapalan/dagger-2-for-android-beginners-introduction-be6580cb3edb) and [Dependency Injection with Dagger2](https://developer.android.com/training/dependency-injection/dagger-basics), getting started with Dagger2 on Android by example
 	
-Since version 2.31,  Dagger2 gives us the ability to use assisted injection. And now I can create my view models in more simple way like below.
-Here is my ViewModel: it uses params which deliver parameters to REST APIs and an useCase. This means we can pass the parameters to REST APIs as the query or paths. That is, it's possible to achieve passing everything manually.
+Since version 2.31,  Dagger2 gives us the ability to use assisted injection. And now you can create my view models in more simple way like below.
+Here is my ViewModel: it uses params which deliver parameters to REST APIs and an useCase. This means you can pass the parameters to REST APIs as the query or paths. That is, it's possible to achieve passing everything manually.
 	
 To use Dagger’s assisted injection, annotate the constructor of an object with @AssistedInject and annotate any assisted parameters with @Assisted, as shown below:
 
@@ -392,9 +392,9 @@ I've applied the Single-Activity Architecture with the Navigation component to t
 
 Since the announcement of Jetpack in Google I/O 2018, Single Activity Architecture is also mentioned and it seems like the Google team intended to make this architecture more preferable.
 I never faced any problem using the Single-Activity Architecture with the Navigation component.
-Instead of having one Activity represent one screen, we view an Activity as a big container with the fragments inside the Activity representing the screen.
+Instead of having one Activity represent one screen, I view an Activity as a big container with the fragments inside the Activity representing the screen.
 
-I've used this architecture in several production and my open-source apps and so far there are no issues. You might wonder what if we want to pass the data back and forth between Fragments like startActivityForResult? 
+I've used this architecture in several production and my open-source apps and so far there are no issues. You might wonder what if w want to pass the data back and forth between Fragments like startActivityForResult? 
 If you are about to start the new app, I think it worth a try using Single-Activity Architecture with the Navigation component. However, in the case where you want to use it with the existing app with many Activities, you can start off by transforming the flow to use this architecture. For example, in the authentication flow, instead of having multiple Activity for Login, Sign up, etc, you can combine that into one Activity with Fragment representing each screen in the flow.
 
 Please visit the link below if you'd like to dive deep into [Single activity architecture](https://developer.android.com/guide/navigation).
@@ -406,7 +406,7 @@ The role of each ViewModelbelow are below:
 	
 #### Shared-ViewModel
 	
-In this open-source project, I also used the [Shared-ViewModel](https://github.com/Lukoh/SingleSharedSample/blob/master/app/src/main/java/com/goforer/singlesharedsample/presentation/vm/SharedViewModel.kt) for communication between fragments. However, recently, Google has just added a new ability to FragmentManager which allows the FragmentManager to act as a central store for fragment results. We can pass the data back and forth between Fragments easily. You can read more about it [here](https://developer.android.com/training/basics/fragments/pass-data-between)
+In this open-source project, I also used the [Shared-ViewModel](https://github.com/Lukoh/SingleSharedSample/blob/master/app/src/main/java/com/goforer/singlesharedsample/presentation/vm/SharedViewModel.kt) for communication between fragments. However, recently, Google has just added a new ability to FragmentManager which allows the FragmentManager to act as a central store for fragment results. You can pass the data back and forth between Fragments easily. You can read more about it [here](https://developer.android.com/training/basics/fragments/pass-data-between)
 	
 #### Mediator-ViewModel
 	
@@ -456,7 +456,7 @@ constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
 	
  * The Pager object calls the load() method from the MoviePagingSource object, providing it with the LoadParams object and receiving the LoadResult object in return.
 	
- * We also have to provide configurations such as pageSize with the PagingConfig object.
+ * You also have to provide configurations such as pageSize with the PagingConfig object.
 
  * The cachedIn(viewModelScope) caches the data from the MoviePagingSource to survive the screen orientation changes.
 
@@ -573,7 +573,7 @@ View binding is a feature that allows you to more easily write code that interac
 
 In most cases, view binding replaces findViewById.
 
-In comparison to the well-known methods such as Kotlin synthetics, Butterknife and findViewById, it provides a safer and more concise way of handling view interactions inside your views. Before we compare them all side by side, let’s dive in the features of View Binding.
+In comparison to the well-known methods such as Kotlin synthetics, Butterknife and findViewById, it provides a safer and more concise way of handling view interactions inside your views. Before comparing them all side by side, let’s dive in the features of View Binding.
 	
 According to Google, this new approach has the best of all the worlds. So, you should use it wherever you can.
 
