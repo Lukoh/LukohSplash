@@ -27,7 +27,7 @@ import com.goforer.lukohsplash.presentation.vm.Params
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.shareIn
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -78,12 +78,11 @@ constructor(
 
                 emit(status)
                 cursor.close()
-
             }
         }
-    }.stateIn(
+    }.shareIn(
         scope = lifecycleScope,
         started = WhileSubscribed(5000),
-        initialValue = 1
+        replay = 1
     )
 }

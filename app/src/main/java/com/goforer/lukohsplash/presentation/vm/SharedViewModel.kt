@@ -19,6 +19,7 @@ package com.goforer.lukohsplash.presentation.vm
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.launch
 
 open class SharedViewModel<Data> : ViewModel() {
@@ -27,9 +28,9 @@ open class SharedViewModel<Data> : ViewModel() {
     internal fun share(data: Data) {
         sharedData = flow {
             emit(data)
-        }.shareIn (
+        }.shareIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = WhileSubscribed(),
             replay = 1
         )
     }
@@ -37,8 +38,8 @@ open class SharedViewModel<Data> : ViewModel() {
     internal fun shared(doOnResult: (data: Data) -> Unit) {
         viewModelScope.launch {
             sharedData.collect {
-               doOnResult(it)
-           }
+                doOnResult(it)
+            }
         }
     }
 }

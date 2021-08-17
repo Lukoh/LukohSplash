@@ -327,9 +327,11 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                     )
                 }
 
+                makeLoading(true)
                 downloadPhotoViewModel.value.collect {
                     when (it) {
                         DownloadManager.STATUS_FAILED -> {
+                            makeLoading(false)
                             Toast.makeText(
                                 homeActivity,
                                 getString(R.string.download_fail_phrase),
@@ -338,6 +340,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         DownloadManager.STATUS_PAUSED -> {
+                            makeLoading(false)
                             Toast.makeText(
                                 homeActivity,
                                 getString(R.string.paused),
@@ -347,12 +350,15 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         DownloadManager.STATUS_PENDING -> {
+                            makeLoading(true)
                         }
 
                         DownloadManager.STATUS_RUNNING -> {
+                            makeLoading(true)
                         }
 
                         DownloadManager.STATUS_SUCCESSFUL -> {
+                            makeLoading(false)
                             NormalDialog.Builder(context)
                                 .setTitle(R.string.title_photo_download)
                                 .setMessage(getString(R.string.download_success))
@@ -362,6 +368,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         FILE_EXISTED -> {
+                            makeLoading(false)
                             NormalDialog.Builder(context)
                                 .setTitle(R.string.title_photo_download)
                                 .setMessage(getString(R.string.photo_existed))
@@ -371,6 +378,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         else -> {
+                            makeLoading(false)
                             Toast.makeText(
                                 homeActivity,
                                 getString(R.string.no_photo),
