@@ -574,6 +574,8 @@ View binding is a feature that allows you to more easily write code that interac
 In most cases, view binding replaces findViewById.
 
 In comparison to the well-known methods such as Kotlin synthetics, Butterknife and findViewById, it provides a safer and more concise way of handling view interactions inside your views. Before we compare them all side by side, let’s dive in the features of View Binding.
+	
+According to Google, this new approach has the best of all the worlds. So, you should use it wherever you can.
 
 #### Main advantages
 	
