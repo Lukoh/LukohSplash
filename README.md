@@ -414,8 +414,90 @@ In this open-source project, I also used the [Mediator-ViewModel](https://github
 	
 #### Processor-ViewModel
 	
-In this open-source project, I also used the [Processor-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/ProcessorViewModel.kt) for hanlding the business logic. Once dealing with the business logic, the work of this ViewModel get back to UI with the result and update or refresh the UI. I implemented this ViewModel with a couple of methods. I implemented this ViewModel with a couple of methods. Business logic is completely separated from UI. It makes our code very easy to 
-maintain and test.It makes all code very easy to maintain and test.
+In this open-source project, I also used the [Processor-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/ProcessorViewModel.kt) for hanlding the business logic. Once dealing with the business logic, the work of this ViewModel which is tied up with each UseCase in the processor package get back to UI with the result and update or refresh the UI. I implemented this ViewModel with a couple of methods. Business logic is completely separated from UI. It makes our code very easy to 
+maintain and test.It makes all code very easy to maintain and test. Please see the below code if you'd like to know how Processor-ViewModel and the UseCase in in the processor package get worked.
+
+```kotlin
+class DownloadPhotoViewModel
+@AssistedInject
+constructor(
+    useCase: DownloadPhotosUseCase,
+    @Assisted private val params: Params,
+) : ProcessorViewModel<Int>(useCase, params) {
+    @AssistedFactory
+    interface AssistedDownloadPhotoFactory {
+        fun create(params: Params): DownloadPhotoViewModel
+    }
+
+    companion object {
+        fun provideFactory(
+            assistedFactory: AssistedDownloadPhotoFactory, params: Params) = object : Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(params) as T
+            }
+        }
+    }
+}
+```	
+
+```kotlin
+@Singleton
+class DownloadPhotosUseCase
+@Inject
+constructor(
+    private val context: Context,
+    private val downloaderQueryInterface: DownloaderQueryWrapper
+) : UseCase<Int>() {
+    private lateinit var params: Params
+
+    companion object {
+        internal const val FILE_EXISTED = 9999
+    }
+
+    override fun run(lifecycleScope: CoroutineScope, params: Params) = flow {
+        var downloading = true
+        val downloadManager = params.query.firstParam as DownloadManager
+        val url = params.query.secondParam as String
+        val file = params.query.thirdParam as File
+        val fileName = url.substring(url.lastIndexOf("/") + 1).take(19)
+        val myFile =
+            File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "${fileName}.jpg")
+
+        this@DownloadPhotosUseCase.params = params
+        if (myFile.exists()) {
+            emit(FILE_EXISTED)
+        } else {
+            val query = downloaderQueryInterface.takeQuery(
+                downloadManager,
+                SaveFileInfo(url, file, fileName)
+            )
+
+            while (downloading) {
+                val cursor: Cursor = downloadManager.query(query)
+                cursor.moveToFirst()
+                if (cursor.getInt(
+                        cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                    )
+                    == DownloadManager.STATUS_SUCCESSFUL
+                ) {
+                    downloading = false
+                }
+
+                val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+
+                emit(status)
+                cursor.close()
+
+            }
+        }
+    }.stateIn(
+        scope = lifecycleScope,
+        started = WhileSubscribed(5000),
+        initialValue = 1
+    )
+}
+```
 	
 ### Paging3
 	
