@@ -98,7 +98,6 @@ In this demp App, the Entity is the data model of the business logic layer.
 * In the Datasource layer, the “datasource” package, we create the Datasource class that develops the logic to get the API data and return them in a data model to be able to work with them. In our example, the Datasource is instantiated with the library with which the API connection is going to be used to consume the data, so the Datasource must instantiate this library in order to call its methods.
 
 
-
 ## Advanced latest Architecture
 
 ### Flow
@@ -574,12 +573,16 @@ View binding is a feature that allows you to more easily write code that interac
 
 In most cases, view binding replaces findViewById.
 
+In comparison to the well-known methods such as Kotlin synthetics, Butterknife and findViewById, it provides a safer and more concise way of handling view interactions inside your views. Before we compare them all side by side, let’s dive in the features of View Binding.
+
 #### Main advantages
 	
 The new ViewBinding feature has some advantages compared to the traditional approach and some of the libraries:
  * **Null safety**: view binding creates direct references to views, there’s no risk of a NullPointerException due to an invalid view ID. Also, when a view is only     exists regarding some conditions, the field containing its reference in the binding class is marked with @Nullable .
  * **Type safety**: All the View binding fields are generated matching the same type as the ones referenced in XML, so there’s no need to typecast. This means that the risk of a class cast exception is much lower, since If for some reason your layout and code doesn’t match, the build will fail at compile time instead at runtime.
- * **Speed**: it doesn’t have any build time speed impact since it does not use annotation processors like ButterKnife or DataBinding.
+ * **Speed**: It doesn't affect build speed because it doesn't use annotation processors. New properties are dynamically created when the first build with view binding is activated. And when you add a new view element to your XML, you don't have to rewrite it every time.
+ * **Interoperability**: Generated classes are in Java and are optimized for Kotlin-Java interoperability.
+ * **Injection capability**: Generated class can be injected in activity or fragment.
 	
 ```kotlin
 abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
