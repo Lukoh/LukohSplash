@@ -567,6 +567,91 @@ Please read [this page](https://developer.android.com/topic/libraries/architectu
 ViewPager2 is an improved version of the ViewPager library that offers enhanced functionality and addresses common difficulties with using ViewPager. If your app already uses ViewPager, [read this page](https://developer.android.com/training/animation/vp2-migration) to learn more about migrating to ViewPager2.
 
 If you want to use ViewPager2 in your app and are not currently using ViewPager, read [Slide between fragments using ViewPager2](https://developer.android.com/training/animation/screen-slide-2) and [Create swipe views with tabs using ViewPager2](https://developer.android.com/guide/navigation/navigation-swipe-view-2) for more information.
+	
+### View Binding
+	
+View binding is a feature that allows you to more easily write code that interacts with views. Once view binding is enabled in a module, it generates a binding class for each XML layout file present in that module. An instance of a binding class contains direct references to all views that have an ID in the corresponding layout.
+
+In most cases, view binding replaces findViewById.
+	
+```kotlin
+abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
+    private var _binding: T? = null
+    abstract val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> T
+
+    internal val binding
+        get() = _binding as T
+	
+    ...
+   
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = _binding ?: bindingInflater.invoke(inflater, container, false)
+        if (activity is HomeActivity) {
+            homeActivity = (activity as HomeActivity?)!!
+            (activity as HomeActivity).supportActionBar?.hide()
+        }
+
+        return requireNotNull(_binding).root
+    }
+	
+    ...
+	
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        _binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        _binding = null
+    }
+	
+    ...
+}		
+```
+
+```kotlin
+class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
+    override val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> FragmentPhotosBinding
+        get() = FragmentPhotosBinding::inflate
+	
+    ...
+	
+     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+	
+	...
+	
+	binding.rvPhotos.apply {
+            val gridManager = StaggeredGridLayoutManager(1, RecyclerView.VERTICAL).apply {
+                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+            }
+
+            adapter = photoAdapter
+            photoAdapter?.stateRestorationPolicy = PREVENT_WHEN_EMPTY
+            gridManager.spanCount = 1
+            gridManager.orientation = resources.configuration.orientation
+            itemAnimator?.changeDuration = 0
+            addItemDecoration(StaggeredGridItemOffsetDecoration(0, 1), 0)
+            (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+            setItemViewCacheSize(RECYCLER_VIEW_CACHE_SIZE)
+            isVerticalScrollBarEnabled = false
+            layoutManager = gridManager
+        }
+
+        binding.swipeRefreshContainer.setOnRefreshListener {
+            isFromBackStack = false
+            getPhotos()
+        }
+     }	
+}	
+```
 
 ### MVVM with Clean Architecture: A Solid Combination
 
