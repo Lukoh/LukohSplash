@@ -573,6 +573,12 @@ If you want to use ViewPager2 in your app and are not currently using ViewPager,
 View binding is a feature that allows you to more easily write code that interacts with views. Once view binding is enabled in a module, it generates a binding class for each XML layout file present in that module. An instance of a binding class contains direct references to all views that have an ID in the corresponding layout.
 
 In most cases, view binding replaces findViewById.
+
+Main advantages
+The new ViewBinding feature has some advantages compared to the traditional approach and some of the libraries:
+ * **Null safety**: view binding creates direct references to views, there’s no risk of a NullPointerException due to an invalid view ID. Also, when a view is only     exists regarding some conditions, the field containing its reference in the binding class is marked with @Nullable .
+ * **Type safety**: All the View binding fields are generated matching the same type as the ones referenced in XML, so there’s no need to typecast. This means that the risk of a class cast exception is much lower, since If for some reason your layout and code doesn’t match, the build will fail at compile time instead at runtime.
+ * **Speed**: it doesn’t have any build time speed impact since it does not use annotation processors like ButterKnife or DataBinding.
 	
 ```kotlin
 abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
@@ -652,6 +658,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
      }	
 }	
 ```
+lease visit the link below if you'd like to dive deep into [View Binding](https://developer.android.com/topic/libraries/view-binding).
 
 ### MVVM with Clean Architecture: A Solid Combination
 
