@@ -48,7 +48,6 @@ import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserCollectionsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
@@ -117,7 +116,6 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                     it.refresh is LoadState.Error -> state = it.refresh
                     it.refresh is LoadState.NotLoading -> {
                         with(binding) {
-                            delay(1000)
                             if (collectionAdapter?.itemCount == 0)
                                 showNoPhotoMessage(rvList, noPhotoContainer.root, true)
                             else
