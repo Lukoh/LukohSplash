@@ -33,10 +33,10 @@ class CropImageUseCase
 @Inject
 constructor() : UseCase<Bitmap>() {
     @Suppress("UNCHECKED_CAST")
-    override fun run(lifecycleScope: CoroutineScope, params: Params) = flow {
+    override fun run(viewModelScope: CoroutineScope, params: Params) = flow {
         emit(cropImage(params.query.firstParam as Bitmap))
     }.shareIn(
-        scope = lifecycleScope,
+        scope = viewModelScope,
         started = WhileSubscribed(5000),
         replay = 1
     )

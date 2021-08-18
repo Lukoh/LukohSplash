@@ -133,15 +133,15 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
                     }
                 })
 
-                tabItemPhotos.setOnClickListener {
+                tabItemPhotos.setSecureOnClickListener {
                     currentItem = USER_PHOTOS
                 }
 
-                tabItemLikes.setOnClickListener {
+                tabItemLikes.setSecureOnClickListener {
                     currentItem = USER_LIKES
                 }
 
-                tabItemCollection.setOnClickListener {
+                tabItemCollection.setSecureOnClickListener {
                     currentItem = USER_COLLECTION
                 }
 

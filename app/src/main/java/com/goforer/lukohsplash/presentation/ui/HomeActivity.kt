@@ -33,13 +33,14 @@ import com.bumptech.glide.annotation.GlideModule
 import com.goforer.base.extension.gone
 import com.goforer.base.extension.upShow
 import com.goforer.base.utility.keyboard.KeyboardObserver
+import com.goforer.base.view.dialog.LoadingDialog
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.databinding.ActivityHomeBinding
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
-class HomeActivity : AppCompatActivity(), HasAndroidInjector {
+open class HomeActivity : AppCompatActivity(), HasAndroidInjector {
     private lateinit var keyboardObserver: KeyboardObserver
 
     private lateinit var binding: ActivityHomeBinding
@@ -52,6 +53,10 @@ class HomeActivity : AppCompatActivity(), HasAndroidInjector {
 
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
+
+    private var loadingDialog: LoadingDialog? = null
+
+    internal var isLoading = false
 
     companion object {
         const val TAB_INDEX = "TAB_INDEX"
@@ -118,6 +123,22 @@ class HomeActivity : AppCompatActivity(), HasAndroidInjector {
 
         currentFocus?.windowToken?.let {
             inputManager.hideSoftInputFromWindow(it, InputMethodManager.HIDE_NOT_ALWAYS)
+        }
+    }
+
+    internal open fun makeLoading(show: Boolean) {
+        isLoading = show
+        if (show) {
+            if (loadingDialog?.isShowing() == true)
+                return
+
+            loadingDialog = LoadingDialog.getInstance()
+            loadingDialog?.show(this.supportFragmentManager, null)
+
+        } else {
+            if (loadingDialog?.isShowing() == true)
+                loadingDialog?.dismiss()
+            loadingDialog = null
         }
     }
 

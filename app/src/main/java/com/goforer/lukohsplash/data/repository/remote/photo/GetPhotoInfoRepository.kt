@@ -29,8 +29,8 @@ import javax.inject.Singleton
 class GetPhotoInfoRepository
 @Inject
 constructor() : Repository<Resource>() {
-    override fun doWork(lifecycleScope: CoroutineScope, query: Query) = object :
-        NetworkBoundWorker<Photo, Photo>(false, lifecycleScope) {
+    override fun doWork(viewModelScope: CoroutineScope, query: Query) = object :
+        NetworkBoundWorker<Photo, Photo>(false, viewModelScope) {
         override fun request() = restAPI.getPhoto(query.firstParam as String, YOUR_ACCESS_KEY)
 
         override suspend fun onNetworkError(errorMessage: String, errorCode: Int) {

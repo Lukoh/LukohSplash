@@ -22,7 +22,9 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.SystemClock
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
@@ -37,9 +39,9 @@ import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
+import com.goforer.base.view.widget.AspectRatioImageView
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.data.source.model.entity.user.response.User
-import com.goforer.base.view.widget.AspectRatioImageView
 import com.google.android.material.appbar.AppBarLayout
 import kotlin.math.abs
 
@@ -140,6 +142,25 @@ fun View.hideKeyboard(): Boolean {
     this.clearFocus()
 
     return false
+}
+
+class ClickListener(private val interval: Long, private val onCLick: (View) -> Unit) :
+    OnClickListener {
+    private var lastTimeClicked: Long = 0
+
+    override fun onClick(v: View) {
+        if (SystemClock.elapsedRealtime() - lastTimeClicked > interval) {
+            lastTimeClicked = SystemClock.elapsedRealtime()
+            onCLick(v)
+        }
+    }
+}
+
+fun View.setSecureOnClickListener(interval: Long = 1000, onClick: (View) -> Unit) {
+    val clickListener = ClickListener(interval = interval) {
+        onClick(it)
+    }
+    setOnClickListener(clickListener)
 }
 
 fun AppCompatActivity.setupActionBar(@IdRes toolbarId: Int, action: ActionBar.() -> Unit) {

@@ -19,26 +19,28 @@ package com.goforer.lukohsplash.presentation.vm.user
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.Factory
 import com.goforer.lukohsplash.domain.mediator.user.GetUserCollectionsUseCase
-import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.MediatorViewModel
+import com.goforer.lukohsplash.presentation.vm.Params
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 class GetUserCollectionsViewModel
 @AssistedInject
-constructor(useCase: GetUserCollectionsUseCase, @Assisted private val params: Params) : MediatorViewModel(useCase, params) {
+constructor(useCase: GetUserCollectionsUseCase, @Assisted private val params: Params) :
+    MediatorViewModel(useCase, params) {
     @AssistedFactory
     interface AssistedUserCollectionsFactory {
-        fun create(params: Params, ): GetUserCollectionsViewModel
+        fun create(params: Params): GetUserCollectionsViewModel
     }
 
     companion object {
-        fun provideFactory(assistedFactory: AssistedUserCollectionsFactory, params: Params) = object : Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return assistedFactory.create(params) as T
+        fun provideFactory(assistedFactory: AssistedUserCollectionsFactory, params: Params) =
+            object : Factory {
+                @Suppress("UNCHECKED_CAST")
+                override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                    return assistedFactory.create(params) as T
+                }
             }
-        }
     }
 }

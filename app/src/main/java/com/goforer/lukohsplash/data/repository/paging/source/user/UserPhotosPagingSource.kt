@@ -17,15 +17,15 @@
 package com.goforer.lukohsplash.data.repository.paging.source.user
 
 import androidx.paging.PagingState
+import com.goforer.base.extension.isNullOnFlow
+import com.goforer.lukohsplash.data.repository.paging.PagingErrorMessage
+import com.goforer.lukohsplash.data.repository.paging.source.BasePagingSource
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.ApiEmptyResponse
 import com.goforer.lukohsplash.data.source.network.response.ApiErrorResponse
 import com.goforer.lukohsplash.data.source.network.response.ApiSuccessResponse
 import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
 import com.goforer.lukohsplash.presentation.vm.Query
-import com.goforer.base.extension.isNullOnFlow
-import com.goforer.lukohsplash.data.repository.paging.PagingErrorMessage
-import com.goforer.lukohsplash.data.repository.paging.source.BasePagingSource
 import kotlinx.coroutines.flow.collect
 import retrofit2.HttpException
 import java.io.IOException
@@ -45,9 +45,10 @@ constructor() : BasePagingSource<Int, Photo>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
         return try {
             params.key.isNullOnFlow({}, {
+                nextPage = params.key?.plus(1)!!
                 restAPI.getUserPhotos(
                     query.firstParam as String,
-                    NetworkBoundWorker.YOUR_ACCESS_KEY, params.key?.plus(1),
+                    NetworkBoundWorker.YOUR_ACCESS_KEY, params.key?.plus(1)!!,
                     NetworkBoundWorker.NONE_ITEM_COUNT,
                     NetworkBoundWorker.LATEST,
                     query.secondParam as Boolean, query.thirdParam as String,
@@ -75,7 +76,7 @@ constructor() : BasePagingSource<Int, Photo>() {
                 LoadResult.Page(
                     data = pagingList,
                     prevKey = null,
-                    nextKey =  params.key?.plus(1) ?: 1
+                    nextKey = params.key?.plus(1) ?: 1
                 )
             else
                 LoadResult.Error(Throwable(errorMessage))

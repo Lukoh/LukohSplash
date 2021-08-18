@@ -51,18 +51,19 @@ import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentPhotoDetailBinding
-import com.goforer.lukohsplash.domain.processor.photo.DownloadPhotosUseCase.Companion.FILE_EXISTED
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.ExifAdapter
 import com.goforer.lukohsplash.presentation.ui.photo.adapter.TagAdapter
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.home.share.SharedPhotoIdViewModel
+import com.goforer.lukohsplash.presentation.vm.photo.CheckFileExistViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.DownloadPhotoViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.GetPhotoInfoViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.File
@@ -104,6 +105,9 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     @Inject
     lateinit var downloadPhotoViewModelFactory: DownloadPhotoViewModel.AssistedDownloadPhotoFactory
+
+    @Inject
+    lateinit var checkFileExistViewModelFactory: CheckFileExistViewModel.AssistedFileExistFactory
 
     /*
     @Inject
@@ -272,7 +276,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
         setLikeButtonState(photo.liked_by_user ?: false)
 
-        userContainer.setOnClickListener {
+        userContainer.setSecureOnClickListener {
             photo.user.isNull({
                 NormalDialog.Builder(context)
                     .setTitle(R.string.no_user)
@@ -289,12 +293,47 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
             )
         }
 
-        ivDownload.setOnClickListener {
+        ivDownload.setSecureOnClickListener {
             setupPermission(object : PermissionCallback {
                 override fun onPermissionGranted() {
-                    downloadPhoto(photo.urls.raw)
+                    checkExistFile(photo.urls.raw)
                 }
             })
+        }
+    }
+
+    private fun checkExistFile(url: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val checkFileExistViewModel: CheckFileExistViewModel by viewModels {
+                    CheckFileExistViewModel.provideFactory(
+                        checkFileExistViewModelFactory,
+                        Params(Query().apply {
+                            firstParam = url
+                            secondParam = -1
+                        })
+                    )
+                }
+
+                checkFileExistViewModel.value.collect {
+                    it?.let {
+                        if (it) {
+                            NormalDialog.Builder(context)
+                                .setTitle(R.string.title_photo_download)
+                                .setMessage(getString(R.string.photo_existed))
+                                .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
+                                }.setOnDismissListener {
+                                }.show(homeActivity.supportFragmentManager)
+                        } else {
+                            homeActivity.makeLoading(true)
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                delay(500)
+                                downloadPhoto(url)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -327,11 +366,10 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                     )
                 }
 
-                makeLoading(true)
                 downloadPhotoViewModel.value.collect {
                     when (it) {
                         DownloadManager.STATUS_FAILED -> {
-                            makeLoading(false)
+                            homeActivity.makeLoading(false)
                             Toast.makeText(
                                 homeActivity,
                                 getString(R.string.download_fail_phrase),
@@ -340,7 +378,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         DownloadManager.STATUS_PAUSED -> {
-                            makeLoading(false)
+                            homeActivity.makeLoading(false)
                             Toast.makeText(
                                 homeActivity,
                                 getString(R.string.paused),
@@ -350,15 +388,13 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         DownloadManager.STATUS_PENDING -> {
-                            makeLoading(true)
                         }
 
                         DownloadManager.STATUS_RUNNING -> {
-                            makeLoading(true)
                         }
 
                         DownloadManager.STATUS_SUCCESSFUL -> {
-                            makeLoading(false)
+                            homeActivity.makeLoading(false)
                             NormalDialog.Builder(context)
                                 .setTitle(R.string.title_photo_download)
                                 .setMessage(getString(R.string.download_success))
@@ -367,18 +403,11 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                                 }.show(homeActivity.supportFragmentManager)
                         }
 
-                        FILE_EXISTED -> {
-                            makeLoading(false)
-                            NormalDialog.Builder(context)
-                                .setTitle(R.string.title_photo_download)
-                                .setMessage(getString(R.string.photo_existed))
-                                .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
-                                }.setOnDismissListener {
-                                }.show(homeActivity.supportFragmentManager)
+                        null -> {
+
                         }
 
                         else -> {
-                            makeLoading(false)
                             Toast.makeText(
                                 homeActivity,
                                 getString(R.string.no_photo),

@@ -32,7 +32,7 @@ import timber.log.Timber
  * Guide</a>.
  */
 abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
-    private val enabledCache: Boolean, lifecycleScope: CoroutineScope
+    private val enabledCache: Boolean, viewModelScope: CoroutineScope
 ) {
     private val resource = Resource()
 
@@ -85,7 +85,7 @@ abstract class NetworkBoundWorker<Result, ResponseValue> constructor(
             }
         }
     }.shareIn(
-        scope = lifecycleScope,
+        scope = viewModelScope,
         started = WhileSubscribed(5000),
         replay = 10
     )
