@@ -37,6 +37,7 @@ import com.goforer.base.extension.isNull
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.lukohsplash.R
+import com.goforer.lukohsplash.data.repository.paging.source.BasePagingSource
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
@@ -47,9 +48,9 @@ import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserLikesViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -84,7 +85,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
         likesAdapter ?: observeUserName()
         binding.swipeRefreshContainer.setOnRefreshListener {
             if (userName != "")
-                getUserLikes(userName)
+                getUserLikes(userName, 1)
         }
 
         likesAdapter = likesAdapter ?: UerLikesAdapter(homeActivity) { _, _ ->
@@ -114,13 +115,12 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                     it.append is LoadState.Error -> state = it.append
                     it.refresh is LoadState.Error -> state = it.refresh
                     it.refresh is LoadState.NotLoading -> {
-                        launch {
-                            with(binding) {
-                                if (likesAdapter?.itemCount == 0)
-                                    showNoPhotoMessage(rvList, noPhotoContainer.root, true)
-                                else
-                                    showNoPhotoMessage(rvList, noPhotoContainer.root, false)
-                            }
+                        with(binding) {
+                            delay(1000)
+                            if (likesAdapter?.itemCount == 0)
+                                showNoPhotoMessage(rvList, noPhotoContainer.root, true)
+                            else
+                                showNoPhotoMessage(rvList, noPhotoContainer.root, false)
                         }
                     }
                     it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
@@ -164,19 +164,19 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserLikes(userName)
+                getUserLikes(userName, BasePagingSource.nextPage)
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getUserLikes(name: String) {
+    private fun getUserLikes(name: String, page: Int) {
         val getUserLikesViewModel: GetUserLikesViewModel by viewModels {
             GetUserLikesViewModel.provideFactory(
                 getUserLikesViewModelFactory,
                 Params(Query().apply {
                     firstParam = name
-                    secondParam = -1
+                    secondParam = page
                 })
             )
         }

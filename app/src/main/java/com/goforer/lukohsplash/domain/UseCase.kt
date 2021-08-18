@@ -32,5 +32,5 @@ abstract class UseCase<Value> {
         internal const val CORRECTION_Y_VALUE = 356
     }
 
-    abstract fun run(lifecycleScope: CoroutineScope, params: Params): Flow<Value>
+    abstract fun run(viewModelScope: CoroutineScope, params: Params): Flow<Value>
 }

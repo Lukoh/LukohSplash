@@ -112,39 +112,41 @@ class UserFragment : BaseFragment<FragmentUserBinding>() {
 
     private fun setAdapter() {
         with(binding) {
-            viewPager.adapter = object : FragmentStateAdapter(this@UserFragment) {
-                private val mList: List<BaseFragment<*>> = fragments
+            with(viewPager) {
+                adapter = object : FragmentStateAdapter(this@UserFragment) {
+                    private val mList: List<BaseFragment<*>> = fragments
 
-                override fun getItemCount(): Int {
-                    return mList.size
+                    override fun getItemCount(): Int {
+                        return mList.size
+                    }
+
+                    override fun createFragment(position: Int): Fragment {
+                        return mList[position]
+                    }
                 }
 
-                override fun createFragment(position: Int): Fragment {
-                    return mList[position]
+                registerOnPageChangeCallback(object :
+                    ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        onTabChanged(position)
+                        currentTab = position
+                    }
+                })
+
+                tabItemPhotos.setSecureOnClickListener {
+                    currentItem = USER_PHOTOS
                 }
-            }
 
-            viewPager.registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    onTabChanged(position)
-                    currentTab = position
+                tabItemLikes.setSecureOnClickListener {
+                    currentItem = USER_LIKES
                 }
-            })
 
-            tabItemPhotos.setOnClickListener {
-                currentTab = USER_PHOTOS
+                tabItemCollection.setSecureOnClickListener {
+                    currentItem = USER_COLLECTION
+                }
+
+                currentItem = currentTab
             }
-
-            tabItemLikes.setOnClickListener {
-                currentTab = USER_LIKES
-            }
-
-            tabItemCollection.setOnClickListener {
-                currentTab = USER_COLLECTION
-            }
-
-            viewPager.currentItem = currentTab
         }
     }
 

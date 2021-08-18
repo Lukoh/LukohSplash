@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.goforer.base.extension.*
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
+import com.goforer.lukohsplash.data.repository.paging.source.BasePagingSource
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
@@ -76,8 +77,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
         }
 
         setAppBar()
-        photoAdapter ?: getPhotos()
-
+        getPhotos(BasePagingSource.nextPage)
         photoAdapter = photoAdapter ?: PhotosAdapter(homeActivity) { itemView, item ->
             sharedPhotoIdViewModel.share(item.id)
             itemView.findNavController().navigate(
@@ -104,7 +104,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 
         binding.swipeRefreshContainer.setOnRefreshListener {
             isFromBackStack = false
-            getPhotos()
+            getPhotos(1)
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
@@ -188,14 +188,14 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getPhotos() {
+    private fun getPhotos(page: Int) {
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 val getPhotosViewModel: GetPhotosViewModel by viewModels {
                     GetPhotosViewModel.provideFactory(
                         getPhotosViewModelFactory,
                         Params(Query().apply {
-                            firstParam = 1
+                            firstParam = page
                             secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
                             thirdParam = NetworkBoundWorker.LATEST
                         })

@@ -37,6 +37,7 @@ import com.goforer.base.extension.isNull
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.lukohsplash.R
+import com.goforer.lukohsplash.data.repository.paging.source.BasePagingSource
 import com.goforer.lukohsplash.data.source.model.entity.user.response.Collection
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
@@ -47,9 +48,9 @@ import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserCollectionsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -84,7 +85,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
         collectionAdapter ?: observeUserName()
         binding.swipeRefreshContainer.setOnRefreshListener {
             if (userName != "")
-                getUserCollection(userName)
+                getUserCollection(userName, 1)
         }
 
         collectionAdapter = collectionAdapter ?: UserCollectionAdapter(homeActivity) { _, _ ->
@@ -115,13 +116,12 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                     it.append is LoadState.Error -> state = it.append
                     it.refresh is LoadState.Error -> state = it.refresh
                     it.refresh is LoadState.NotLoading -> {
-                        launch {
-                            with(binding) {
-                                if (collectionAdapter?.itemCount == 0)
-                                    showNoPhotoMessage(rvList, noPhotoContainer.root, true)
-                                else
-                                    showNoPhotoMessage(rvList, noPhotoContainer.root, false)
-                            }
+                        with(binding) {
+                            delay(1000)
+                            if (collectionAdapter?.itemCount == 0)
+                                showNoPhotoMessage(rvList, noPhotoContainer.root, true)
+                            else
+                                showNoPhotoMessage(rvList, noPhotoContainer.root, false)
                         }
                     }
                     it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
@@ -165,19 +165,19 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserCollection(userName)
+                getUserCollection(userName, BasePagingSource.nextPage)
             })
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getUserCollection(name: String) {
+    private fun getUserCollection(name: String, page: Int) {
         val getUserCollectionsViewModel: GetUserCollectionsViewModel by viewModels {
             GetUserCollectionsViewModel.provideFactory(
                 getUserCollectionsViewModelFactory,
                 Params(Query().apply {
                     firstParam = name
-                    secondParam = -1
+                    secondParam = page
                 })
             )
         }

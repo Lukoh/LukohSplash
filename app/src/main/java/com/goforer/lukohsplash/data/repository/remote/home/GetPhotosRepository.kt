@@ -36,7 +36,7 @@ class GetPhotosRepository
 @Inject
 constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
     @ExperimentalCoroutinesApi
-    override fun doWork(lifecycleScope: CoroutineScope, query: Query) = object :
+    override fun doWork(viewModelScope: CoroutineScope, query: Query) = object :
         NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false) {
         override fun request() = restAPI.getPhotos(YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT, LATEST)
 
@@ -49,6 +49,6 @@ constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
         ) {
             pagingSource.setData(query, value)
             pagingSource
-        }.flow.cachedIn(lifecycleScope)
+        }.flow.cachedIn(viewModelScope)
     }.asFlow
 }

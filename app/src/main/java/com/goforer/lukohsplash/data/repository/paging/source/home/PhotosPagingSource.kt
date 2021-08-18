@@ -17,6 +17,9 @@
 package com.goforer.lukohsplash.data.repository.paging.source.home
 
 import androidx.paging.PagingState
+import com.goforer.base.extension.isNullOnFlow
+import com.goforer.lukohsplash.data.repository.paging.PagingErrorMessage.ERROR_MESSAGE_PAGING_EMPTY
+import com.goforer.lukohsplash.data.repository.paging.source.BasePagingSource
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.ApiEmptyResponse
 import com.goforer.lukohsplash.data.source.network.response.ApiErrorResponse
@@ -24,9 +27,6 @@ import com.goforer.lukohsplash.data.source.network.response.ApiSuccessResponse
 import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.YOUR_ACCESS_KEY
 import com.goforer.lukohsplash.presentation.vm.Query
 import kotlinx.coroutines.flow.collect
-import com.goforer.base.extension.isNullOnFlow
-import com.goforer.lukohsplash.data.repository.paging.PagingErrorMessage.ERROR_MESSAGE_PAGING_EMPTY
-import com.goforer.lukohsplash.data.repository.paging.source.BasePagingSource
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -45,8 +45,12 @@ constructor() : BasePagingSource<Int, Photo>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
         return try {
             params.key.isNullOnFlow({}, {
+                nextPage = params.key?.plus(1)!!
                 restAPI.getPhotos(
-                    YOUR_ACCESS_KEY, params.key?.plus(1), query.secondParam as Int,  query.thirdParam as String
+                    YOUR_ACCESS_KEY,
+                    params.key?.plus(1)!!,
+                    query.secondParam as Int,
+                    query.thirdParam as String
                 ).collect { apiResponse ->
                     pagingList = when (apiResponse) {
                         is ApiSuccessResponse -> {
