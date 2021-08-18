@@ -48,9 +48,9 @@ import com.goforer.lukohsplash.presentation.vm.Query
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.user.GetUserPhotosViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -115,12 +115,13 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
                     it.append is LoadState.Error -> state = it.append
                     it.refresh is LoadState.Error -> state = it.refresh
                     it.refresh is LoadState.NotLoading -> {
-                        with(binding) {
-                            delay(1000)
-                            if (photoAdapter?.itemCount == 0)
-                                showNoPhotoMessage(rvList, noPhotoContainer.root, true)
-                            else
-                                showNoPhotoMessage(rvList, noPhotoContainer.root, false)
+                        launch {
+                            with(binding) {
+                                if (photoAdapter?.itemCount == 0)
+                                    showNoPhotoMessage(rvList, noPhotoContainer.root, true)
+                                else
+                                    showNoPhotoMessage(rvList, noPhotoContainer.root, false)
+                            }
                         }
                     }
                     it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
