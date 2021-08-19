@@ -38,6 +38,10 @@ import javax.inject.Singleton
 class UserLikesPagingSource
 @Inject
 constructor() : BasePagingSource<Int, Photo>() {
+    companion object {
+        internal var nextPage = 1
+    }
+
     override fun setData(query: Query, value: MutableList<Photo>) {
         this.query = query
         pagingList = value

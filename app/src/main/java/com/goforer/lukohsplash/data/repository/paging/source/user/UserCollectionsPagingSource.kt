@@ -37,6 +37,10 @@ import javax.inject.Singleton
 class UserCollectionsPagingSource
 @Inject
 constructor() : BasePagingSource<Int, Collection>() {
+    companion object {
+        internal var nextPage = 1
+    }
+
     override fun setData(query: Query, value: MutableList<Collection>) {
         this.query = query
         pagingList = value

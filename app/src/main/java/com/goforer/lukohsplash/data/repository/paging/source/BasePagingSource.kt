@@ -25,10 +25,6 @@ import javax.inject.Singleton
 
 @Singleton
 abstract class BasePagingSource<Key : Any, Value : Any> : PagingSource<Key, Value>() {
-    companion object {
-        internal var nextPage = 1
-    }
-
     protected lateinit var pagingList: MutableList<Value>
 
     protected var errorMessage = PagingErrorMessage.ERROR_MESSAGE_PAGING_EMPTY

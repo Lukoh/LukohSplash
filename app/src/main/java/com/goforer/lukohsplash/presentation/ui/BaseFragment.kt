@@ -30,9 +30,9 @@ import com.goforer.base.extension.gone
 import com.goforer.base.extension.show
 import com.goforer.base.extension.upShow
 import com.goforer.base.utility.keyboard.BaseKeyboardObserver
+import com.goforer.base.view.dialog.LoadingDialog
 import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.lukohsplash.R
-import com.goforer.lukohsplash.data.repository.paging.source.BasePagingSource
 import com.goforer.lukohsplash.di.Injectable
 
 abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
@@ -46,6 +46,10 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
     private lateinit var context: Context
 
     private var errorDialogMsg = ""
+
+    private var loadingDialog: LoadingDialog? = null
+
+    internal var isLoading = false
 
     private lateinit var onBackPressedCallback: OnBackPressedCallback
 
@@ -90,14 +94,12 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
         super.onDestroyView()
 
         _binding = null
-        BasePagingSource.nextPage = 1
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
         _binding = null
-        BasePagingSource.nextPage = 1
     }
 
     override fun onAttach(context: Context) {
@@ -151,6 +153,22 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
         }
     }
 
+    protected open fun makeLoading(show: Boolean) {
+        isLoading = show
+        if (show) {
+            if (loadingDialog?.isShowing() == true)
+                return
+
+            loadingDialog = LoadingDialog.getInstance()
+            loadingDialog?.show(this.childFragmentManager, null)
+
+        } else {
+            if (loadingDialog?.isShowing() == true)
+                loadingDialog?.dismiss()
+            loadingDialog = null
+        }
+    }
+
     internal fun hideKeyboard() {
         if (activity is HomeActivity)
             homeActivity.hideKeyboard()
@@ -190,10 +208,6 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
                 errorDialogMsg = ""
             }
         }
-    }
-
-    internal fun setLoading(show: Boolean) {
-        homeActivity.makeLoading(show)
     }
 
     internal fun showNoPhotoMessage(view: View, containerView: ConstraintLayout, noPhoto: Boolean) {

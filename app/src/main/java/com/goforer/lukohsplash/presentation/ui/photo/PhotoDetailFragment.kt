@@ -62,9 +62,11 @@ import com.goforer.lukohsplash.presentation.vm.photo.DownloadPhotoViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.GetPhotoInfoViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -303,19 +305,19 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     }
 
     private fun checkExistFile(url: String) {
+        val checkFileExistViewModel: CheckFileExistViewModel by viewModels {
+            CheckFileExistViewModel.provideFactory(
+                checkFileExistViewModelFactory,
+                Params(Query().apply {
+                    firstParam = url
+                    secondParam = -1
+                })
+            )
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val checkFileExistViewModel: CheckFileExistViewModel by viewModels {
-                    CheckFileExistViewModel.provideFactory(
-                        checkFileExistViewModelFactory,
-                        Params(Query().apply {
-                            firstParam = url
-                            secondParam = -1
-                        })
-                    )
-                }
-
-                checkFileExistViewModel.value.collect {
+                checkFileExistViewModel.value.collectLatest {
                     it?.let {
                         if (it) {
                             NormalDialog.Builder(context)
@@ -325,11 +327,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                                 }.setOnDismissListener {
                                 }.show(homeActivity.supportFragmentManager)
                         } else {
-                            homeActivity.makeLoading(true)
-                            viewLifecycleOwner.lifecycleScope.launch {
-                                delay(500)
-                                downloadPhoto(url)
-                            }
+                            downloadPhoto(url)
                         }
                     }
                 }
@@ -352,24 +350,26 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun downloadPhoto(url: String) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val downloadPhotoViewModel: DownloadPhotoViewModel by viewModels {
-                    DownloadPhotoViewModel.provideFactory(
-                        downloadPhotoViewModelFactory,
-                        Params(Query().apply {
-                            firstParam =
-                                homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                            secondParam = url
-                            thirdParam = File(Environment.DIRECTORY_PICTURES)
-                        })
-                    )
-                }
+        makeLoading(true)
+        val downloadPhotoViewModel: DownloadPhotoViewModel by viewModels {
+            DownloadPhotoViewModel.provideFactory(
+                downloadPhotoViewModelFactory,
+                Params(Query().apply {
+                    firstParam =
+                        homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                    secondParam = url
+                    thirdParam = File(Environment.DIRECTORY_PICTURES)
+                })
+            )
+        }
 
-                downloadPhotoViewModel.value.collect {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                delay(500)
+                downloadPhotoViewModel.value.collectLatest {
                     when (it) {
                         DownloadManager.STATUS_FAILED -> {
-                            homeActivity.makeLoading(false)
+                            makeLoading(false)
                             Toast.makeText(
                                 homeActivity,
                                 getString(R.string.download_fail_phrase),
@@ -378,7 +378,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         DownloadManager.STATUS_PAUSED -> {
-                            homeActivity.makeLoading(false)
+                            makeLoading(false)
                             Toast.makeText(
                                 homeActivity,
                                 getString(R.string.paused),
@@ -391,20 +391,21 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         DownloadManager.STATUS_RUNNING -> {
+                            makeLoading(true)
                         }
 
                         DownloadManager.STATUS_SUCCESSFUL -> {
-                            homeActivity.makeLoading(false)
                             NormalDialog.Builder(context)
                                 .setTitle(R.string.title_photo_download)
                                 .setMessage(getString(R.string.download_success))
                                 .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
                                 }.setOnDismissListener {
                                 }.show(homeActivity.supportFragmentManager)
+                            makeLoading(false)
                         }
 
                         null -> {
-
+                            makeLoading(true)
                         }
 
                         else -> {
