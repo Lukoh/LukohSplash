@@ -37,7 +37,7 @@ import com.goforer.base.extension.isNull
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
 import com.goforer.base.view.dialog.NormalDialog
 import com.goforer.lukohsplash.R
-import com.goforer.lukohsplash.data.repository.paging.source.BasePagingSource
+import com.goforer.lukohsplash.data.repository.paging.source.user.UserCollectionsPagingSource
 import com.goforer.lukohsplash.data.source.model.entity.user.response.Collection
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
@@ -50,7 +50,6 @@ import com.goforer.lukohsplash.presentation.vm.user.GetUserCollectionsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -83,29 +82,32 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         collectionAdapter ?: observeUserName()
-        binding.swipeRefreshContainer.setOnRefreshListener {
-            if (userName != "")
-                getUserCollection(userName, 1)
-        }
-
-        collectionAdapter = collectionAdapter ?: UserCollectionAdapter(homeActivity) { _, _ ->
-        }
-
-        binding.rvList.apply {
-            val gridManager = StaggeredGridLayoutManager(1, RecyclerView.VERTICAL).apply {
-                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        with(binding) {
+            swipeRefreshLayoutContainer.layoutTransition.setAnimateParentHierarchy(false)
+            swipeRefreshContainer.setOnRefreshListener {
+                if (userName != "")
+                    getUserCollection(userName, 1)
             }
 
-            adapter = collectionAdapter
-            collectionAdapter?.stateRestorationPolicy = PREVENT_WHEN_EMPTY
+            collectionAdapter = collectionAdapter ?: UserCollectionAdapter(homeActivity) { _, _ ->
+            }
 
-            gridManager.spanCount = 1
-            gridManager.orientation = resources.configuration.orientation
-            itemAnimator?.changeDuration = 0
-            addItemDecoration(StaggeredGridItemOffsetDecoration(0, 1), 0)
-            (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
-            setItemViewCacheSize(RECYCLER_VIEW_CACHE_SIZE)
-            layoutManager = gridManager
+            rvList.apply {
+                val gridManager = StaggeredGridLayoutManager(1, RecyclerView.VERTICAL).apply {
+                    gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+                }
+
+                adapter = collectionAdapter
+                collectionAdapter?.stateRestorationPolicy = PREVENT_WHEN_EMPTY
+
+                gridManager.spanCount = 1
+                gridManager.orientation = resources.configuration.orientation
+                itemAnimator?.changeDuration = 0
+                addItemDecoration(StaggeredGridItemOffsetDecoration(0, 1), 0)
+                (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+                setItemViewCacheSize(RECYCLER_VIEW_CACHE_SIZE)
+                layoutManager = gridManager
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
@@ -116,13 +118,11 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                     it.append is LoadState.Error -> state = it.append
                     it.refresh is LoadState.Error -> state = it.refresh
                     it.refresh is LoadState.NotLoading -> {
-                        launch {
-                            with(binding) {
-                                if (collectionAdapter?.itemCount == 0)
-                                    showNoPhotoMessage(rvList, noPhotoContainer.root, true)
-                                else
-                                    showNoPhotoMessage(rvList, noPhotoContainer.root, false)
-                            }
+                        with(binding) {
+                            if (collectionAdapter?.itemCount == 0)
+                                showNoPhotoMessage(rvList, noPhotoContainer.root, true)
+                            else
+                                showNoPhotoMessage(rvList, noPhotoContainer.root, false)
                         }
                     }
                     it.refresh !is LoadState.Loading -> binding.swipeRefreshContainer.isRefreshing =
@@ -150,6 +150,18 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        UserCollectionsPagingSource.nextPage = 1
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        UserCollectionsPagingSource.nextPage = 1
+    }
+
     override fun onBackPressed() {
         findNavController(userFragment).popBackStack()
     }
@@ -166,7 +178,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                     }.show(homeActivity.supportFragmentManager)
             }, { name ->
                 userName = name
-                getUserCollection(userName, BasePagingSource.nextPage)
+                getUserCollection(userName, UserCollectionsPagingSource.nextPage)
             })
         }
     }

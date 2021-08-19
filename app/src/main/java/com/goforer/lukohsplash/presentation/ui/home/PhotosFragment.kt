@@ -34,7 +34,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.goforer.base.extension.*
 import com.goforer.base.view.decoration.StaggeredGridItemOffsetDecoration
-import com.goforer.lukohsplash.data.repository.paging.source.BasePagingSource
+import com.goforer.lukohsplash.data.repository.paging.source.home.PhotosPagingSource
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
@@ -77,34 +77,35 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
         }
 
         setAppBar()
-        getPhotos(BasePagingSource.nextPage)
+        getPhotos(PhotosPagingSource.nextPage)
         photoAdapter = photoAdapter ?: PhotosAdapter(homeActivity) { itemView, item ->
             sharedPhotoIdViewModel.share(item.id)
             itemView.findNavController().navigate(
                 PhotosFragmentDirections.actionPhotosFragmentToPhotoDetailFragment()
             )
         }
+        with(binding) {
+            rvPhotos.apply {
+                val gridManager = StaggeredGridLayoutManager(1, RecyclerView.VERTICAL).apply {
+                    gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+                }
 
-        binding.rvPhotos.apply {
-            val gridManager = StaggeredGridLayoutManager(1, RecyclerView.VERTICAL).apply {
-                gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+                adapter = photoAdapter
+                photoAdapter?.stateRestorationPolicy = PREVENT_WHEN_EMPTY
+                gridManager.spanCount = 1
+                gridManager.orientation = resources.configuration.orientation
+                itemAnimator?.changeDuration = 0
+                addItemDecoration(StaggeredGridItemOffsetDecoration(0, 1), 0)
+                (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
+                setItemViewCacheSize(RECYCLER_VIEW_CACHE_SIZE)
+                isVerticalScrollBarEnabled = false
+                layoutManager = gridManager
             }
 
-            adapter = photoAdapter
-            photoAdapter?.stateRestorationPolicy = PREVENT_WHEN_EMPTY
-            gridManager.spanCount = 1
-            gridManager.orientation = resources.configuration.orientation
-            itemAnimator?.changeDuration = 0
-            addItemDecoration(StaggeredGridItemOffsetDecoration(0, 1), 0)
-            (itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
-            setItemViewCacheSize(RECYCLER_VIEW_CACHE_SIZE)
-            isVerticalScrollBarEnabled = false
-            layoutManager = gridManager
-        }
-
-        binding.swipeRefreshContainer.setOnRefreshListener {
-            isFromBackStack = false
-            getPhotos(1)
+            swipeRefreshContainer.setOnRefreshListener {
+                isFromBackStack = false
+                getPhotos(1)
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
@@ -152,6 +153,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     override fun onDestroyView() {
         super.onDestroyView()
 
+        PhotosPagingSource.nextPage = 1
         isFromBackStack = false
     }
 

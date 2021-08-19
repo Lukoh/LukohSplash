@@ -156,7 +156,7 @@ class ClickListener(private val interval: Long, private val onCLick: (View) -> U
     }
 }
 
-fun View.setSecureOnClickListener(interval: Long = 1000, onClick: (View) -> Unit) {
+fun View.setSecureOnClickListener(interval: Long = 500, onClick: (View) -> Unit) {
     val clickListener = ClickListener(interval = interval) {
         onClick(it)
     }
