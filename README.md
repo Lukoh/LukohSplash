@@ -4,6 +4,10 @@
   <a href="#"><img alt="PRs" src="https://img.shields.io/badge/PRs-Welcome-3DDC84?style=flat-square"></a>
 </p>
 
+<p align="left">
+:eyeglasses: The LukohSplash by open-source contributor, Lukoh.
+</p><br>
+
 ![header](https://capsule-render.vercel.app/api?type=slice&color=gradient&text=%LukohSplash%20%20&height=200&fontSize=100)
 # LukohSplash
 
