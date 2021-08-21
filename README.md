@@ -110,7 +110,7 @@ In this demp App, the Entity is the data model of the business logic layer.
 
 ## Advanced latest Architecture
 
- * ### Flow
+*### Flow
 
 Let’s dive migrating from LiveData to Kolin’s Flow.
 
