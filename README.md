@@ -24,7 +24,7 @@ Pleaes get in touch with me via email if you're intersted in my technical experi
 
 lukoh.nam@gmail.com
 
-## Better Android Apps Using MVVM with Clean Architecture
+# Better Android Apps Using MVVM with Clean Architecture
 
 ​​If you don’t choose the well-structured architecture for your Android project, you will have a hard time maintaining it as your codebase grows and your team expands.
 
@@ -108,9 +108,9 @@ In this demp App, the Entity is the data model of the business logic layer.
 * In the Datasource layer, the “datasource” package, I created the Datasource class that develops the logic to get the API data and return them in a data model to be able to work with them. In our example, the Datasource is instantiated with the library with which the API connection is going to be used to consume the data, so the Datasource must instantiate this library in order to call its methods.
 
 
-## Advanced latest Architecture
+# Advanced latest Architecture
 
-### Flow
+* ## Flow
 
 Let’s dive migrating from LiveData to Kolin’s Flow.
 
@@ -279,7 +279,7 @@ If you want to know which to choose, StateFlow or SharedFlow, please read [Subst
 I also recommend to visit the Android official below tech blog to know how migrating from LiveData to Kotlin’s Flow and : 
 [Migrating from LiveData to Kotlin’s Flow](https://medium.com/androiddevelopers/migrating-from-livedata-to-kotlins-flow-379292f419fb)
 
-### Dependency Injection
+* ## Dependency Injection
 
 What is Dependency Injection?
 First, what is a dependency? Any non-trivial software program is going to contain components that pass information and send message calls back and forth between one another.
@@ -291,7 +291,7 @@ Dependency injection is often discussed in conjunction with one of the five SOLI
 
 The gist of the Dependency Inversion principle is that it is important to depend on abstractions rather than concrete implementations.
 
-#### Dagger2
+* ### Dagger2
 A fast dependency injector for Android and Kotlin, Java.
 Dagger2 is a great library that allows you to @Inject everything you need where you need it and handle the lifecycle of created objects. Dagger2 is used to avoid detail-complicated boilerplate code of connecting architecture elements one to another.
 
@@ -396,7 +396,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 }
 ```	
 
-### Single-Activity Architecture with the Navigation component 
+* ## - Single-Activity Architecture with the Navigation component 
 
 I've applied the Single-Activity Architecture with the Navigation component to this LukohSplash open-source project
 
@@ -409,20 +409,20 @@ If you are about to start the new app, I think it worth a try using Single-Activ
 
 Please visit the link below if you'd like to dive deep into [Single activity architecture](https://developer.android.com/guide/navigation).
 	
-### ViewModel
+* ## ViewModel
 	
 I made 3 ViewModel to decouple the role of ViewModels.
 The role of each ViewModelbelow are below:	
 	
-#### Shared-ViewModel
+#### - Shared-ViewModel
 	
 In this open-source project, I also used the [Shared-ViewModel](https://github.com/Lukoh/SingleSharedSample/blob/master/app/src/main/java/com/goforer/singlesharedsample/presentation/vm/SharedViewModel.kt) for communication between fragments. However, recently, Google has just added a new ability to FragmentManager which allows the FragmentManager to act as a central store for fragment results. You can pass the data back and forth between Fragments easily. You can read more about it [here](https://developer.android.com/training/basics/fragments/pass-data-between)
 	
-#### Mediator-ViewModel
+* ## Mediator-ViewModel
 	
 In this open-source project, I also used the [Mediator-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/MediatorViewModel.kt) for delivering data-information as parmeters or paths being used in REST APIs to UseCase and Repository. I implemented this ViewModel with a couple of methods.
 	
-#### Processor-ViewModel
+* ## Processor-ViewModel
 	
 In this open-source project, I also used the [Processor-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/ProcessorViewModel.kt) for hanlding the business logic. Once dealing with the business logic, the work of this ViewModel which is tied up with each UseCase in the processor package get back to UI with the result and update or refresh the UI. I implemented this ViewModel with a couple of methods. Business logic is completely separated from UI. It makes our code very easy to 
 maintain and test.It makes all code very easy to maintain and test. Please see the below code if you'd like to know how Processor-ViewModel and the UseCase in in the processor package get worked.
@@ -509,7 +509,7 @@ constructor(
 }
 ```
 	
-### Paging3
+* ## Paging3
 	
 The Jetpack Component Library helps you load and display pages of data from a larger dataset from local storage or over network. This approach allows your app to use both network bandwidth and system resources more efficiently. The components of the Paging library are designed to fit into the recommended Android app architecture, integrate cleanly with other Jetpack components, and provide first-class Kotlin support.
 	
@@ -517,7 +517,7 @@ Also the Paging 3.0 Jetpack Component Library is a major update to the previous 
 	
 You can check out it how to implment all code of Paging3. Please refer to code below:
 
-#### Get the PagingData in Repository
+* ### Get the PagingData in Repository
 Now I created an instance of Pager in my Repository to get a stream of data from the PhotosPagingSource that I just created.
 
 [GetPhotosRepository Code](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/data/repository/remote/home/GetPhotosRepository.kt)
@@ -628,7 +628,7 @@ constructor() : BasePagingSource<Int, Photo>() {
 }
 ```
 
-#### Display data in RecyclerView
+* ## Display data in RecyclerView
 	
 First I have to create a RecyclerView'S adapter class which extends from the PagingDataAdapter. This is the same as a normal RecyclerView adapter. The PagingDataAdapter takes two parameters, the first one is the type of the data(which in our case is the Movie object), and the second one is a RecyclerView.ViewHolder.
 
@@ -653,13 +653,13 @@ private fun getPhotos() {
 
 Please read [this page](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) and [How to Use the Paging 3 Library in Android](https://proandroiddev.com/how-to-use-the-paging-3-library-in-android-5d128bb5b1d8) if you'd like to learn how to apply and implement it.
 	
-### ViewPager2
+* ## ViewPager2
 	
 ViewPager2 is an improved version of the ViewPager library that offers enhanced functionality and addresses common difficulties with using ViewPager. If your app already uses ViewPager, [read this page](https://developer.android.com/training/animation/vp2-migration) to learn more about migrating to ViewPager2.
 
 If you want to use ViewPager2 in your app and are not currently using ViewPager, read [Slide between fragments using ViewPager2](https://developer.android.com/training/animation/screen-slide-2) and [Create swipe views with tabs using ViewPager2](https://developer.android.com/guide/navigation/navigation-swipe-view-2) for more information.
 	
-### View Binding
+* ## View Binding
 	
 View binding is a feature that allows you to more easily write code that interacts with views. Once view binding is enabled in a module, it generates a binding class for each XML layout file present in that module. An instance of a binding class contains direct references to all views that have an ID in the corresponding layout.
 
@@ -669,7 +669,7 @@ In comparison to the well-known methods such as Kotlin synthetics, Butterknife a
 	
 According to Google, this new approach has the best of all the worlds. So, you should use it wherever you can.
 
-#### Main advantages
+* ### Main advantages
 	
 The new ViewBinding feature has some advantages compared to the traditional approach and some of the libraries:
  * **Null safety**: view binding creates direct references to views, there’s no risk of a NullPointerException due to an invalid view ID. Also, when a view is only     exists regarding some conditions, the field containing its reference in the binding class is marked with @Nullable .
@@ -756,9 +756,137 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
      }	
 }	
 ```
-lease visit the link below if you'd like to dive deep into [View Binding](https://developer.android.com/topic/libraries/view-binding).
+Please visit the link below if you'd like to dive deep into [View Binding](https://developer.android.com/topic/libraries/view-binding).
+	
+* ## Work Manager
 
-### MVVM with Clean Architecture: A Solid Combination
+WorkManager is an Android Jetpack library that runs deferrable, guaranteed background work when the work’s constraints are satisfied. It is the current best practice for this kind of work on Android.	
+	
+What is WorkManager?
+WorkManager is one of the Android Architecture Components and part of Android Jetpack, a new and opinionated take on how to build modern Android applications.
+	
+```kotlin
+class DownLoadPhotoWorker
+@AssistedInject
+constructor(
+    @Assisted private val context: Context,
+    @Assisted workerParams: WorkerParameters
+) : CoroutineWorker(context, workerParams) {
+    private var downloading = true
+
+    /**
+     * Workmanager worker thread which do processing
+     * in background, so it will not impact to main thread or UI
+     *
+     */
+    override suspend fun doWork(): Result {
+        var isSuccessful = true
+        var errorStatus = DownloadManager.ERROR_UNKNOWN
+
+        try {
+            withContext(Dispatchers.IO) {
+                val downloadManager =
+                    context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val url = inputData.getString("url")!!
+                val file = File(Environment.DIRECTORY_PICTURES)
+                val fileName = url.substring(url.lastIndexOf("/") + 1).take(19)
+                val downloadUri = Uri.parse(url)
+                val dirType = file.toString()
+                val request = DownloadManager.Request(downloadUri).apply {
+                    setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                        .setAllowedOverRoaming(false)
+                        .setTitle(url.substring(url.lastIndexOf("/") + 1))
+                        .setDescription("")
+                        .setDestinationInExternalFilesDir(context, dirType, "${fileName}.jpg")
+                }
+
+                val query = DownloadManager.Query().setFilterById(downloadManager.enqueue(request))
+
+                if (!file.exists()) {
+                    file.mkdirs()
+                }
+
+                while (downloading) {
+                    val cursor: Cursor = downloadManager.query(query)
+                    cursor.moveToFirst()
+                    when (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
+                        DownloadManager.STATUS_FAILED -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.STATUS_FAILED
+                        }
+
+                        DownloadManager.STATUS_PAUSED -> {
+                            Timber.d("DownloadManager Status : PAUSED")
+                        }
+
+                        DownloadManager.STATUS_PENDING -> {
+                            Timber.d("DownloadManager Status : PENDING")
+                        }
+
+                        DownloadManager.STATUS_RUNNING -> {
+                            Timber.d("DownloadManager Status : RUNNING")
+                        }
+
+                        DownloadManager.STATUS_SUCCESSFUL -> {
+                            isSuccessful = true
+                            downloading = false
+                        }
+
+                        DownloadManager.ERROR_UNKNOWN -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.ERROR_UNKNOWN
+                        }
+
+                        DownloadManager.ERROR_FILE_ERROR -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.ERROR_FILE_ERROR
+                        }
+
+                        DownloadManager.ERROR_INSUFFICIENT_SPACE -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.ERROR_INSUFFICIENT_SPACE
+                        }
+
+                        DownloadManager.ERROR_HTTP_DATA_ERROR -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.ERROR_HTTP_DATA_ERROR
+                        }
+
+                        DownloadManager.ERROR_UNHANDLED_HTTP_CODE -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.ERROR_UNHANDLED_HTTP_CODE
+                        }
+
+                        else -> {
+                        }
+                    }
+
+                    cursor.close()
+                }
+            }
+        } catch (e: Exception) {
+            return Result.failure()
+        }
+
+        return if (isSuccessful)
+            Result.success()
+        else
+            Result.failure(workDataOf("error" to errorStatus))
+    }
+}
+```
+	
+Please visit the link below if you'd like to dive deep into [Work Manager](https://developer.android.com/topic/libraries/architecture/workmanager).
+	
+Also I recommand you to read [this tech blog](https://medium.com/androiddevelopers/introducing-workmanager-2083bcfc4712) if you'd like to learn more about Work Manager.
+
+* ## MVVM with Clean Architecture: A Solid Combination
 
 My purpose with this open-source project was to understand MVVM with Clean Architecture and latest Jetpack libraries, so I skipped over a few things that you can try to improve it further:
 
