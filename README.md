@@ -765,8 +765,126 @@ WorkManager is an Android Jetpack library that runs deferrable, guaranteed backg
 What is WorkManager?
 WorkManager is one of the Android Architecture Components and part of Android Jetpack, a new and opinionated take on how to build modern Android applications.
 	
+```kotlin
+class DownLoadPhotoWorker
+@AssistedInject
+constructor(
+    @Assisted private val context: Context,
+    @Assisted workerParams: WorkerParameters
+) : CoroutineWorker(context, workerParams) {
+    private var downloading = true
+
+    /**
+     * Workmanager worker thread which do processing
+     * in background, so it will not impact to main thread or UI
+     *
+     */
+    override suspend fun doWork(): Result {
+        var isSuccessful = true
+        var errorStatus = DownloadManager.ERROR_UNKNOWN
+
+        try {
+            withContext(Dispatchers.IO) {
+                val downloadManager =
+                    context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                val url = inputData.getString("url")!!
+                val file = File(Environment.DIRECTORY_PICTURES)
+                val fileName = url.substring(url.lastIndexOf("/") + 1).take(19)
+                val downloadUri = Uri.parse(url)
+                val dirType = file.toString()
+                val request = DownloadManager.Request(downloadUri).apply {
+                    setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                        .setAllowedOverRoaming(false)
+                        .setTitle(url.substring(url.lastIndexOf("/") + 1))
+                        .setDescription("")
+                        .setDestinationInExternalFilesDir(context, dirType, "${fileName}.jpg")
+                }
+
+                val query = DownloadManager.Query().setFilterById(downloadManager.enqueue(request))
+
+                if (!file.exists()) {
+                    file.mkdirs()
+                }
+
+                while (downloading) {
+                    val cursor: Cursor = downloadManager.query(query)
+                    cursor.moveToFirst()
+                    when (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))) {
+                        DownloadManager.STATUS_FAILED -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.STATUS_FAILED
+                        }
+
+                        DownloadManager.STATUS_PAUSED -> {
+                            Timber.d("DownloadManager Status : PAUSED")
+                        }
+
+                        DownloadManager.STATUS_PENDING -> {
+                            Timber.d("DownloadManager Status : PENDING")
+                        }
+
+                        DownloadManager.STATUS_RUNNING -> {
+                            Timber.d("DownloadManager Status : RUNNING")
+                        }
+
+                        DownloadManager.STATUS_SUCCESSFUL -> {
+                            isSuccessful = true
+                            downloading = false
+                        }
+
+                        DownloadManager.ERROR_UNKNOWN -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.ERROR_UNKNOWN
+                        }
+
+                        DownloadManager.ERROR_FILE_ERROR -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.ERROR_FILE_ERROR
+                        }
+
+                        DownloadManager.ERROR_INSUFFICIENT_SPACE -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.ERROR_INSUFFICIENT_SPACE
+                        }
+
+                        DownloadManager.ERROR_HTTP_DATA_ERROR -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.ERROR_HTTP_DATA_ERROR
+                        }
+
+                        DownloadManager.ERROR_UNHANDLED_HTTP_CODE -> {
+                            isSuccessful = false
+                            downloading = false
+                            errorStatus = DownloadManager.ERROR_UNHANDLED_HTTP_CODE
+                        }
+
+                        else -> {
+                        }
+                    }
+
+                    cursor.close()
+                }
+            }
+        } catch (e: Exception) {
+            return Result.failure()
+        }
+
+        return if (isSuccessful)
+            Result.success()
+        else
+            Result.failure(workDataOf("error" to errorStatus))
+    }
+}
+```
+	
 Please visit the link below if you'd like to dive deep into [Work Manager](https://developer.android.com/topic/libraries/architecture/workmanager).
-And I recommand you to read [this tech blog](https://medium.com/androiddevelopers/introducing-workmanager-2083bcfc4712) if you'd like to learn more about Work Manager.
+	
+Also I recommand you to read [this tech blog](https://medium.com/androiddevelopers/introducing-workmanager-2083bcfc4712) if you'd like to learn more about Work Manager.
 
 ### MVVM with Clean Architecture: A Solid Combination
 
