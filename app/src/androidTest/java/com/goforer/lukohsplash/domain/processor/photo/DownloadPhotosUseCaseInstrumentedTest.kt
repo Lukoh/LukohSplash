@@ -23,9 +23,9 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry
-import com.goforer.base.worker.download.DownloaderQuery
-import com.goforer.lukohsplash.presentation.uitest.TestFragment
+import androidx.work.WorkInfo
 import com.goforer.lukohsplash.presentation.ui.HomeActivity
+import com.goforer.lukohsplash.presentation.uitest.TestFragment
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -48,15 +48,16 @@ class DownloadPhotosUseCaseInstrumentedTest {
     private lateinit var manager: DownloadManager
 
     @get:Rule
-    var activityRule: ActivityScenarioRule<HomeActivity>
-        = ActivityScenarioRule(HomeActivity::class.java)
+    var activityRule: ActivityScenarioRule<HomeActivity> =
+        ActivityScenarioRule(HomeActivity::class.java)
 
     @Before
     fun setup() {
         file = File("Pictures")
-        url = "https://images.unsplash.com/photo-1625582709381-8350d178fdc6?ixid=MnwyNDc1MTN8MHwxfGFsbHwzMXx8fHx8fDJ8fDE2MjcyNjE1NjU\\u0026ixlib=rb-1.2.1"
+        url =
+            "https://images.unsplash.com/photo-1625582709381-8350d178fdc6?ixid=MnwyNDc1MTN8MHwxfGFsbHwzMXx8fHx8fDJ8fDE2MjcyNjE1NjU\\u0026ixlib=rb-1.2.1"
         context = InstrumentationRegistry.getInstrumentation().targetContext
-        useCaseForDownloadPhoto = DownloadPhotosUseCase(context, DownloaderQuery(context))
+        useCaseForDownloadPhoto = DownloadPhotosUseCase(context)
         manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     }
 
@@ -69,33 +70,27 @@ class DownloadPhotosUseCaseInstrumentedTest {
                 override fun onPermissionGranted() {
                     runBlocking {
                         useCaseForDownloadPhoto.run(this, Params(Query().apply {
-                            firstParam = manager
-                            secondParam = url
-                            thirdParam = file
+                            firstParam = url
+                            secondParam = 1
                         })).collect {
-                            when (it) {
-                                DownloadManager.STATUS_FAILED -> {
-                                    assert(it == DownloadManager.STATUS_FAILED)
+                            when (it.state) {
+                                WorkInfo.State.ENQUEUED -> {
+                                    assert(it.state == WorkInfo.State.ENQUEUED)
                                 }
-
-                                DownloadManager.STATUS_PAUSED -> {
-                                    assert(it == DownloadManager.STATUS_PAUSED)
+                                WorkInfo.State.RUNNING -> {
+                                    assert(it.state == WorkInfo.State.RUNNING)
                                 }
-
-                                DownloadManager.STATUS_PENDING -> {
-                                    assert(it == DownloadManager.STATUS_PENDING)
+                                WorkInfo.State.BLOCKED -> {
+                                    assert(it.state == WorkInfo.State.BLOCKED)
                                 }
-
-                                DownloadManager.STATUS_RUNNING -> {
-                                    assert(it ==  DownloadManager.STATUS_RUNNING)
+                                WorkInfo.State.FAILED -> {
+                                    assert(it.state == WorkInfo.State.FAILED)
                                 }
-
-                                DownloadManager.STATUS_SUCCESSFUL -> {
-                                    assert(it ==  DownloadManager.STATUS_SUCCESSFUL)
+                                WorkInfo.State.CANCELLED -> {
+                                    assert(it.state == WorkInfo.State.CANCELLED)
                                 }
-
-                                DownloadPhotosUseCase.FILE_EXISTED -> {
-                                    assert(it == DownloadPhotosUseCase.FILE_EXISTED)
+                                else -> {
+                                    assert(it.state == it.state)
                                 }
                             }
                         }

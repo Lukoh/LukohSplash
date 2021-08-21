@@ -16,7 +16,6 @@
 
 package com.goforer.base.view.dialog
 
-import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -60,11 +59,9 @@ open class LoadingDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.loLoading.playAnimation()
+
         dialog?.setCancelable(false)
-
-        val animationDrawable = binding.ivLoading.drawable as AnimationDrawable
-
-        animationDrawable.start()
     }
 
     override fun onDestroyView() {

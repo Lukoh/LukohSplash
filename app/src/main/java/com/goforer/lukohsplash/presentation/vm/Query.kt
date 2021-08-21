@@ -14,6 +14,8 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Suppress("KDocUnresolvedReference")
+
 package com.goforer.lukohsplash.presentation.vm
 
 import javax.inject.Singleton

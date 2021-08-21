@@ -15,6 +15,11 @@
     <string name="no_user_name_phrase">There is no the user\'s name</string>
     <string name="download_fail_phrase">Download has been failed, please try again</string>
     <string name="download_success">The photo is downloaded successfully</string>
+    <string name="download_fail">Fail to download this photo</string>
+    <string name="download_fail_file">Fail to download this photo: File Error</string>
+    <string name="download_fail_insufficient_space">Fail to download this photo: Insufficient Space</string>
+    <string name="download_fail_http_data">Fail to download this photo: HTTP Data Error</string>
+    <string name="download_fail_unhandled_http_code">Fail to download this photo: Unhandled HTTP Code</string>
     <string name="photo_existed">This photo file existed in the storage</string>
     <string name="no_photo">There is no any photo to download"</string>
     <string name="list_no_photo">No Item</string>

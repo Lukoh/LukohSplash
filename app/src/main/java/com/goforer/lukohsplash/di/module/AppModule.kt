@@ -30,8 +30,6 @@ import com.goforer.base.network.NetworkErrorHandler
 import com.goforer.base.network.entity.NetworkError
 import com.goforer.base.utility.ConnectionUtils
 import com.goforer.base.view.dialog.NormalDialog
-import com.goforer.base.worker.download.DownloaderQuery
-import com.goforer.base.worker.download.wrapper.DownloaderQueryWrapper
 import com.goforer.lukohsplash.BuildConfig
 import com.goforer.lukohsplash.LukohSplash
 import com.goforer.lukohsplash.R
@@ -80,11 +78,6 @@ class AppModule {
     @Provides
     @Singleton
     fun provideGSon(): Gson = GsonBuilder().create()
-
-    @Provides
-    @Singleton
-    fun provideDownloaderQueryWrapper(context: Context): DownloaderQueryWrapper =
-        DownloaderQuery(context)
 
     @Singleton
     @Provides
