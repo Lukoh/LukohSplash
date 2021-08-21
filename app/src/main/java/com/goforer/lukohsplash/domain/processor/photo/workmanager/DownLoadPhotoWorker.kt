@@ -14,7 +14,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.goforer.lukohsplash.presentation.ui.photo.workmanager
+package com.goforer.lukohsplash.domain.processor.photo.workmanager
 
 import android.app.DownloadManager
 import android.content.Context
