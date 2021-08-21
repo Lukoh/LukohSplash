@@ -756,7 +756,17 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
      }	
 }	
 ```
-lease visit the link below if you'd like to dive deep into [View Binding](https://developer.android.com/topic/libraries/view-binding).
+Please visit the link below if you'd like to dive deep into [View Binding](https://developer.android.com/topic/libraries/view-binding).
+	
+### Work Manager
+
+WorkManager is an Android Jetpack library that runs deferrable, guaranteed background work when the work’s constraints are satisfied. It is the current best practice for this kind of work on Android.	
+	
+What is WorkManager?
+WorkManager is one of the Android Architecture Components and part of Android Jetpack, a new and opinionated take on how to build modern Android applications.
+	
+Please visit the link below if you'd like to dive deep into [Work Manager](https://developer.android.com/topic/libraries/architecture/workmanager).
+And I recommand you to read [this tech blog](https://medium.com/androiddevelopers/introducing-workmanager-2083bcfc4712) if you'd like to learn more about Work Manager.
 
 ### MVVM with Clean Architecture: A Solid Combination
 
