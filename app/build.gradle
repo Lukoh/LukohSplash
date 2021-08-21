@@ -127,7 +127,6 @@ android {
     lintOptions {
         checkDependencies true
     }
-    
 }
 
 dependencies {
@@ -160,6 +159,7 @@ dependencies {
 
     implementation "androidx.paging:paging-runtime-ktx:$arch_paging_version"
     implementation "androidx.lifecycle:lifecycle-runtime-testing:$arch_lifecycle_version"
+    implementation "androidx.work:work-runtime-ktx:$androidx_work_version"
     testImplementation "androidx.paging:paging-common-ktx:$arch_paging_version"
 
     implementation 'com.google.code.gson:gson:2.8.7'
@@ -176,6 +176,8 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     implementation 'com.github.bumptech.glide:annotations:4.12.0'
     kapt 'com.github.bumptech.glide:compiler:4.12.0'
+
+    implementation "com.airbnb.android:lottie:$lottieVersion"
 
     // Json Logging
     implementation 'com.orhanobut:logger:2.2.0'
@@ -260,6 +262,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     // Optional -- UI testing with UI Automator
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+
+    // optional - Test helpers
+    androidTestImplementation "androidx.work:work-testing:$androidx_work_version"
 
     implementation 'commons-io:commons-io:20030203.000550'
 }

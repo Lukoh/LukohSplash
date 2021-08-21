@@ -18,12 +18,10 @@ package com.goforer.lukohsplash.presentation.ui.photo
 
 import android.Manifest
 import android.app.DownloadManager
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
@@ -43,6 +41,7 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkInfo
 import com.goforer.base.extension.*
 import com.goforer.base.view.decoration.SpacingItemDecoration
 import com.goforer.base.view.dialog.NormalDialog
@@ -62,13 +61,10 @@ import com.goforer.lukohsplash.presentation.vm.photo.DownloadPhotoViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.GetPhotoInfoViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserNameViewModel
 import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 /**
@@ -192,18 +188,18 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getPhoto(id: String) {
+        val getPhotoInfoViewModel: GetPhotoInfoViewModel by viewModels {
+            GetPhotoInfoViewModel.provideFactory(
+                getPhotoInfoViewModelFactory,
+                Params(Query().apply {
+                    firstParam = id
+                    secondParam = -1
+                })
+            )
+        }
+
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val getPhotoInfoViewModel: GetPhotoInfoViewModel by viewModels {
-                    GetPhotoInfoViewModel.provideFactory(
-                        getPhotoInfoViewModelFactory,
-                        Params(Query().apply {
-                            firstParam = id
-                            secondParam = -1
-                        })
-                    )
-                }
-
                 getPhotoInfoViewModel.value.collect { resource ->
                     when (resource.getStatus()) {
                         Status.SUCCESS -> {
@@ -355,46 +351,22 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
             DownloadPhotoViewModel.provideFactory(
                 downloadPhotoViewModelFactory,
                 Params(Query().apply {
-                    firstParam =
-                        homeActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                    secondParam = url
-                    thirdParam = File(Environment.DIRECTORY_PICTURES)
+                    firstParam = url
                 })
             )
         }
 
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                delay(500)
                 downloadPhotoViewModel.value.collectLatest {
-                    when (it) {
-                        DownloadManager.STATUS_FAILED -> {
-                            makeLoading(false)
-                            Toast.makeText(
-                                homeActivity,
-                                getString(R.string.download_fail_phrase),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                    when (it?.state) {
+                        WorkInfo.State.ENQUEUED -> {
                         }
 
-                        DownloadManager.STATUS_PAUSED -> {
-                            makeLoading(false)
-                            Toast.makeText(
-                                homeActivity,
-                                getString(R.string.paused),
-                                Toast.LENGTH_SHORT
-                            ).show()
-
+                        WorkInfo.State.RUNNING -> {
                         }
 
-                        DownloadManager.STATUS_PENDING -> {
-                        }
-
-                        DownloadManager.STATUS_RUNNING -> {
-                            makeLoading(true)
-                        }
-
-                        DownloadManager.STATUS_SUCCESSFUL -> {
+                        WorkInfo.State.SUCCEEDED -> {
                             NormalDialog.Builder(context)
                                 .setTitle(R.string.title_photo_download)
                                 .setMessage(getString(R.string.download_success))
@@ -404,14 +376,56 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                             makeLoading(false)
                         }
 
-                        null -> {
-                            makeLoading(true)
-                        }
-
-                        else -> {
+                        WorkInfo.State.BLOCKED -> {
+                            makeLoading(false)
                             Toast.makeText(
                                 homeActivity,
-                                getString(R.string.no_photo),
+                                getString(R.string.download_fail_phrase),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        WorkInfo.State.FAILED -> {
+                            val phrase = when (it.outputData.getInt(
+                                "error",
+                                DownloadManager.ERROR_UNKNOWN
+                            )) {
+                                DownloadManager.ERROR_FILE_ERROR -> {
+                                    getString(R.string.download_fail_file)
+                                }
+
+                                DownloadManager.ERROR_INSUFFICIENT_SPACE -> {
+                                    getString(R.string.download_fail_insufficient_space)
+                                }
+
+                                DownloadManager.ERROR_HTTP_DATA_ERROR -> {
+                                    getString(R.string.download_fail_http_data)
+                                }
+
+                                DownloadManager.ERROR_UNHANDLED_HTTP_CODE -> {
+                                    getString(R.string.download_fail_unhandled_http_code)
+                                }
+
+                                else -> {
+                                    getString(R.string.download_fail)
+                                }
+                            }
+
+                            NormalDialog.Builder(context)
+                                .setTitle(phrase)
+                                .setMessage(getString(R.string.download_fail))
+                                .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
+                                }.setOnDismissListener {
+                                }.show(homeActivity.supportFragmentManager)
+                            makeLoading(false)
+
+                        }
+
+                        WorkInfo.State.CANCELLED -> {
+                            makeLoading(false)
+                            Toast.makeText(
+                                homeActivity,
+                                getString(R.string.download_fail_phrase),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

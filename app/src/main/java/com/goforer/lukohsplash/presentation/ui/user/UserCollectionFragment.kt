@@ -194,6 +194,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                 })
             )
         }
+        
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserCollectionsViewModel.value.collect { resource ->

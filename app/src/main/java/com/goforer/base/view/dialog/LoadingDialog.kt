@@ -16,15 +16,14 @@
 
 package com.goforer.base.view.dialog
 
-import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.goforer.base.extension.setDefaultWindowTheme
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.databinding.DialogLoadingBinding
-import com.goforer.base.extension.setDefaultWindowTheme
 
 open class LoadingDialog : DialogFragment() {
     private var _binding: DialogLoadingBinding? = null
@@ -60,11 +59,9 @@ open class LoadingDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.loLoading.playAnimation()
+
         dialog?.setCancelable(false)
-
-        val animationDrawable = binding.ivLoading.drawable as AnimationDrawable
-
-        animationDrawable.start()
     }
 
     override fun onDestroyView() {

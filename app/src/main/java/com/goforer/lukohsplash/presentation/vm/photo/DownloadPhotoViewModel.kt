@@ -18,6 +18,7 @@ package com.goforer.lukohsplash.presentation.vm.photo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.Factory
+import androidx.work.WorkInfo
 import com.goforer.lukohsplash.domain.processor.photo.DownloadPhotosUseCase
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.ProcessorViewModel
@@ -30,7 +31,7 @@ class DownloadPhotoViewModel
 constructor(
     useCase: DownloadPhotosUseCase,
     @Assisted private val params: Params,
-) : ProcessorViewModel<Int>(useCase, params) {
+) : ProcessorViewModel<WorkInfo>(useCase, params) {
     @AssistedFactory
     interface AssistedDownloadPhotoFactory {
         fun create(params: Params): DownloadPhotoViewModel
@@ -38,7 +39,8 @@ constructor(
 
     companion object {
         fun provideFactory(
-            assistedFactory: AssistedDownloadPhotoFactory, params: Params) = object : Factory {
+            assistedFactory: AssistedDownloadPhotoFactory, params: Params
+        ) = object : Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 return assistedFactory.create(params) as T

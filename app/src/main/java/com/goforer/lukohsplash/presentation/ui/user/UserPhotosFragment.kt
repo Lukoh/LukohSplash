@@ -195,6 +195,7 @@ class UserPhotosFragment : BaseFragment<FragmentItemListBinding>() {
                 })
             )
         }
+
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 getUserPhotosViewModel.value.collect { resource ->

@@ -16,44 +16,31 @@
 
 package com.goforer.lukohsplash.domain.processor.photo
 
-import android.app.DownloadManager
-import android.database.Cursor
-import com.goforer.base.worker.download.wrapper.DownloaderQueryWrapper
-import com.goforer.lukohsplash.data.source.model.entity.photo.SaveFileInfo
+import android.content.Context
+import androidx.lifecycle.asFlow
+import androidx.work.*
 import com.goforer.lukohsplash.domain.UseCase
+import com.goforer.lukohsplash.presentation.ui.photo.workmanager.DownLoadPhotoWorker
 import com.goforer.lukohsplash.presentation.vm.Params
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.flow
-import java.io.File
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class DownloadPhotosUseCase
 @Inject
-constructor(private val downloaderQueryInterface: DownloaderQueryWrapper) : UseCase<Int>() {
-    override fun run(viewModelScope: CoroutineScope, params: Params) = flow {
-        var downloading = true
-        val downloadManager = params.query.firstParam as DownloadManager
-        val url = params.query.secondParam as String
-        val file = params.query.thirdParam as File
-        val fileName = url.substring(url.lastIndexOf("/") + 1).take(19)
+constructor(private val context: Context) : UseCase<WorkInfo>() {
+    override fun run(viewModelScope: CoroutineScope, params: Params): Flow<WorkInfo> {
+        val work = OneTimeWorkRequestBuilder<DownLoadPhotoWorker>()
+            .setInputData(workDataOf("url" to params.query.firstParam as String))
+            .setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            )
+            .build()
 
-        val query =
-            downloaderQueryInterface.takeQuery(downloadManager, SaveFileInfo(url, file, fileName))
+        WorkManager.getInstance(context).enqueue(work)
 
-        while (downloading) {
-            val cursor: Cursor = downloadManager.query(query)
-            cursor.moveToFirst()
-            if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL
-            ) {
-                downloading = false
-            }
-
-            val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
-
-            emit(status)
-            cursor.close()
-        }
+        return WorkManager.getInstance(context).getWorkInfoByIdLiveData(work.id).asFlow()
     }
 }

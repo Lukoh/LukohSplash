@@ -51,7 +51,7 @@ constructor() : BasePagingSource<Int, Photo>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
         return try {
             params.key.isNullOnFlow({}, {
-                nextPage = params.key?.plus(1)!!
+                nextPage = params.key ?: 1
                 restAPI.getUserLikes(
                     query.firstParam as String,
                     YOUR_ACCESS_KEY,
