@@ -22,7 +22,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.*
 import androidx.work.testing.SynchronousExecutor
 import androidx.work.testing.WorkManagerTestInitHelper
-import com.goforer.lukohsplash.presentation.ui.photo.workmanager.DownLoadPhotoWorker
+import com.goforer.lukohsplash.domain.processor.photo.workmanager.DownLoadPhotoWorker
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before

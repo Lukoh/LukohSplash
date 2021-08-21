@@ -20,7 +20,7 @@ import android.content.Context
 import androidx.lifecycle.asFlow
 import androidx.work.*
 import com.goforer.lukohsplash.domain.UseCase
-import com.goforer.lukohsplash.presentation.ui.photo.workmanager.DownLoadPhotoWorker
+import com.goforer.lukohsplash.domain.processor.photo.workmanager.DownLoadPhotoWorker
 import com.goforer.lukohsplash.presentation.vm.Params
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
