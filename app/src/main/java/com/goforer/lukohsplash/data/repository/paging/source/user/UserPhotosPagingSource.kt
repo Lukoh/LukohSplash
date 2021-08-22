@@ -48,11 +48,13 @@ constructor() : BasePagingSource<Int, Photo>() {
     @SuppressWarnings("unchecked")
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Photo> {
         return try {
-            params.key.isNullOnFlow({}, {
-                nextPage = params.key ?: 1
+            params.key.isNullOnFlow({
+                nextPage = 1
+            }, {
+                nextPage = it.plus(1)
                 restAPI.getUserPhotos(
                     query.firstParam as String,
-                    NetworkBoundWorker.YOUR_ACCESS_KEY, params.key?.plus(1)!!,
+                    NetworkBoundWorker.YOUR_ACCESS_KEY, it.plus(1),
                     NetworkBoundWorker.NONE_ITEM_COUNT,
                     NetworkBoundWorker.LATEST,
                     query.secondParam as Boolean, query.thirdParam as String,

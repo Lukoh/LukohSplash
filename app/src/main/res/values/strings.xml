@@ -15,6 +15,7 @@
     <string name="no_user_name_phrase">There is no the user\'s name</string>
     <string name="download_fail_phrase">Download has been failed, please try again</string>
     <string name="download_success">The photo is downloaded successfully</string>
+    <string name="download_already_saved">This photo has already been successfully saved.</string>
     <string name="download_fail">Fail to download this photo</string>
     <string name="download_fail_file">Fail to download this photo: File Error</string>
     <string name="download_fail_insufficient_space">Fail to download this photo: Insufficient Space</string>

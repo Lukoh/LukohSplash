@@ -64,7 +64,6 @@ import com.goforer.lukohsplash.presentation.vm.photo.share.SharedUserViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -75,6 +74,8 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         get() = FragmentPhotoDetailBinding::inflate
 
     private lateinit var listener: PermissionCallback
+
+    private var downloadCount = 0
 
     private val requestMultiplePermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -311,7 +312,7 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
             )
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 checkFileExistViewModel.value.collectLatest {
                     it?.let {
@@ -367,13 +368,19 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
                         }
 
                         WorkInfo.State.SUCCEEDED -> {
+                            val phrase = if (downloadCount == 0)
+                                getString(R.string.download_success)
+                            else
+                                getString(R.string.download_already_saved)
+
                             NormalDialog.Builder(context)
                                 .setTitle(R.string.title_photo_download)
-                                .setMessage(getString(R.string.download_success))
+                                .setMessage(phrase)
                                 .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
                                 }.setOnDismissListener {
                                 }.show(homeActivity.supportFragmentManager)
                             makeLoading(false)
+                            downloadCount++
                         }
 
                         WorkInfo.State.BLOCKED -> {
