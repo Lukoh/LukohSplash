@@ -49,12 +49,14 @@ constructor() : BasePagingSource<Int, Collection>() {
     @SuppressWarnings("unchecked")
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Collection> {
         return try {
-            params.key.isNullOnFlow({}, {
-                nextPage = params.key ?: 1
+            params.key.isNullOnFlow({
+                nextPage = 1
+            }, {
+                nextPage = it.plus(1)
                 restAPI.getUserCollections(
                     query.firstParam as String,
                     YOUR_ACCESS_KEY,
-                    params.key?.plus(1),
+                    it.plus(1),
                     NONE_ITEM_COUNT
                 ).collect { apiResponse ->
                     pagingList = when (apiResponse) {
