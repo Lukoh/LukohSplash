@@ -416,35 +416,36 @@ Navigation Architecture Component has been launched to solve a lot of Android ap
 
 * Implementation
 	
-Android Navigation Component accelerates app development and is easy to be implemented. It entails not much more than a few concepts and a config file.
+  Android Navigation Component accelerates app development and is easy to be implemented. It entails not much more than a few concepts and a config file.
 
 * Fragment transactions
 	
-You may have tried Fragment transactions before. If so, you know that a lot of your code is needed to achieve the result. If you've already learned the Android Navigation Component, you no longer need to care about adding, replacing and removing Fragments, because the framework does this for us.
+  You may have tried Fragment transactions before. If so, you know that a lot of your code is needed to achieve the result. If you've already learned the Android   
+  Navigation Component, you no longer need to care about adding, replacing and removing Fragments, because the framework does this for us.
 
 * Passing arguments in a safe way
 	
-Now there is a way to ensure that the data being passed from one Fragment will be received by another Fragment without cast.
+  Now there is a way to ensure that the data being passed from one Fragment will be received by another Fragment without cast.
 
 * Handling up/back button and back stack
 	
-Sometimes this gives us a headache. Now it’s only necessary to specify the app navigation within the config file.
+  Sometimes this gives us a headache. Now it’s only necessary to specify the app navigation within the config file.
 
 * Animations
 	
-Animations are also specified in a simple way, within the config file, making the code cleaner. Just beautiful.
+  Animations are also specified in a simple way, within the config file, making the code cleaner. Just beautiful.
 
 * Deep links
 	
-In Android, a deep link is a link that takes the user directly to a specific destination within an app. The framework lets you easily create deep links with the use of single line of code within the config file, without having to handle it manually.
+  In Android, a deep link is a link that takes the user directly to a specific destination within an app. The framework lets you easily create deep links with the   use of single line of code within the config file, without having to handle it manually.
 
 * Handling drawer navigation and bottom navigation
 	
-The framework already has support for these navigation components, keeping it concise and complete.
+  The framework already has support for these navigation components, keeping it concise and complete.
 
 * Tests
 	
-We all know the importance of testing things before launching an app. All of the things that are offered by the framework are already well tested. This way, the important test becomes the interactions between the Fragments.
+  We all know the importance of testing things before launching an app. All of the things that are offered by the framework are already well tested. This way, the   important test becomes the interactions between the Fragments.
 
 Please visit the link below if you'd like to dive deep into [Single activity architecture](https://developer.android.com/guide/navigation).
 	
