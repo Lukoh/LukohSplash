@@ -517,7 +517,7 @@ Also the Paging 3.0 Jetpack Component Library is a major update to the previous 
 	
 You can check out it how to implment all code of Paging3. Please refer to code below:
 
-### Get the PagingData in Repository
+### - Get the PagingData in Repository
 	
 Now I created an instance of Pager in my Repository to get a stream of data from the PhotosPagingSource that I just created.
 
