@@ -396,7 +396,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 }
 ```	
 
-## - Single-Activity Architecture with the Navigation component 
+## Single-Activity Architecture with the Navigation component 
 
 I've applied the Single-Activity Architecture with the Navigation component to this LukohSplash open-source project
 
