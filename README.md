@@ -404,8 +404,39 @@ Since the announcement of Jetpack in Google I/O 2018, Single Activity Architectu
 I never faced any problem using the Single-Activity Architecture with the Navigation component.
 Instead of having one Activity represent one screen, I view an Activity as a big container with the fragments inside the Activity representing the screen.
 
-I've used this architecture in several production and my open-source apps and so far there are no issues. You might wonder what if w want to pass the data back and forth between Fragments like startActivityForResult? 
+I've used this architecture in several production and my open-source apps and so far there are no issues. You might wonder what if you want to pass the data back and forth between Fragments like startActivityForResult? 
 If you are about to start the new app, I think it worth a try using Single-Activity Architecture with the Navigation component. However, in the case where you want to use it with the existing app with many Activities, you can start off by transforming the flow to use this architecture. For example, in the authentication flow, instead of having multiple Activity for Login, Sign up, etc, you can combine that into one Activity with Fragment representing each screen in the flow.
+	
+The Navigation Architecture Component simplifies the implementation of navigation in an Android app. It also ensures a consistent and predictable user experience by adhering to an established set of principles.
+
+### - Advantages
+The concept behind the Navigation Architecture Component is to have the developer use a single Activity (Fragments only), to achieve various benefits. These include reduced development time, easy animations between Fragments, and increased app performance.
+
+Navigation Architecture Component has been launched to solve a lot of Android app navigation problems. We can see them described below.
+
+* Implementation
+Android Navigation Component accelerates app development and is easy to be implemented. It entails not much more than a few concepts and a config file.
+
+* Fragment transactions
+You may have tried Fragment transactions before. If so, you know that a lot of your code is needed to achieve the result. If you've already learned the Android Navigation Component, you no longer need to care about adding, replacing and removing Fragments, because the framework does this for us.
+
+* Passing arguments in a safe way
+Now there is a way to ensure that the data being passed from one Fragment will be received by another Fragment without cast.
+
+* Handling up/back button and back stack
+Sometimes this gives us a headache. Now it’s only necessary to specify the app navigation within the config file.
+
+* Animations
+Animations are also specified in a simple way, within the config file, making the code cleaner. Just beautiful.
+
+* Deep links
+In Android, a deep link is a link that takes the user directly to a specific destination within an app. The framework lets you easily create deep links with the use of single line of code within the config file, without having to handle it manually.
+
+* Handling drawer navigation and bottom navigation
+The framework already has support for these navigation components, keeping it concise and complete.
+
+* Tests
+We all know the importance of testing things before launching an app. All of the things that are offered by the framework are already well tested. This way, the important test becomes the interactions between the Fragments.
 
 Please visit the link below if you'd like to dive deep into [Single activity architecture](https://developer.android.com/guide/navigation).
 	
