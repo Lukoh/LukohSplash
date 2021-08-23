@@ -418,11 +418,11 @@ The role of each ViewModelbelow are below:
 	
 In this open-source project, I also used the [Shared-ViewModel](https://github.com/Lukoh/SingleSharedSample/blob/master/app/src/main/java/com/goforer/singlesharedsample/presentation/vm/SharedViewModel.kt) for communication between fragments. However, recently, Google has just added a new ability to FragmentManager which allows the FragmentManager to act as a central store for fragment results. You can pass the data back and forth between Fragments easily. You can read more about it [here](https://developer.android.com/training/basics/fragments/pass-data-between)
 	
-### Mediator-ViewModel
+### - Mediator-ViewModel
 	
 In this open-source project, I also used the [Mediator-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/MediatorViewModel.kt) for delivering data-information as parmeters or paths being used in REST APIs to UseCase and Repository. I implemented this ViewModel with a couple of methods.
 	
-### Processor-ViewModel
+### - Processor-ViewModel
 	
 In this open-source project, I also used the [Processor-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/ProcessorViewModel.kt) for hanlding the business logic. Once dealing with the business logic, the work of this ViewModel which is tied up with each UseCase in the processor package get back to UI with the result and update or refresh the UI. I implemented this ViewModel with a couple of methods. Business logic is completely separated from UI. It makes our code very easy to 
 maintain and test.It makes all code very easy to maintain and test. Please see the below code if you'd like to know how Processor-ViewModel and the UseCase in in the processor package get worked.
