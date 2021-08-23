@@ -553,7 +553,7 @@ constructor(val pagingSource: PhotosPagingSource) : Repository<Resource>() {
 
  * The cachedIn(viewModelScope) caches the data from the MoviePagingSource to survive the screen orientation changes.
 
-#### Create a Data Source
+### - Create a Data Source
 
 Unlike the previous versions of Paging library, in Paging3, I have to implement a PagingSource<Key, Value> to define a data source. The PagingSource takes two parameters a Key and a Value. The Key parameter is the identifier of the data to be loaded such as page number and the Value is the type of the data itself.
 
@@ -629,7 +629,7 @@ constructor() : BasePagingSource<Int, Photo>() {
 }
 ```
 
-### Display data in RecyclerView
+### - Display data in RecyclerView
 	
 First I have to create a RecyclerView'S adapter class which extends from the PagingDataAdapter. This is the same as a normal RecyclerView adapter. The PagingDataAdapter takes two parameters, the first one is the type of the data(which in our case is the Movie object), and the second one is a RecyclerView.ViewHolder.
 
@@ -670,7 +670,7 @@ In comparison to the well-known methods such as Kotlin synthetics, Butterknife a
 	
 According to Google, this new approach has the best of all the worlds. So, you should use it wherever you can.
 
-### Main advantages
+### - Main advantages
 	
 The new ViewBinding feature has some advantages compared to the traditional approach and some of the libraries:
  * **Null safety**: view binding creates direct references to views, there’s no risk of a NullPointerException due to an invalid view ID. Also, when a view is only     exists regarding some conditions, the field containing its reference in the binding class is marked with @Nullable .
@@ -884,7 +884,7 @@ constructor(
 }
 ```
 
-### WorkManager periodicity
+### - WorkManager periodicity
 
 If you want that your work is repeated periodically, you can use a PeriodicWorkRequest.
 	
