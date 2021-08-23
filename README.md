@@ -669,7 +669,7 @@ In comparison to the well-known methods such as Kotlin synthetics, Butterknife a
 	
 According to Google, this new approach has the best of all the worlds. So, you should use it wherever you can.
 
-* ### Main advantages
+### Main advantages
 	
 The new ViewBinding feature has some advantages compared to the traditional approach and some of the libraries:
  * **Null safety**: view binding creates direct references to views, there’s no risk of a NullPointerException due to an invalid view ID. Also, when a view is only     exists regarding some conditions, the field containing its reference in the binding class is marked with @Nullable .
@@ -760,10 +760,11 @@ Please visit the link below if you'd like to dive deep into [View Binding](https
 	
 * ## Work Manager
 
-WorkManager is an Android Jetpack library that runs deferrable, guaranteed background work when the work’s constraints are satisfied. It is the current best practice for this kind of work on Android.	
+WorkManager is an API that makes it easy to schedule reliable, asynchronous tasks that are expected to run even if the app exits or the device restarts. The WorkManager API is a suitable and recommended replacement for all previous Android background scheduling APIs, including FirebaseJobDispatcher, GcmNetworkManager, and Job Scheduler. WorkManager incorporates the features of its predecessors in a modern, consistent API that works back to API level 14 while also being conscious of battery life.
 	
 What is WorkManager?
 WorkManager is one of the Android Architecture Components and part of Android Jetpack, a new and opinionated take on how to build modern Android applications.
+It is the current best practice for most background work on Android.
 	
 ```kotlin
 class DownLoadPhotoWorker
@@ -881,10 +882,18 @@ constructor(
     }
 }
 ```
+
+### WorkManager periodicity
+
+If you want that your work is repeated periodically, you can use a PeriodicWorkRequest.
+	
+I recommand you to read this [WorkManager periodicity](https://medium.com/androiddevelopers/workmanager-periodicity-ff35185ff006) blog if you'd like to know more about the repeating work in Work Manager.
 	
 Please visit the link below if you'd like to dive deep into [Work Manager](https://developer.android.com/topic/libraries/architecture/workmanager).
 	
 Also I recommand you to read [this tech blog](https://medium.com/androiddevelopers/introducing-workmanager-2083bcfc4712) if you'd like to learn more about Work Manager.
+	
+And please hit this Android [WorkManager meets Kotlin](https://medium.com/androiddevelopers/workmanager-meets-kotlin-b9ad02f7405e) tech blog if you'd like to use Kotlin in Work Manager.
 
 * ## MVVM with Clean Architecture: A Solid Combination
 
