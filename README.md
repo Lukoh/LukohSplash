@@ -291,7 +291,7 @@ Dependency injection is often discussed in conjunction with one of the five SOLI
 
 The gist of the Dependency Inversion principle is that it is important to depend on abstractions rather than concrete implementations.
 
-* ### Dagger2
+### Dagger2
 A fast dependency injector for Android and Kotlin, Java.
 Dagger2 is a great library that allows you to @Inject everything you need where you need it and handle the lifecycle of created objects. Dagger2 is used to avoid detail-complicated boilerplate code of connecting architecture elements one to another.
 
