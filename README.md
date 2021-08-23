@@ -279,7 +279,7 @@ If you want to know which to choose, StateFlow or SharedFlow, please read [Subst
 I also recommend to visit the Android official below tech blog to know how migrating from LiveData to Kotlin’s Flow and : 
 [Migrating from LiveData to Kotlin’s Flow](https://medium.com/androiddevelopers/migrating-from-livedata-to-kotlins-flow-379292f419fb)
 
-* ## Dependency Injection
+## Dependency Injection
 
 What is Dependency Injection?
 First, what is a dependency? Any non-trivial software program is going to contain components that pass information and send message calls back and forth between one another.
@@ -396,7 +396,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 }
 ```	
 
-* ## - Single-Activity Architecture with the Navigation component 
+## - Single-Activity Architecture with the Navigation component 
 
 I've applied the Single-Activity Architecture with the Navigation component to this LukohSplash open-source project
 
@@ -409,20 +409,20 @@ If you are about to start the new app, I think it worth a try using Single-Activ
 
 Please visit the link below if you'd like to dive deep into [Single activity architecture](https://developer.android.com/guide/navigation).
 	
-* ## ViewModel
+## ViewModel
 	
 I made 3 ViewModel to decouple the role of ViewModels.
 The role of each ViewModelbelow are below:	
 	
-#### - Shared-ViewModel
+### - Shared-ViewModel
 	
 In this open-source project, I also used the [Shared-ViewModel](https://github.com/Lukoh/SingleSharedSample/blob/master/app/src/main/java/com/goforer/singlesharedsample/presentation/vm/SharedViewModel.kt) for communication between fragments. However, recently, Google has just added a new ability to FragmentManager which allows the FragmentManager to act as a central store for fragment results. You can pass the data back and forth between Fragments easily. You can read more about it [here](https://developer.android.com/training/basics/fragments/pass-data-between)
 	
-* ## Mediator-ViewModel
+### Mediator-ViewModel
 	
 In this open-source project, I also used the [Mediator-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/MediatorViewModel.kt) for delivering data-information as parmeters or paths being used in REST APIs to UseCase and Repository. I implemented this ViewModel with a couple of methods.
 	
-* ## Processor-ViewModel
+### Processor-ViewModel
 	
 In this open-source project, I also used the [Processor-ViewModel](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/presentation/vm/ProcessorViewModel.kt) for hanlding the business logic. Once dealing with the business logic, the work of this ViewModel which is tied up with each UseCase in the processor package get back to UI with the result and update or refresh the UI. I implemented this ViewModel with a couple of methods. Business logic is completely separated from UI. It makes our code very easy to 
 maintain and test.It makes all code very easy to maintain and test. Please see the below code if you'd like to know how Processor-ViewModel and the UseCase in in the processor package get worked.
@@ -509,7 +509,7 @@ constructor(
 }
 ```
 	
-* ## Paging3
+## Paging3
 	
 The Jetpack Component Library helps you load and display pages of data from a larger dataset from local storage or over network. This approach allows your app to use both network bandwidth and system resources more efficiently. The components of the Paging library are designed to fit into the recommended Android app architecture, integrate cleanly with other Jetpack components, and provide first-class Kotlin support.
 	
@@ -517,7 +517,8 @@ Also the Paging 3.0 Jetpack Component Library is a major update to the previous 
 	
 You can check out it how to implment all code of Paging3. Please refer to code below:
 
-* ### Get the PagingData in Repository
+### Get the PagingData in Repository
+	
 Now I created an instance of Pager in my Repository to get a stream of data from the PhotosPagingSource that I just created.
 
 [GetPhotosRepository Code](https://github.com/Lukoh/LukohSplash/blob/main/app/src/main/java/com/goforer/lukohsplash/data/repository/remote/home/GetPhotosRepository.kt)
@@ -628,7 +629,7 @@ constructor() : BasePagingSource<Int, Photo>() {
 }
 ```
 
-* ## Display data in RecyclerView
+### Display data in RecyclerView
 	
 First I have to create a RecyclerView'S adapter class which extends from the PagingDataAdapter. This is the same as a normal RecyclerView adapter. The PagingDataAdapter takes two parameters, the first one is the type of the data(which in our case is the Movie object), and the second one is a RecyclerView.ViewHolder.
 
@@ -653,13 +654,13 @@ private fun getPhotos() {
 
 Please read [this page](https://developer.android.com/topic/libraries/architecture/paging/v3-overview) and [How to Use the Paging 3 Library in Android](https://proandroiddev.com/how-to-use-the-paging-3-library-in-android-5d128bb5b1d8) if you'd like to learn how to apply and implement it.
 	
-* ## ViewPager2
+## ViewPager2
 	
 ViewPager2 is an improved version of the ViewPager library that offers enhanced functionality and addresses common difficulties with using ViewPager. If your app already uses ViewPager, [read this page](https://developer.android.com/training/animation/vp2-migration) to learn more about migrating to ViewPager2.
 
 If you want to use ViewPager2 in your app and are not currently using ViewPager, read [Slide between fragments using ViewPager2](https://developer.android.com/training/animation/screen-slide-2) and [Create swipe views with tabs using ViewPager2](https://developer.android.com/guide/navigation/navigation-swipe-view-2) for more information.
 	
-* ## View Binding
+## View Binding
 	
 View binding is a feature that allows you to more easily write code that interacts with views. Once view binding is enabled in a module, it generates a binding class for each XML layout file present in that module. An instance of a binding class contains direct references to all views that have an ID in the corresponding layout.
 
@@ -758,7 +759,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
 ```
 Please visit the link below if you'd like to dive deep into [View Binding](https://developer.android.com/topic/libraries/view-binding).
 	
-* ## Work Manager
+## Work Manager
 
 WorkManager is an API that makes it easy to schedule reliable, asynchronous tasks that are expected to run even if the app exits or the device restarts. The WorkManager API is a suitable and recommended replacement for all previous Android background scheduling APIs, including FirebaseJobDispatcher, GcmNetworkManager, and Job Scheduler. WorkManager incorporates the features of its predecessors in a modern, consistent API that works back to API level 14 while also being conscious of battery life.
 	
@@ -895,7 +896,7 @@ Also I recommand you to read [this tech blog](https://medium.com/androiddevelope
 	
 And please hit this Android [WorkManager meets Kotlin](https://medium.com/androiddevelopers/workmanager-meets-kotlin-b9ad02f7405e) tech blog if you'd like to use Kotlin in Work Manager.
 
-* ## MVVM with Clean Architecture: A Solid Combination
+## MVVM with Clean Architecture: A Solid Combination
 
 My purpose with this open-source project was to understand MVVM with Clean Architecture and latest Jetpack libraries, so I skipped over a few things that you can try to improve it further:
 
