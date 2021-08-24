@@ -209,6 +209,8 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$timber_version"
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_version"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"

@@ -9,5 +9,4 @@
         android:id="@+id/setting"
         android:name="com.goforer.lukohsplash.presentation.ui.home.SettingFragment"
         tools:layout="@layout/fragment_setting" />
-
 </navigation>

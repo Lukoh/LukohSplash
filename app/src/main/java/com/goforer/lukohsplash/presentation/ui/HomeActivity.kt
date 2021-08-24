@@ -40,13 +40,13 @@ import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
 open class HomeActivity : AppCompatActivity(), HasAndroidInjector {
-    private lateinit var keyboardObserver: KeyboardObserver
-
-    private lateinit var binding: ActivityHomeBinding
-
-    private lateinit var glideRequestManager: RequestManager
+    internal lateinit var binding: ActivityHomeBinding
 
     internal var onKeyboardChange: ((status: Int) -> Unit) = {}
+    
+    private lateinit var keyboardObserver: KeyboardObserver
+
+    private lateinit var glideRequestManager: RequestManager
 
     private var tabIndex: Int = -1
 

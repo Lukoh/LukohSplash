@@ -11,27 +11,38 @@
         tools:layout="@layout/fragment_photos">
         <action
             android:id="@+id/action_PhotosFragment_to_PhotoDetailFragment"
-            app:destination="@id/photo_detail">
-        </action>
+            app:destination="@id/photo_detail" />
     </fragment>
 
     <fragment
         android:id="@+id/photo_detail"
         android:name="com.goforer.lukohsplash.presentation.ui.photo.PhotoDetailFragment"
         tools:layout="@layout/fragment_photo_detail">
-
         <action
             android:id="@+id/action_PhotoDetailFragment_to_UserFragment"
-            app:destination="@id/user_info">
-        </action>
+            app:destination="@id/user_info" />
+        <action
+            android:id="@+id/action_PhotoDetailFragment_to_PhotoViewerFragment"
+            app:destination="@id/photo_viewer" />
+    </fragment>
 
-
+    <fragment
+        android:id="@+id/photo_viewer"
+        android:name="com.goforer.lukohsplash.presentation.ui.photo.PhotoViewerFragment"
+        tools:layout="@layout/fragment_photo_viewer">
+        <argument
+            android:name="photoUrl"
+            app:argType="string" />
     </fragment>
 
     <fragment
         android:id="@+id/user_info"
         android:name="com.goforer.lukohsplash.presentation.ui.user.UserFragment"
         tools:layout="@layout/fragment_user">
+
+        <action
+            android:id="@+id/action_PhotoDetailFragment_to_PhotoViewerFragment"
+            app:destination="@id/photo_viewer" />
 
     </fragment>
 

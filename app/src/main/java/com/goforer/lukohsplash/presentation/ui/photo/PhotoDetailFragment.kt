@@ -32,6 +32,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -76,6 +77,8 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
     private lateinit var listener: PermissionCallback
 
     private var downloadCount = 0
+
+    private var isFromBackStack = false
 
     private val requestMultiplePermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -139,6 +142,11 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setFragmentResultListener(FRAGMENT_REQUEST_FROM_BACKSTACK) { _, bundle ->
+            homeActivity.binding.bottomNav.show()
+            isFromBackStack = bundle.getBoolean(FRAGMENT_RESULT_FROM_BACKSTACK)
+        }
 
         observePhotoID()
         binding.swipeContainer.setOnSwipeOutListener(
@@ -224,13 +232,19 @@ class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
         }
     }
 
-    private fun setup(photo: Photo) {
-        binding.ivPhoto.loadPhotoUrlWithThumbnail(
+    private fun setup(photo: Photo) = with(binding) {
+        ivPhoto.loadPhotoUrlWithThumbnail(
             getPhotoUrl(photo, THUMB),
             photo.urls.thumb,
             photo.color,
             centerCrop = true
         )
+
+        ivPhoto.setSecureOnClickListener {
+            it.findNavController().navigate(
+                PhotoDetailFragmentDirections.actionPhotoDetailFragmentToPhotoViewerFragment(photo.urls.raw)
+            )
+        }
     }
 
     private fun displayPhotoDetails(photo: Photo) = with(binding) {

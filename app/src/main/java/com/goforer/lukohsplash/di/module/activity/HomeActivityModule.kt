@@ -19,6 +19,7 @@ package com.goforer.lukohsplash.di.module.activity
 import com.goforer.lukohsplash.di.module.fragment.home.PhotosFragmentModule
 import com.goforer.lukohsplash.di.module.fragment.home.SettingFragmentModule
 import com.goforer.lukohsplash.di.module.fragment.photo.PhotoDetailFragmentModule
+import com.goforer.lukohsplash.di.module.fragment.photo.PhotoViewerFragmentModule
 import com.goforer.lukohsplash.di.module.fragment.user.UserCollectionFragmentModule
 import com.goforer.lukohsplash.di.module.fragment.user.UserFragmentModule
 import com.goforer.lukohsplash.di.module.fragment.user.UserLikesFragmentModule
@@ -34,6 +35,7 @@ abstract class HomeActivityModule {
             //sign up
             PhotosFragmentModule::class,
             PhotoDetailFragmentModule::class,
+            PhotoViewerFragmentModule::class,
             SettingFragmentModule::class,
             UserFragmentModule::class,
             UserPhotosFragmentModule::class,
