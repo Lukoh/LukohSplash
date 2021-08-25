@@ -40,7 +40,7 @@ import com.goforer.lukohsplash.presentation.ui.HomeActivity
 
 class PhotosAdapter(
     private val context: Context,
-    val doOnClick: (view: View, asset: Photo) -> Unit
+    val doOnClick: (view: View, photo: Photo) -> Unit
 ) : PagingDataAdapter<Photo, BaseViewHolder<Photo>>(DIFF_CALLBACK) {
     companion object {
         private const val RAW = "raw"

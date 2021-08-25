@@ -19,8 +19,8 @@ class SwipeConstraintLayout @JvmOverloads constructor(
     private lateinit var activity: AppCompatActivity
 
     companion object {
-        private const val SWIPE_THRESHOLD_VELOCITY_X = 250F
-        private const val SWIPE_THRESHOLD_VELOCITY_Y = 155F
+        private const val SWIPE_THRESHOLD_VELOCITY_X = 450F
+        private const val SWIPE_THRESHOLD_VELOCITY_Y = 450F
     }
 
     interface OnSwipeOutListener {

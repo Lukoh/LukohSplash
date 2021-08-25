@@ -1,24 +1,9 @@
-/*
- * Copyright (C) 2021 Lukoh Nam, goForer
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License,
- * or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.
- * If not, see <http://www.gnu.org/licenses/>.
- */
-
 package com.goforer.lukohsplash.presentation.ui.user.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,18 +12,16 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.goforer.base.extension.loadPhotoUrlWithThumbnail
-import com.goforer.base.extension.loadProfilePicture
-import com.goforer.base.extension.margin
-import com.goforer.base.extension.setAspectRatio
+import com.goforer.base.extension.*
+import com.goforer.base.utility.TimeUtils
 import com.goforer.base.view.holder.BaseViewHolder
 import com.goforer.lukohsplash.R
 import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
-import com.goforer.lukohsplash.databinding.ItemPhotoBinding
+import com.goforer.lukohsplash.databinding.ItemCollectionPhotoBinding
 import com.goforer.lukohsplash.presentation.scheduler.UIJobScheduler
 import com.goforer.lukohsplash.presentation.ui.HomeActivity
 
-class UserPhotosAdapter(
+class UserCollectionPhotosAdapter(
     private val context: Context,
     val doOnClick: (view: View, photo: Photo) -> Unit
 ) : PagingDataAdapter<Photo, BaseViewHolder<Photo>>(DIFF_CALLBACK) {
@@ -78,7 +61,11 @@ class UserPhotosAdapter(
             ContextThemeWrapper(parent.context.applicationContext, R.style.AppTheme)
 
         val binding =
-            ItemPhotoBinding.inflate(LayoutInflater.from(contextThemeWrapper), parent, false)
+            ItemCollectionPhotoBinding.inflate(
+                LayoutInflater.from(contextThemeWrapper),
+                parent,
+                false
+            )
 
         return PhotoItemHolder(binding, this)
     }
@@ -93,9 +80,17 @@ class UserPhotosAdapter(
         }
     }
 
+//    override fun getItemId(position: Int): Long {
+//        return getItem(position)?.id.hashCode().toLong()
+//    }
+
+//    internal fun searchText(text: String) {
+//        searchedText = text
+//    }
+
     class PhotoItemHolder(
-        private val binding: ItemPhotoBinding,
-        private val adapter: UserPhotosAdapter
+        private val binding: ItemCollectionPhotoBinding,
+        private val adapter: UserCollectionPhotosAdapter
     ) : BaseViewHolder<Photo>(binding.root) {
         @SuppressLint("SetTextI18n")
         override fun bindItemHolder(holder: BaseViewHolder<Photo>, item: Photo, position: Int) {
@@ -107,6 +102,7 @@ class UserPhotosAdapter(
                 item.user?.let { user ->
                     userContainer.isVisible = true
                     userContainer.setOnClickListener {
+
                     }
 
                     UIJobScheduler.submitJob(coroutineScope) {
@@ -114,13 +110,41 @@ class UserPhotosAdapter(
                     }
 
                     UIJobScheduler.submitJob(coroutineScope) {
-                        tvUser.text = user.name ?: itemView.context.getString(R.string.unknown)
+                        item.created_at?.let {
+                            tvDate.text =
+                                "${adapter.context.getString(R.string.published)}${" "}${
+                                    TimeUtils.convertDateFormat(
+                                        it.split("T")[0]
+                                    )
+                                }"
+                        }
+                    }
+
+                    UIJobScheduler.submitJob(coroutineScope) {
+                        tvUserName.text = user.name ?: itemView.context.getString(R.string.unknown)
+                    }
+
+                    UIJobScheduler.submitJob(coroutineScope) {
+                        tvColorFill.text = item.color
+                        tvColorFill.setBackgroundColor(Color.parseColor(item.color))
+                    }
+
+
+                    UIJobScheduler.submitJob(coroutineScope) {
+                        tvLikesCount.text = (item.likes ?: 0).toPrettyString()
+                    }
+
+                    UIJobScheduler.submitJob(coroutineScope) {
+                        tvPhotoDimensionValue.text = if (item.width != null && item.height != null)
+                            SpannableStringBuilder("${item.width} × ${item.height}")
+                        else SpannableStringBuilder(context.getString(R.string.unknown))
                     }
                 }
 
                 val url = getPhotoUrl(item, THUMB)
 
                 ivPhoto.setAspectRatio(item.width, item.height)
+
                 UIJobScheduler.submitJob(coroutineScope) {
                     ivPhoto.loadPhotoUrlWithThumbnail(url, item.urls.thumb, item.color)
                 }

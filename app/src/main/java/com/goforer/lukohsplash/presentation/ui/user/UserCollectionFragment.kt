@@ -25,6 +25,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -81,6 +82,7 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        createCustomTabsServiceConnection()
         collectionAdapter ?: observeUserName()
         with(binding) {
             swipeRefreshLayoutContainer.layoutTransition.setAnimateParentHierarchy(false)
@@ -89,8 +91,14 @@ class UserCollectionFragment : BaseFragment<FragmentItemListBinding>() {
                     getUserCollection(userName, 1)
             }
 
-            collectionAdapter = collectionAdapter ?: UserCollectionAdapter(homeActivity) { _, _ ->
-            }
+            collectionAdapter =
+                collectionAdapter ?: UserCollectionAdapter(homeActivity) { itemView, item ->
+                    itemView.findNavController().navigate(
+                        UserFragmentDirections.actionUserFragmentToUserCollectionPhotosFragment(
+                            item.id, item.title
+                        )
+                    )
+                }
 
             rvList.apply {
                 val gridManager = StaggeredGridLayoutManager(1, RecyclerView.VERTICAL).apply {
