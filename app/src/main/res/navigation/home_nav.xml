@@ -41,8 +41,25 @@
         tools:layout="@layout/fragment_user">
 
         <action
-            android:id="@+id/action_PhotoDetailFragment_to_PhotoViewerFragment"
+            android:id="@+id/action_UserFragment_to_PhotoViewerFragment"
             app:destination="@id/photo_viewer" />
+
+        <action
+            android:id="@+id/action_UserFragment_to_UserCollectionPhotosFragment"
+            app:destination="@id/collection_photo_list" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/collection_photo_list"
+        android:name="com.goforer.lukohsplash.presentation.ui.user.UserCollectionPhotosFragment"
+        tools:layout="@layout/fragment_collection_photos">
+        <argument
+            android:name="collectionId"
+            app:argType="string" />
+        <argument
+            android:name="collectionTitle"
+            app:argType="string" />
 
     </fragment>
 

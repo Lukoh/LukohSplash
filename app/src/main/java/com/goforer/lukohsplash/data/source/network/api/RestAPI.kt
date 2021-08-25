@@ -21,7 +21,9 @@ import com.goforer.lukohsplash.data.source.model.entity.user.response.Collection
 import com.goforer.lukohsplash.data.source.model.entity.user.response.User
 import com.goforer.lukohsplash.data.source.network.response.ApiResponse
 import kotlinx.coroutines.flow.Flow
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface RestAPI {
     @GET("photos")
@@ -73,4 +75,12 @@ interface RestAPI {
         @Query("page") page: Int?,
         @Query("per_page") per_page: Int?
     ): Flow<ApiResponse<MutableList<Collection>>>
+
+    @GET("collections/{id}/photos")
+    fun getUserCollectionPhotos(
+        @Path("id") id: String,
+        @Query("client_id") clientId: String,
+        @Query("page") page: Int?,
+        @Query("per_page") per_page: Int?
+    ): Flow<ApiResponse<MutableList<Photo>>>
 }

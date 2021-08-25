@@ -43,7 +43,6 @@ import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.Status
 import com.goforer.lukohsplash.databinding.FragmentItemListBinding
 import com.goforer.lukohsplash.presentation.ui.BaseFragment
-import com.goforer.lukohsplash.presentation.ui.photo.PhotoDetailFragmentDirections
 import com.goforer.lukohsplash.presentation.ui.user.adapter.UerLikesAdapter
 import com.goforer.lukohsplash.presentation.vm.Params
 import com.goforer.lukohsplash.presentation.vm.Query
@@ -93,7 +92,7 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
 
             likesAdapter = likesAdapter ?: UerLikesAdapter(homeActivity) { itemView, item ->
                 itemView.findNavController().navigate(
-                    PhotoDetailFragmentDirections.actionPhotoDetailFragmentToPhotoViewerFragment(
+                    UserFragmentDirections.actionUserFragmentToPhotoViewerFragment(
                         item.urls.raw
                     )
                 )

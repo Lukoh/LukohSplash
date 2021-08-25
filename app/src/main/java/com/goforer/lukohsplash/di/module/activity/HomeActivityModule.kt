@@ -20,10 +20,7 @@ import com.goforer.lukohsplash.di.module.fragment.home.PhotosFragmentModule
 import com.goforer.lukohsplash.di.module.fragment.home.SettingFragmentModule
 import com.goforer.lukohsplash.di.module.fragment.photo.PhotoDetailFragmentModule
 import com.goforer.lukohsplash.di.module.fragment.photo.PhotoViewerFragmentModule
-import com.goforer.lukohsplash.di.module.fragment.user.UserCollectionFragmentModule
-import com.goforer.lukohsplash.di.module.fragment.user.UserFragmentModule
-import com.goforer.lukohsplash.di.module.fragment.user.UserLikesFragmentModule
-import com.goforer.lukohsplash.di.module.fragment.user.UserPhotosFragmentModule
+import com.goforer.lukohsplash.di.module.fragment.user.*
 import com.goforer.lukohsplash.presentation.ui.HomeActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -40,7 +37,8 @@ abstract class HomeActivityModule {
             UserFragmentModule::class,
             UserPhotosFragmentModule::class,
             UserLikesFragmentModule::class,
-            UserCollectionFragmentModule::class
+            UserCollectionFragmentModule::class,
+            UserCollectionPhotosFragmentModule::class
         ]
     )
 
