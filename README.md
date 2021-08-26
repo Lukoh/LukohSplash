@@ -637,7 +637,30 @@ To pass data between destinations, first define the argument by adding it to the
 
 Here is a example which is used in LukohSplash shown below:
 
-[Code]
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav"
+    app:startDestination="@+id/photo_list">
+    ...
+
+    <fragment
+        android:id="@+id/collection_photo_list"
+        android:name="com.goforer.lukohsplash.presentation.ui.user.UserCollectionPhotosFragment"
+        tools:layout="@layout/fragment_collection_photos">
+        <argument
+            android:name="collectionId"
+            app:argType="string" />
+        <argument
+            android:name="collectionTitle"
+            app:argType="string" />
+
+    </fragment>
+
+</navigation>
+```
 
 I used Safe Args to share or pass data between with type safety.
 
