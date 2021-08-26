@@ -32,9 +32,9 @@
                 android:id="@+id/rv_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingBottom="@dimen/dp_57"
                 android:scrollbars="none"
-                android:visibility="visible"
-                android:paddingBottom="57dp" />
+                android:visibility="visible" />
 
         </FrameLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -160,6 +160,8 @@ dependencies {
     implementation "androidx.paging:paging-runtime-ktx:$arch_paging_version"
     implementation "androidx.lifecycle:lifecycle-runtime-testing:$arch_lifecycle_version"
     implementation "androidx.work:work-runtime-ktx:$androidx_work_version"
+    implementation "androidx.browser:browser:$androidx_browser_version"
+    implementation 'androidx.webkit:webkit:1.4.0'
     testImplementation "androidx.paging:paging-common-ktx:$arch_paging_version"
 
     implementation 'com.google.code.gson:gson:2.8.7'
@@ -209,6 +211,8 @@ dependencies {
     implementation "com.jakewharton.timber:timber:$timber_version"
 
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_version"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"

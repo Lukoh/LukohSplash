@@ -2,6 +2,7 @@
     <string name="app_name">LukohSplash</string>
     <string name="title_home">Home</string>
     <string name="title_photos">Photos</string>
+    <string name="title_collection_photos">Photos</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_setting">Setting</string>
     <string name="title_photo_detail">Photo Information</string>
@@ -35,9 +36,12 @@
     <string name="like">Like</string>
     <string name="likes">Likes</string>
     <string name="collections">Collections</string>
+    <string name="dimension">Dimension</string>
     <string name="views">Views</string>
     <string name="download">Download</string>
     <string name="downloads">Downloads</string>
+    <string name="published">Published on</string>
+    <string name="color">Color</string>
     <string name="add_to_collection">Add to collection</string>
     <string name="location_template" translatable="false">%s, %s</string>
 

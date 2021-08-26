@@ -16,19 +16,24 @@
 
 package com.goforer.lukohsplash.presentation.ui
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.DialogInterface
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.browser.customtabs.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.goforer.base.extension.gone
 import com.goforer.base.extension.show
 import com.goforer.base.extension.upShow
+import com.goforer.base.utility.ConnectionUtils
 import com.goforer.base.utility.keyboard.BaseKeyboardObserver
 import com.goforer.base.view.dialog.LoadingDialog
 import com.goforer.base.view.dialog.NormalDialog
@@ -42,6 +47,8 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
     internal val binding
         get() = _binding as T
 
+    internal var isLoading = false
+
     protected lateinit var homeActivity: HomeActivity
     private lateinit var context: Context
 
@@ -49,7 +56,10 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
 
     private var loadingDialog: LoadingDialog? = null
 
-    internal var isLoading = false
+    private var customTabsServiceConnection: CustomTabsServiceConnection? = null
+
+    protected var client: CustomTabsClient? = null
+    protected var customTabsSession: CustomTabsSession? = null
 
     private lateinit var onBackPressedCallback: OnBackPressedCallback
 
@@ -58,6 +68,8 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
 
         const val FRAGMENT_REQUEST_FROM_BACKSTACK = "requestKey_from_back"
         const val FRAGMENT_RESULT_FROM_BACKSTACK = "resultKey_get_photos"
+
+        const val CUSTOM_TAB_PACKAGE_NAME = "com.android.chrome"
     }
 
     override fun onCreateView(
@@ -94,6 +106,12 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
         super.onDestroyView()
 
         _binding = null
+        customTabsServiceConnection?.let {
+            homeActivity.unbindService(customTabsServiceConnection!!)
+            customTabsServiceConnection = null
+            client = null
+            customTabsSession = null
+        }
     }
 
     override fun onDestroy() {
@@ -166,6 +184,46 @@ abstract class BaseFragment<T : ViewBinding> : Fragment(), Injectable {
             if (loadingDialog?.isShowing() == true)
                 loadingDialog?.dismiss()
             loadingDialog = null
+        }
+    }
+
+    protected fun createCustomTabsServiceConnection() {
+        customTabsServiceConnection = object : CustomTabsServiceConnection() {
+            override fun onCustomTabsServiceConnected(
+                componentName: ComponentName,
+                customTabsClient: CustomTabsClient
+            ) {
+                //Pre-warming
+                client = customTabsClient
+                client?.warmup(0L)
+                customTabsSession = client?.newSession(null)
+            }
+
+            override fun onServiceDisconnected(name: ComponentName) {
+                client = null
+            }
+        }
+
+        CustomTabsClient.bindCustomTabsService(
+            this.context,
+            CUSTOM_TAB_PACKAGE_NAME,
+            customTabsServiceConnection!!
+        )
+    }
+
+    protected fun loadContent(url: String, color: Int = Color.TRANSPARENT) {
+        if (Patterns.WEB_URL.matcher(url).matches()) {
+            val params = CustomTabColorSchemeParams.Builder()
+                .setToolbarColor(color)
+                .build()
+            val customTabsIntent = CustomTabsIntent.Builder()
+                .setColorSchemeParams(CustomTabsIntent.COLOR_SCHEME_DARK, params)
+                .setShowTitle(false)
+                .setUrlBarHidingEnabled(true)
+                .build()
+
+
+            customTabsIntent.launchUrl(homeActivity, ConnectionUtils.getUri(url))
         }
     }
 

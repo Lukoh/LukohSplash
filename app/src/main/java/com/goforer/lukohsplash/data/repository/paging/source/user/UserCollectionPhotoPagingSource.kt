@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2021 Lukoh Nam, goForer
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 2 of the License,
- * or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU General Public License for more details.
- * You should have received a copy of the GNU General Public License along with this program.
- * If not, see <http://www.gnu.org/licenses/>.
- */
-
 package com.goforer.lukohsplash.data.repository.paging.source.user
 
 import androidx.paging.PagingState
@@ -24,9 +8,7 @@ import com.goforer.lukohsplash.data.source.model.entity.photo.response.Photo
 import com.goforer.lukohsplash.data.source.network.response.ApiEmptyResponse
 import com.goforer.lukohsplash.data.source.network.response.ApiErrorResponse
 import com.goforer.lukohsplash.data.source.network.response.ApiSuccessResponse
-import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.LATEST
-import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.NONE_ITEM_COUNT
-import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker.Companion.YOUR_ACCESS_KEY
+import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
 import com.goforer.lukohsplash.presentation.vm.Query
 import kotlinx.coroutines.flow.collect
 import retrofit2.HttpException
@@ -35,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserLikesPagingSource
+class UserCollectionPhotoPagingSource
 @Inject
 constructor() : BasePagingSource<Int, Photo>() {
     companion object {
@@ -54,13 +36,11 @@ constructor() : BasePagingSource<Int, Photo>() {
                 nextPage = 1
             }, {
                 nextPage = it.plus(1)
-                restAPI.getUserLikes(
+                restAPI.getUserCollectionPhotos(
                     query.firstParam as String,
-                    YOUR_ACCESS_KEY,
+                    NetworkBoundWorker.YOUR_ACCESS_KEY,
                     nextPage,
-                    NONE_ITEM_COUNT,
-                    LATEST,
-                    null
+                    query.thirdParam as Int,
                 ).collect { apiResponse ->
                     pagingList = when (apiResponse) {
                         is ApiSuccessResponse -> {
@@ -84,7 +64,7 @@ constructor() : BasePagingSource<Int, Photo>() {
                 LoadResult.Page(
                     data = pagingList,
                     prevKey = null,
-                    nextKey =  params.key?.plus(1) ?: 1
+                    nextKey = nextPage
                 )
             else
                 LoadResult.Error(Throwable(errorMessage))

@@ -52,6 +52,7 @@
     <style name="TemplateTitleCollapsed">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/line_grey1</item>
+        android:maxLength="12"
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
     </style>
@@ -59,6 +60,7 @@
     <style name="TemplateTitleExpanded">
         <item name="android:textSize">30sp</item>
         <item name="android:textColor">@color/line_grey1</item>
+        <item name="android:max">24</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textStyle">bold</item>
     </style>

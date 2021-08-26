@@ -25,6 +25,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -89,7 +90,12 @@ class UserLikesFragment : BaseFragment<FragmentItemListBinding>() {
                     getUserLikes(userName, 1)
             }
 
-            likesAdapter = likesAdapter ?: UerLikesAdapter(homeActivity) { _, _ ->
+            likesAdapter = likesAdapter ?: UerLikesAdapter(homeActivity) { itemView, item ->
+                itemView.findNavController().navigate(
+                    UserFragmentDirections.actionUserFragmentToPhotoViewerFragment(
+                        item.urls.raw
+                    )
+                )
             }
 
             rvList.apply {
