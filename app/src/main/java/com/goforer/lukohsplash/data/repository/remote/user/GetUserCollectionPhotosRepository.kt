@@ -11,7 +11,6 @@ import com.goforer.lukohsplash.data.source.network.response.Resource
 import com.goforer.lukohsplash.data.source.network.worker.NetworkBoundWorker
 import com.goforer.lukohsplash.presentation.vm.Query
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,9 +18,8 @@ import javax.inject.Singleton
 class GetUserCollectionPhotosRepository
 @Inject
 constructor(val pagingSource: UserCollectionPhotoPagingSource) : Repository<Resource>() {
-    @ExperimentalCoroutinesApi
     override fun doWork(viewModelScope: CoroutineScope, query: Query) = object :
-        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false, viewModelScope) {
+        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false) {
         override fun request() = restAPI.getUserCollectionPhotos(
             query.firstParam as String,
             YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT
@@ -37,5 +35,5 @@ constructor(val pagingSource: UserCollectionPhotoPagingSource) : Repository<Reso
             pagingSource.setData(query, value)
             pagingSource
         }.flow.cachedIn(viewModelScope)
-    }.asSharedFlow
+    }.asFlow
 }
