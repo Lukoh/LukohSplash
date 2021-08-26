@@ -549,6 +549,241 @@ constructor(
 }
 ```
 	
+## Communicating with fragments
+	
+I introduce  two way to share or pass data between destinations such as fragments.
+
+
+###  - Using ViewModel
+
+ViewModel is an ideal choice when you need to share, pass the data or information between multiple fragments or between fragments and their host activity. ViewModel objects store and manage UI data.
+The following sections show you how to use ViewModel to communicate between your fragments.
+
+####  * Share data between fragments
+
+A couple of or more fragments in the same activity often need to pass information or data with each other. For example, imagine one fragment that displays a list and another that allows the user to apply various filters to the list. This case might not be trivial to implement without the fragments communicating directly, which would mean they are no longer self-contained. Additionally, both fragments must handle the scenario where the other fragment is not yet created or visible.
+
+These fragments can share a ViewModel using their activity scope to handle this communication. By sharing the ViewModel in this way, the fragments do not need to know about each other, and the activity does not need to do anything to facilitate the communication.
+
+The following code shows how a couple of or more fragments can use a shared ViewModel to communicate:
+
+```kotlin
+@Singleton
+class SharedPhotoIdViewModel
+@Inject
+constructor() : SharedViewModel<String>()
+
+The following code to to share the data to PhotoDetailFragment to handle some work with it.
+
+class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
+    ...
+    @Inject
+    internal lateinit var sharedPhotoIdViewModel: SharedPhotoIdViewModel
+    ...
+    ...
+    photoAdapter = photoAdapter ?: PhotosAdapter(homeActivity) { itemView, item ->
+        sharedPhotoIdViewModel.share(item.id)
+        itemView.findNavController().navigate(
+            PhotosFragmentDirections.actionPhotosFragmentToPhotoDetailFragment()
+        )
+    }
+    ...   
+}
+
+The following code to to receive the shared data from  PhotosFragment to handle some work with it.
+
+class PhotoDetailFragment : BaseFragment<FragmentPhotoDetailBinding>() {
+    ...
+    @Inject
+    lateinit var sharedPhotoIdViewModel: SharedPhotoIdViewModel
+    ...
+    ...
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        ...
+        observePhotoID()
+        ...
+    }
+
+    ...
+    private fun observePhotoID() {
+        sharedPhotoIdViewModel.shared {
+            // handle some work with the shared data
+        }
+    }
+    ...
+}
+```
+
+You can observe the shared data or information in any fragments if you want to receive these stuff. Just declare SharedView model like above code in the fragment and implement the below code in any fragments to get the shared data or information:
+
+```kotlin
+sharedPhotoIdViewModel.shared {
+    // handle some work with the shared data
+}
+```
+
+Than's all to share or pass the data or information between fragments with ViewModel. It's easy.
+
+I implemented [SharedViewModel](). Please read SharedModel section in ViewModel section, if you'd like to know what [SharedModel]() is. It's very useful to understand above code.
+
+
+### - Using Navigation
+
+Navigation allows you to attach data to a navigation operation by defining arguments for a destination. For example, a user profile destination might take a user ID argument to determine which user to display.
+In general, you should strongly prefer passing only the minimal amount of data between destinations. For example, you should pass a key to retrieve an object rather than passing the object itself, as the total space for all saved states is limited on Android. 
+
+To pass data between destinations, first define the argument by adding it to the destination that receives it.
+
+Here is a example which is used in LukohSplash shown below:
+
+[Code]
+
+I used Safe Args to share or pass data between with type safety.
+
+The Navigation component has a Gradle plugin called Safe Args that generates simple object and builder classes for type-safe navigation and access to any associated arguments. Safe Args is strongly recommended for navigating and passing data, because it ensures type-safety.
+
+In some cases, for example if you are not using Gradle, you can't use the Safe Args plugin. In these cases, you can use Bundles to directly pass data.
+
+To add Safe Args to your project, please visit [Use Safe Args to pass data with type safety](https://developer.android.com/guide/navigation/navigation-pass-data#Safe-args)
+
+After enabling Safe Args, your generated code contains the following type-safe classes and methods for each action as well as with each sending and receiving destination.
+
+A class is created for each destination where an action originates. The name of this class is the name of the originating destination, appended with the word "Directions". For example, if the originating destination is a fragment that is named SpecifyAmountFragment, the generated class would be called SpecifyAmountFragmentDirections.
+
+This class has a method for each action defined in the originating destination.
+
+For each action used to pass the argument, an inner class is created whose name is based on the action. For example, if the action is called confirmationAction, the class is named ConfirmationAction. If your action contains arguments without a defaultValue, then you use the associated action class to set the value of the arguments.
+
+A class is created for the receiving destination. The name of this class is the name of the destination, appended with the word "Args". For example, if the destination fragment is named ConfirmationFragment, the generated class is called ConfirmationFragmentArgs. Use this class's fromBundle() method to retrieve the arguments.
+
+The following code shows you how to use these methods to set an argument and pass it to the navigate() method:
+
+[UserCollectionFragment]()
+
+```kotlin
+override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
+    ...
+    collectionAdapter =
+            collectionAdapter ?: UserCollectionAdapter(homeActivity) { itemView, item ->
+                itemView.findNavController().navigate(
+                    UserFragmentDirections.actionUserFragmentToUserCollectionPhotosFragment(
+                        item.id, item.title
+                    )
+                )
+            }
+    ...
+}
+```
+
+In your receiving destination’s code, use the getArguments() method to retrieve the bundle and use its contents. When using the -ktx dependencies, Kotlin users can also use the by navArgs() property delegate to access arguments.
+
+[UserCollectionPhotosFragment]()
+
+```kotlin
+class UserCollectionPhotosFragment : BaseFragment<FragmentCollectionPhotosBinding>() {
+    ...
+    private val args: UserCollectionPhotosFragmentArgs by navArgs()
+    ...
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        ...
+        getCollectionPhotos(args.collectionId, PhotosPagingSource.nextPage)
+        ...
+    }		
+}
+```
+
+Use Safe Args with a global action
+When using Safe Args with a global action, you must provide an android:id value for your root <navigation> element, as shown in the following code:
+
+[home_nav.xml]()
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav"
+    app:startDestination="@+id/photo_list">
+
+    <fragment
+        android:id="@+id/photo_list"
+        android:name="com.goforer.lukohsplash.presentation.ui.home.PhotosFragment"
+        tools:layout="@layout/fragment_photos">
+        <action
+            android:id="@+id/action_PhotosFragment_to_PhotoDetailFragment"
+            app:destination="@id/photo_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/photo_detail"
+        android:name="com.goforer.lukohsplash.presentation.ui.photo.PhotoDetailFragment"
+        tools:layout="@layout/fragment_photo_detail">
+        <action
+            android:id="@+id/action_PhotoDetailFragment_to_UserFragment"
+            app:destination="@id/user_info" />
+        <action
+            android:id="@+id/action_PhotoDetailFragment_to_PhotoViewerFragment"
+            app:destination="@id/photo_viewer" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/photo_viewer"
+        android:name="com.goforer.lukohsplash.presentation.ui.photo.PhotoViewerFragment"
+        tools:layout="@layout/fragment_photo_viewer">
+        <argument
+            android:name="photoUrl"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/user_info"
+        android:name="com.goforer.lukohsplash.presentation.ui.user.UserFragment"
+        tools:layout="@layout/fragment_user">
+
+        <action
+            android:id="@+id/action_UserFragment_to_PhotoViewerFragment"
+            app:destination="@id/photo_viewer" />
+
+        <action
+            android:id="@+id/action_UserFragment_to_UserCollectionPhotosFragment"
+            app:destination="@id/collection_photo_list" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/collection_photo_list"
+        android:name="com.goforer.lukohsplash.presentation.ui.user.UserCollectionPhotosFragment"
+        tools:layout="@layout/fragment_collection_photos">
+        <argument
+            android:name="collectionId"
+            app:argType="string" />
+        <argument
+            android:name="collectionTitle"
+            app:argType="string" />
+
+    </fragment>
+
+</navigation>
+```
+
+Navigation generates a Directions class for the <navigation> element that is based on the android:id value. For example, if you have a <navigation> element with android:id=@+id/main_nav, the generated class is called MainNavDirections. 
+
+If you'd like to learn Navigation, I recommend you to read [this document of Navigation](https://developer.android.com/guide/navigation/navigation-getting-started) 
+
+
+Conclusion
+
+If you need to pass large amounts of data or object, consider using a ViewModel as described above.
+
+Or if you need to pass a couple of data or parameters, consider using Navigation as mentioned above.
+	
+	
 ## Paging3
 	
 The Jetpack Component Library helps you load and display pages of data from a larger dataset from local storage or over network. This approach allows your app to use both network bandwidth and system resources more efficiently. The components of the Paging library are designed to fit into the recommended Android app architecture, integrate cleanly with other Jetpack components, and provide first-class Kotlin support.
