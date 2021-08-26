@@ -39,7 +39,6 @@ open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewM
         }
     }
 
-    @ExperimentalCoroutinesApi
     override fun onCleared() {
         super.onCleared()
 
