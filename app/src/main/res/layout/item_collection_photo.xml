@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:background="#ddffee"
                 android:textAlignment="center"
-                android:textColor="@color/overlay_light_70"
+                android:textColor="@color/colorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 

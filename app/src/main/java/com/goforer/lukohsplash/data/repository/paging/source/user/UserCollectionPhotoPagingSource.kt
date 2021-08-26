@@ -39,7 +39,7 @@ constructor() : BasePagingSource<Int, Photo>() {
                 restAPI.getUserCollectionPhotos(
                     query.firstParam as String,
                     NetworkBoundWorker.YOUR_ACCESS_KEY,
-                    it.plus(1),
+                    nextPage,
                     query.thirdParam as Int,
                 ).collect { apiResponse ->
                     pagingList = when (apiResponse) {
@@ -64,7 +64,7 @@ constructor() : BasePagingSource<Int, Photo>() {
                 LoadResult.Page(
                     data = pagingList,
                     prevKey = null,
-                    nextKey = params.key?.plus(1) ?: 1
+                    nextKey = nextPage
                 )
             else
                 LoadResult.Error(Throwable(errorMessage))

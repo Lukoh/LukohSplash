@@ -57,7 +57,7 @@ constructor() : BasePagingSource<Int, Photo>() {
                 restAPI.getUserLikes(
                     query.firstParam as String,
                     YOUR_ACCESS_KEY,
-                    it.plus(1),
+                    nextPage,
                     NONE_ITEM_COUNT,
                     LATEST,
                     null
@@ -84,7 +84,7 @@ constructor() : BasePagingSource<Int, Photo>() {
                 LoadResult.Page(
                     data = pagingList,
                     prevKey = null,
-                    nextKey = params.key?.plus(1) ?: 1
+                    nextKey = nextPage
                 )
             else
                 LoadResult.Error(Throwable(errorMessage))
