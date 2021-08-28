@@ -74,4 +74,13 @@ class MockRestAPI(isMakeError: Boolean = false) : RestAPI, MockBaseAPI(isMakeErr
     ): Flow<ApiResponse<MutableList<Collection>>> {
         return getFlowResponse(mutableListOf(collectionsTest.collection0))
     }
+
+    override fun getUserCollectionPhotos(
+        id: String,
+        clientId: String,
+        page: Int?,
+        per_page: Int?
+    ): Flow<ApiResponse<MutableList<Photo>>> {
+        return getFlowResponse(mutableListOf(photosTest.photo0))
+    }
 }
