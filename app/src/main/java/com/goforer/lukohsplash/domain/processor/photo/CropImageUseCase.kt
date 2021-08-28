@@ -21,9 +21,9 @@ import android.graphics.BitmapFactory
 import com.goforer.lukohsplash.domain.UseCase
 import com.goforer.lukohsplash.presentation.vm.Params
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.shareIn
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,7 +35,11 @@ constructor() : UseCase<Bitmap>() {
     @Suppress("UNCHECKED_CAST")
     override fun run(viewModelScope: CoroutineScope, params: Params) = flow {
         emit(cropImage(params.query.firstParam as Bitmap))
-    }
+    }.shareIn(
+        scope = viewModelScope,
+        started = WhileSubscribed(5000),
+        replay = 1
+    )
 
     private fun cropImage(bitmap: Bitmap): Bitmap {
         val corpBitmap = Bitmap.createBitmap(

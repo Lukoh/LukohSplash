@@ -35,7 +35,7 @@ class GetUserCollectionsRepository
 @Inject
 constructor(val pagingSource: UserCollectionsPagingSource) : Repository<Resource>() {
     override fun doWork(viewModelScope: CoroutineScope, query: Query) = object :
-        NetworkBoundWorker<PagingData<Collection>, MutableList<Collection>>(false) {
+        NetworkBoundWorker<PagingData<Collection>, MutableList<Collection>>(false, viewModelScope) {
         override fun request() = restAPI.getUserCollections(
             query.firstParam as String, YOUR_ACCESS_KEY, query.secondParam as Int, NONE_ITEM_COUNT
         )
@@ -50,5 +50,5 @@ constructor(val pagingSource: UserCollectionsPagingSource) : Repository<Resource
             pagingSource.setData(query, value)
             pagingSource
         }.flow.cachedIn(viewModelScope)
-    }.asFlow
+    }.asSharedFlow
 }

@@ -84,7 +84,7 @@ constructor() : BasePagingSource<Int, Photo>() {
                 LoadResult.Page(
                     data = pagingList,
                     prevKey = null,
-                    nextKey =  params.key?.plus(1) ?: 1
+                    nextKey = nextPage
                 )
             else
                 LoadResult.Error(Throwable(errorMessage))

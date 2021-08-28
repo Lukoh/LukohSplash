@@ -16,7 +16,6 @@
 
 package com.goforer.lukohsplash.domain.processor.photo
 
-import android.app.DownloadManager
 import android.content.Context
 import androidx.lifecycle.asFlow
 import androidx.work.*
@@ -24,7 +23,9 @@ import com.goforer.lukohsplash.domain.UseCase
 import com.goforer.lukohsplash.domain.processor.photo.workmanager.DownLoadPhotoWorker
 import com.goforer.lukohsplash.presentation.vm.Params
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,7 +33,7 @@ import javax.inject.Singleton
 class DownloadPhotosUseCase
 @Inject
 constructor(private val context: Context) : UseCase<WorkInfo>() {
-    override fun run(viewModelScope: CoroutineScope, params: Params): Flow<WorkInfo> {
+    override fun run(viewModelScope: CoroutineScope, params: Params): SharedFlow<WorkInfo> {
         val work = OneTimeWorkRequestBuilder<DownLoadPhotoWorker>()
             .setInputData(workDataOf("url" to params.query.firstParam as String))
             .setConstraints(
@@ -42,6 +43,12 @@ constructor(private val context: Context) : UseCase<WorkInfo>() {
 
         WorkManager.getInstance(context).enqueue(work)
 
-        return WorkManager.getInstance(context).getWorkInfoByIdLiveData(work.id).asFlow()
+        return WorkManager.getInstance(context).getWorkInfoByIdLiveData(work.id)
+            .asFlow()
+            .shareIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                replay = 1
+            )
     }
 }

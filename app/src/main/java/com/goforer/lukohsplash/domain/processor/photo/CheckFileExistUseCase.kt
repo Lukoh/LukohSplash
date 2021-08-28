@@ -5,7 +5,9 @@ import android.os.Environment
 import com.goforer.lukohsplash.domain.UseCase
 import com.goforer.lukohsplash.presentation.vm.Params
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.shareIn
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,5 +29,9 @@ constructor(
         } else {
             emit(false)
         }
-    }
+    }.shareIn(
+        scope = viewModelScope,
+        started = WhileSubscribed(5000),
+        replay = 1
+    )
 }

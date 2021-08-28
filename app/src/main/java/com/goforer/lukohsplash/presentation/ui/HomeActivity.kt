@@ -87,7 +87,7 @@ open class HomeActivity : AppCompatActivity(), HasAndroidInjector {
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp(appBarConfiguration)
-            || super.onSupportNavigateUp()
+                || super.onSupportNavigateUp()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -35,7 +35,7 @@ class GetUserLikesRepository
 @Inject
 constructor(val pagingSource: UserLikesPagingSource) : Repository<Resource>() {
     override fun doWork(viewModelScope: CoroutineScope, query: Query) = object :
-        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false) {
+        NetworkBoundWorker<PagingData<Photo>, MutableList<Photo>>(false, viewModelScope) {
         override fun request() = restAPI.getUserLikes(
             query.firstParam as String, YOUR_ACCESS_KEY, 1, NONE_ITEM_COUNT, LATEST, null
         )
@@ -50,5 +50,5 @@ constructor(val pagingSource: UserLikesPagingSource) : Repository<Resource>() {
             pagingSource.setData(query, value)
             pagingSource
         }.flow.cachedIn(viewModelScope)
-    }.asFlow
+    }.asSharedFlow
 }
