@@ -17,6 +17,8 @@
 package com.goforer.lukohsplash.data.source.network.resource
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.testing.TestLifecycleOwner
 import com.goforer.lukohsplash.data.source.model.entity.ResponseResult
 import com.goforer.lukohsplash.data.source.network.response.ApiResponse
 import com.goforer.lukohsplash.data.source.network.response.Resource
@@ -52,23 +54,26 @@ class NetworkBoundWorkerTest : TestWatcher() {
 
     @Test
     fun successCacheTest() {
-        val resource = object : NetworkBoundWorker<ResponseResult, ResponseResult>(false) {
-            override fun loadFromCache(
-                isLatest: Boolean,
-                itemCount: Int,
-                pages: Int
-            ): Flow<ResponseResult> = flow {
-                emit(ResponseResult("OK"))
-            }
+        val resource =
+            object : NetworkBoundWorker<ResponseResult, ResponseResult>(
+                false, TestLifecycleOwner().lifecycleScope
+            ) {
+                override fun loadFromCache(
+                    isLatest: Boolean,
+                    itemCount: Int,
+                    pages: Int
+                ): Flow<ResponseResult> = flow {
+                    emit(ResponseResult("OK"))
+                }
 
-            override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
-                emit(ApiResponse.create(Response.success(ResponseResult("OK"))))
+                override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
+                    emit(ApiResponse.create(Response.success(ResponseResult("OK"))))
+                }
             }
-        }
 
         runBlockingTest {
             coroutineTestRule.managedCoroutineScope.launch {
-                resource.asFlow.test(this) {
+                resource.asSharedFlow.test(this) {
                     println(this.values())
                     assertValueAt(0, Resource().success(ResponseResult("OK")))
                 }
@@ -78,15 +83,18 @@ class NetworkBoundWorkerTest : TestWatcher() {
 
     @Test
     fun successRemoteTest() {
-        val resource = object : NetworkBoundWorker<ResponseResult, ResponseResult>(false) {
-            override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
-                emit(ApiResponse.create(Response.success(ResponseResult("OK"))))
+        val resource =
+            object : NetworkBoundWorker<ResponseResult, ResponseResult>(
+                false, TestLifecycleOwner().lifecycleScope
+            ) {
+                override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
+                    emit(ApiResponse.create(Response.success(ResponseResult("OK"))))
+                }
             }
-        }
 
         runBlockingTest {
             coroutineTestRule.managedCoroutineScope.launch {
-                resource.asFlow.test(this) {
+                resource.asSharedFlow.test(this) {
                     println(this.values())
                     assertValueAt(0, Resource().success(ResponseResult("OK")))
                 }
@@ -98,7 +106,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
     fun emptyResponseTest() {
         val resource =
             object : NetworkBoundWorker<ResponseResult, ResponseResult>(
-                false
+                false, TestLifecycleOwner().lifecycleScope
             ) {
                 override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
                     emit(ApiResponse.create(Response.success(204, ResponseResult("OK"))))
@@ -107,7 +115,7 @@ class NetworkBoundWorkerTest : TestWatcher() {
 
         runBlockingTest {
             coroutineTestRule.managedCoroutineScope.launch {
-                resource.asFlow.test(this) {
+                resource.asSharedFlow.test(this) {
                     println(this.values())
                     assertValueAt(0, Resource().success(""))
                 }
@@ -117,15 +125,18 @@ class NetworkBoundWorkerTest : TestWatcher() {
 
     @Test
     fun errorResponseTest() {
-        val resource = object : NetworkBoundWorker<ResponseResult, ResponseResult>(false) {
-            override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
-                emit(ApiResponse.create(Throwable()))
+        val resource =
+            object : NetworkBoundWorker<ResponseResult, ResponseResult>(
+                false, TestLifecycleOwner().lifecycleScope
+            ) {
+                override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
+                    emit(ApiResponse.create(Throwable()))
+                }
             }
-        }
 
         runBlockingTest {
             coroutineTestRule.managedCoroutineScope.launch {
-                resource.asFlow.test(this) {
+                resource.asSharedFlow.test(this) {
                     println(this.values())
                     assertValueAt(0, Resource().error("unknown error", -1))
                 }
@@ -135,23 +146,26 @@ class NetworkBoundWorkerTest : TestWatcher() {
 
     @Test
     fun localResponseTest() {
-        val resource = object : NetworkBoundWorker<ResponseResult, ResponseResult>(false) {
-            override fun loadFromCache(
-                isLatest: Boolean,
-                itemCount: Int,
-                pages: Int
-            ): Flow<ResponseResult> = flow {
-                emit(ResponseResult("OK"))
-            }
+        val resource =
+            object : NetworkBoundWorker<ResponseResult, ResponseResult>(
+                false, TestLifecycleOwner().lifecycleScope
+            ) {
+                override fun loadFromCache(
+                    isLatest: Boolean,
+                    itemCount: Int,
+                    pages: Int
+                ): Flow<ResponseResult> = flow {
+                    emit(ResponseResult("OK"))
+                }
 
-            override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
-                emit(ApiResponse.create(Throwable()))
+                override fun request(): Flow<ApiResponse<ResponseResult>> = flow {
+                    emit(ApiResponse.create(Throwable()))
+                }
             }
-        }
 
         runBlockingTest {
             coroutineTestRule.managedCoroutineScope.launch {
-                resource.asFlow.test(this) {
+                resource.asSharedFlow.test(this) {
                     println(this.values())
                     assertValueAt(0, Resource().success(ResponseResult("OK")))
                 }
