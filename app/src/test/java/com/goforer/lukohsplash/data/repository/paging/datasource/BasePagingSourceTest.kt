@@ -19,6 +19,7 @@ package com.goforer.lukohsplash.data.repository.paging.datasource
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.goforer.lukohsplash.data.mock.MockRestAPI
 import com.goforer.lukohsplash.data.repository.paging.source.home.PhotosPagingSource
+import com.goforer.lukohsplash.data.repository.paging.source.user.UserCollectionPhotoPagingSource
 import com.goforer.lukohsplash.data.repository.paging.source.user.UserCollectionsPagingSource
 import com.goforer.lukohsplash.data.repository.paging.source.user.UserLikesPagingSource
 import com.goforer.lukohsplash.data.repository.paging.source.user.UserPhotosPagingSource
@@ -64,6 +65,9 @@ abstract class BasePagingSourceTest : TestWatcher() {
     internal lateinit var pagingUserCollectionsSource: UserCollectionsPagingSource
 
     @Inject
+    internal lateinit var pagingUserCollectionPhotoSource: UserCollectionPhotoPagingSource
+
+    @Inject
     lateinit var restAPI: MockRestAPI
 
     @Before
@@ -72,10 +76,12 @@ abstract class BasePagingSourceTest : TestWatcher() {
         pagingUserLikesSource = UserLikesPagingSource()
         pagingUserPhotoSource = UserPhotosPagingSource()
         pagingUserCollectionsSource = UserCollectionsPagingSource()
+        pagingUserCollectionPhotoSource = UserCollectionPhotoPagingSource()
         restAPI = MockRestAPI()
         pagingPhotosSource.restAPI = restAPI
         pagingUserLikesSource.restAPI = restAPI
         pagingUserPhotoSource.restAPI = restAPI
         pagingUserCollectionsSource.restAPI = restAPI
+        pagingUserCollectionPhotoSource.restAPI = restAPI
     }
 }
