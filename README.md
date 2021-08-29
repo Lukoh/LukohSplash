@@ -20,7 +20,7 @@ And I'm learning Jetpack Compose and will apply it to LukohSplash.
 
 Here is the [demo video](https://youtu.be/82tpBjbyNQc). 
 
-Pleaes get in touch with me via email if you're intersted in my technical experience and all techs which are applied into LukohSplash. Also visit my [LinkedIn profile](https://www.linkedin.com/in/lukoh-nam-68207941/?senderId=lukoh-nam-68207941) if you want to know more about me. Here is my email address below:
+Please get in touch with me via email if you're interested in my technical experience and all techs which are applied into LukohSplash. Also visit my [LinkedIn profile](https://www.linkedin.com/in/lukoh-nam-68207941/?senderId=lukoh-nam-68207941) if you want to know more about me. Here is my email address below:
 
 lukoh.nam@gmail.com
 
