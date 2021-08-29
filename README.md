@@ -18,7 +18,7 @@ I was confident that I could develop high performance apps using Android archite
 Now let’s dive into my open-source project, LukohSplash, which is based on the Android MVVM with Clean Architecture and the latest libraries like Jetpack.
 And I'm learning Jetpack Compose and will apply it to LukohSplash. 
 
-Here is the [demo video](https://www.youtube.com/watch?v=7_bfUPWxrk8). 
+Here is the [demo video](https://youtu.be/82tpBjbyNQc). 
 
 Pleaes get in touch with me via email if you're intersted in my technical experience and all techs which are applied into LukohSplash. Also visit my [LinkedIn profile](https://www.linkedin.com/in/lukoh-nam-68207941/?senderId=lukoh-nam-68207941) if you want to know more about me. Here is my email address below:
 
