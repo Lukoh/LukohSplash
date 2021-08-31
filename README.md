@@ -352,19 +352,20 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
     ...
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun getPhotos() {
+    private fun getPhotos(page: Int) {
+        val getPhotosViewModel: GetPhotosViewModel by viewModels {
+            GetPhotosViewModel.provideFactory(
+                getPhotosViewModelFactory,
+                Params(Query().apply {
+                    firstParam = page
+                    secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
+                    thirdParam = NetworkBoundWorker.LATEST
+                })
+            )
+        }
+
         viewLifecycleOwner.lifecycleScope.launchWhenCreated {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                val getPhotosViewModel: GetPhotosViewModel by viewModels {
-                    GetPhotosViewModel.provideFactory(
-                        getPhotosViewModelFactory,
-                        Params(Query().apply {
-                            firstParam = 1
-                            secondParam = NetworkBoundWorker.NONE_ITEM_COUNT
-                            thirdParam = NetworkBoundWorker.LATEST
-                        })
-                    )
-                }
                 getPhotosViewModel.value.collect { resource ->
                     when (resource.getStatus()) {
                         Status.SUCCESS -> {
