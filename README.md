@@ -215,6 +215,7 @@ open class MediatorViewModel(useCase: UseCase<Resource>, params: Params) : ViewM
         started = WhileSubscribed(5000),
         initialValue = Resource().loading(LOADING)
     )
+}	
 ```
 	 	 		
 The exposed StateFlow will receive updates whenever the user changes or the user’s data in the repository is changed.
@@ -393,7 +394,7 @@ class PhotosFragment : BaseFragment<FragmentPhotosBinding>() {
                 }
             }
         }
-    }
+    }	
 }
 ```	
 
