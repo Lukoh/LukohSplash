@@ -307,7 +307,7 @@ Scoped instances Not only can you easily manage instances that can last the enti
 
 Note: I prefer using Dagger2 for dependency injection in complex projects. But with its extremely steep learning curve, it’s beyond the scope of this article. So if you’re interested in going deeper, I highly recommend [Hari Vignesh Jayapalan’s introduction to Dagger2](https://medium.com/@harivigneshjayapalan/dagger-2-for-android-beginners-introduction-be6580cb3edb) and [Dependency Injection with Dagger2](https://developer.android.com/training/dependency-injection/dagger-basics), getting started with Dagger2 on Android by example
 	
-Since version 2.31,  Dagger2 gives us the ability to use assisted injection. And now you can create my view models in more simple way like below.
+Since version 2.31,  Dagger2 gives us the ability to use assisted injection. And now you can create yoour view models in more simple way like below.
 Here is my ViewModel: it uses params which deliver parameters to REST APIs and an useCase. This means you can pass the parameters to REST APIs as the query or paths. That is, it's possible to achieve passing everything manually.
 	
 To use Dagger’s assisted injection, annotate the constructor of an object with @AssistedInject and annotate any assisted parameters with @Assisted, as shown below:
