@@ -183,12 +183,12 @@ The Flow implementation is similar but it doesn’t have LiveData conversions:
 The exposed StateFlow will receive updates whenever the user changes or the user’s data in the repository is changed.
 
 ![alt StateFlow-Flow-Flow-Flow end-to-end](https://github.com/Lukoh/LukohSplash/blob/main/New-Architecture2.png?raw=true)
-**Using StateFlow-Flow-Flow-Flow end-to-end**
+**Using StateFlow-ShardFlow-ShardFlow-Flow end-to-end**
 
 Let you hit [Main Branch](https://github.com/Lukoh/LukohSplash/tree/main) or [Challenge branch](https://github.com/Lukoh/LukohSplash/tree/Challenge) if you're interested in above architecture.
 
 ![alt StateFlow-ShardFlow-ShardFlow-Flow end-to-end](https://github.com/Lukoh/LukohSplash/blob/main/New-Architecture1.png?raw=true)
-**Using StateFlow-ShardFlow-ShardFlow-Flow end-to-end**
+**Using StateFlow-Flow-Flow-Flow end-to-end**\
 
 Let you hit [StateFlow branch](https://github.com/Lukoh/LukohSplash/tree/origin/StateFlow) if you're interested in above architecture.
 
